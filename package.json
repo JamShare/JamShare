@@ -1,0 +1,19 @@
+{
+  "name": "jamshare",
+  "version": "1.0.0",
+  "description": "jam sharing application",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Qazzzie/JamShare.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Qazzzie/JamShare/issues"
+  },
+  "homepage": "https://github.com/Qazzzie/JamShare#readme"
+}
