@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/Qazzzie/JamShare/issues"
   },
-  "homepage": "https://github.com/Qazzzie/JamShare#readme"
+  "homepage": "https://github.com/Qazzzie/JamShare#readme",
+  "dependencies": {
+    "express": "^4.17.2"
+  }
 }
