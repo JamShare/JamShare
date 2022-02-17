@@ -1,18 +1,18 @@
-var express = require('express');
-const app = express();
-// var routes = require('./routes');
-// // var user = require('./routes/user');
-var http = require('http');
-var path = require ('path');
+const express = require('express');
+const { createServer } = require('http');
+const { Server } = require("socket.io");
 
-const PORT = process.env.PORT || 3000;
+const PORT = 3000;
 // var mongoose = require('mongoose');
 
 //for server side audio manipulations
 // const AudioContext = window.AudioContext || window.webkitAudioContext; //https://developer.mozilla.org/en-US/docs/Web/API/AudioContext
 // const audioContext = new AudioContext(); //https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API
 
-const io = require("socket.io");
+
+const app = express();
+const httpServer = createServer(app);
+const io = new Server (httpServer, { /* options */});
 //environments
 
 // app.use('/cors', require('cors')());
@@ -37,11 +37,11 @@ io.on("connection", (socket) => {
 });
 
 //set listen port, and log it.
-http.listen(PORT, () => {
+httpServer.listen(PORT, () => {
     console.log(`Server listening on ${PORT}`);
 });
   
-app.use(path);//path, callback
+// app.use(path);//path, callback
   
 app.use((req, res, next) => {
     // For example, a GET request to `/test` will print "GET /test"
