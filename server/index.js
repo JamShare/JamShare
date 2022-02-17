@@ -1,9 +1,7 @@
 var express = require('express');
 const app = express();
-// var routes = require('./routes');
-// // var user = require('./routes/user');
+
 var http = require('http');
-var path = require ('path');
 
 const PORT = process.env.PORT || 3000;
 // var mongoose = require('mongoose');
@@ -41,7 +39,7 @@ http.listen(PORT, () => {
     console.log(`Server listening on ${PORT}`);
 });
   
-app.use(path);//path, callback
+// app.use(path);//path, callback
   
 app.use((req, res, next) => {
     // For example, a GET request to `/test` will print "GET /test"

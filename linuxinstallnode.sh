@@ -15,7 +15,7 @@ if [ ! -d ~/.nvm ]; then
   source ~/.nvm/nvm.sh
   source ~/.profile
   source ~/.bashrc
-  nvm install 14.8.0
+  nvm install 16.9.1
   npm install
   npm run front
 fi

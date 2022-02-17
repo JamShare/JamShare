@@ -13,3 +13,7 @@ Is a music sharing experience with up to ? live participants in a Jam Session.
 
 # Sponsors
 * Dave Howell
+
+
+# Getting Started
+* Run the shell script 
