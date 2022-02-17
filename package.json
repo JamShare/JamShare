@@ -4,6 +4,9 @@
   "description": "jam sharing application",
   "main": "index.js",
   "scripts": {
+    "start": "node ./server/index",
+    "build": "npm install && cd ./client && npm install && npm run build",
+    "buildstart": "cd ./client && npm run build && cd ../server && npm start",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -17,6 +20,9 @@
   },
   "homepage": "https://github.com/Qazzzie/JamShare#readme",
   "dependencies": {
-    "express": "^4.17.2"
+    "express": "^4.17.2",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "socket.io": "^4.4.1"
   }
 }
