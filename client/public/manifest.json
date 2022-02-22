@@ -1,0 +1,8 @@
+{
+    "short_name": "JamShare",
+    "name": "Jam Share",
+    "start_url": ".",
+    "display": "standalone",
+    "theme_color": "#800080",
+    "background_color": "#ffa500"
+  }

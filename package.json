@@ -1,0 +1,34 @@
+{
+  "name": "jamshare",
+  "version": "1.0.0",
+  "description": "jam sharing application",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./server/index",
+    "build": "npm install && cd ./client && npm install && cd ../server && npm install",
+    "buildstart": "cd ./client && npm run build && cd ../server && npm start",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Qazzzie/JamShare.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Qazzzie/JamShare/issues"
+  },
+  "homepage": "https://github.com/Qazzzie/JamShare#readme",
+  "dependencies": {
+    "babel-preset-react": "^6.24.1",
+    "express": "^4.17.2",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "socket.io": "^4.4.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.17.5",
+    "@babel/preset-env": "^7.16.11",
+    "@babel/preset-react": "^7.16.7"
+  }
+}

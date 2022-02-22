@@ -10,3 +10,10 @@ Is a music sharing experience with up to ? live participants in a Jam Session.
 * Murphy, Nicholas A.	
 * Courvoisier, Morgan	
 * Berry, Devon L.
+
+# Sponsors
+* Dave Howell
+
+
+# Getting Started
+* Run the shell script 
