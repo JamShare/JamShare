@@ -1,5 +1,8 @@
 const express = require('express');//http://expressjs.com/en/5x/api.html
+const app = express();
+const path = require('path');
 const { createServer } = require('http');
+const httpServer = createServer(app);
 const { Server } = require("socket.io");
 const PORT = 3000;
 // var mongoose = require('mongoose');
@@ -8,6 +11,7 @@ const PORT = 3000;
 // const AudioContext = window.AudioContext || window.webkitAudioContext; //https://developer.mozilla.org/en-US/docs/Web/API/AudioContext
 // const audioContext = new AudioContext(); //https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API
 
+// import server functions
 const{
 
 } = require("./audio.js")
@@ -22,8 +26,6 @@ const{
 
 // } = require("./database.js");
 
-const app = express();
-const httpServer = createServer(app);
 const io = new Server (httpServer, { /* options */}); // using socket with express middleware: https://socket.io/docs/v4/server-initialization/
 
 
@@ -63,21 +65,32 @@ io.engine.on("connection_error", (err) => {
       console.log(err.context);  // some additional error context
 });
 
-//set listen port, and log it.
+
+  //set listen port, and log it.
 httpServer.listen(PORT, () => {
     console.log(`Server listening on ${PORT}`);
 });
-  
 // app.use(path);//path, callback
   
-app.use((req, res, next) => {
-    // For example, a GET request to `/test` will print "GET /test"
-    console.log(`${req.method} ${req.url}`);
-    res.send(`${req.method} ${req.url}`);
+// app.use((req, res, next) => {
+//     // For example, a GET request to `/test` will print "GET /test"
+//     console.log(`${req.method} ${req.url}`);
+//     res.send(`${req.method} ${req.url}`);
+//     next();//allows code below to execute
+// });
+
+// app.get('/test', (req, res, next) => {
+//     res.send('ok');
+//     next();
+// });
+
+app.get('/JamShare', (req, res, next) => {
+    // res.send('../client/public');
+    res.sendFile('../client/index.html', {
+        root: path.join(__dirname, './')
+    })
+    
     next();
 });
 
-app.get('/test', (req, res, next) => {
-    res.send('ok');
-});
-
+app.use(express.static(path.resolve(__dirname, "../client/public")));
