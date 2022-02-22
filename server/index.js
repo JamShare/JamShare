@@ -18,7 +18,7 @@ const{
 
 //sessions
 const{
-    // joinSession,
+    joinSession,
 } = require("./session.js");
 
 // database
@@ -52,6 +52,9 @@ io.on("connection", (socket) => {
     //sessions
     socket.on("join-session", (sessionID) => joinSession(clientID, sessionID));
 
+    //streaming 
+    // socket.on("music-stream", (musicData, sessionID) => 
+
     //database
 
     //serverside audio
@@ -79,18 +82,24 @@ httpServer.listen(PORT, () => {
 //     next();//allows code below to execute
 // });
 
-// app.get('/test', (req, res, next) => {
-//     res.send('ok');
-//     next();
-// });
-
-app.get('/JamShare', (req, res, next) => {
-    // res.send('../client/public');
-    res.sendFile('../client/index.html', {
-        root: path.join(__dirname, './')
-    })
-    
+app.get('/test', (req, res, next) => {
+    res.send('ok');
     next();
 });
+
+// app.get('/JamShare', (req, res, next) => {
+//     // res.send('../client/public');
+//     res.sendFile('index.html', { path.join(__dirname, '../client/public')
+//     })
+//     // next();
+// });
+
+app.get('/JamShare', function(_, res) {
+    res.sendFile(path.join(__dirname, '../client/public/index'), function(err) {
+      if (err) {
+        res.status(500).send(err)
+      }
+    })
+  });
 
 app.use(express.static(path.resolve(__dirname, "../client/public")));
