@@ -1,9 +1,9 @@
-const express = require('express');//http://expressjs.com/en/5x/api.html
+const express = require('express'); //http://expressjs.com/en/5x/api.html
 const app = express();
 const path = require('path');
 const { createServer } = require('http');
 const httpServer = createServer(app);
-const { Server } = require("socket.io");
+const { Server } = require('socket.io');
 const PORT = 3000;
 // var mongoose = require('mongoose');
 
@@ -12,35 +12,29 @@ const PORT = 3000;
 // const audioContext = new AudioContext(); //https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API
 
 // import server functions
-const{
-
-} = require("./audio.js")
+const {} = require('./audio.js');
 
 //sessions
-const{
-    joinSession,
-} = require("./session.js");
+const {
+	// joinSession,
+} = require('./session.js');
 
 // database
 // const{
 
 // } = require("./database.js");
 
-const io = new Server (httpServer, { /* options */}); // using socket with express middleware: https://socket.io/docs/v4/server-initialization/
-
+const io = new Server(httpServer, {
+	/* options */
+}); // using socket with express middleware: https://socket.io/docs/v4/server-initialization/
 
 // session ID generation https://socket.io/docs/v4/server-instance/
 // const uuid = require("uuid");
 // io.engine.generateId = (req) => {  return uuid.v4(); }// must be unique across all Socket.IO servers
 
 //customizing initial headers on request ("initial_headers", "headers", and "connection_error" are specially emitted by socket.io)
-// io.engine.on("initial_headers", (headers, req) => {  
-//     headers["JamShare"] = "JamShare";  
-//     headers["set-cookie"] = "mycookie=JamShare";
-// });
 //environments
 
-// allowing express to load external resources
 // app.use('/cors', require('cors')());
 
 // socket events
@@ -82,24 +76,18 @@ httpServer.listen(PORT, () => {
 //     next();//allows code below to execute
 // });
 
-app.get('/test', (req, res, next) => {
-    res.send('ok');
-    next();
-});
-
-// app.get('/JamShare', (req, res, next) => {
-//     // res.send('../client/public');
-//     res.sendFile('index.html', { path.join(__dirname, '../client/public')
-//     })
-//     // next();
+// app.get('/test', (req, res, next) => {
+//     res.send('ok');
+//     next();
 // });
 
-app.get('/JamShare', function(_, res) {
-    res.sendFile(path.join(__dirname, '../client/public/index'), function(err) {
-      if (err) {
-        res.status(500).send(err)
-      }
-    })
-  });
+app.get('/client/public', (req, res, next) => {
+	// res.send('../client/public');
+	res.sendFile('../client/public/index.html', {
+		root: path.join(__dirname, '../client/public'),
+	});
 
-app.use(express.static(path.resolve(__dirname, "../client/public")));
+	next();
+});
+
+app.use(express.static(path.resolve(__dirname, '../client/public')));
