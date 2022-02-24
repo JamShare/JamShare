@@ -16,4 +16,6 @@ Is a music sharing experience with up to ? live participants in a Jam Session.
 
 
 # Getting Started
-* Run the shell script 
+* Run the shell script: "sh installnode.sh" or by double clicking
+* run "npm run build" to install all dependancies.
+* run "npm run start" to begin listening on localhost:3000
