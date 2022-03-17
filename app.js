@@ -36,6 +36,8 @@ io.on("connection", (socket) => {
   });
 });
 
+app.use(express.static(path.resolve(__dirname, "./client/build")));
+
 server.listen(port, () => console.log(`Listening on port ${port}`));
 
 module.exports = app;
