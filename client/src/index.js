@@ -1,10 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { render } from "react-dom";
-
 import {Nav, Landing, Signup, Room} from "./components/component_export"
 import './index.css';
-
 import { BrowserRouter as BrowserRouter, Routes, Route, Link } from "react-router-dom";
 
 ReactDOM.render((
