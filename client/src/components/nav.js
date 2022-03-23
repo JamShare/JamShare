@@ -14,65 +14,63 @@ export class Nav extends React.Component {
   render() {
     return (
       <div class='Nav'>
-      <Container fluid>
-        <Row className="justify-content-lg-center">
-          JamShare
-        </Row>
-        <Row>
-          <Col>
-            <Container>
-                <Row>Sign in</Row>
-                <Row>
-                  <Form>
-                      <Form.Group className="mb-3" controlID="formBasicUsername">
-                        <Form.Label>Username </Form.Label>
-                        <Form.Control type="username" placeholder="enter username" />
-                      </Form.Group>
-                      <Form.Group className="mb-3" controlId="formBasicPassword">
-                        <Form.Label>Password</Form.Label>
-                        <Form.Control type="password" placeholder="Password" />
+        <Container fluid>
+          <Row className="justify-content-lg-center">JamShare</Row>
+          <Row>
+            <Col>
+              <Container>
+                  <Row>Sign in</Row>
+                  <Row>
+                    <Form>
+                        <Form.Group className="mb-3" controlID="formBasicUsername">
+                          <Form.Label>Username </Form.Label>
+                          <Form.Control type="username" placeholder="enter username" />
                         </Form.Group>
-                  </Form>
+                        <Form.Group className="mb-3" controlId="formBasicPassword">
+                          <Form.Label>Password</Form.Label>
+                          <Form.Control type="password" placeholder="Password" />
+                          </Form.Group>
+                    </Form>
+                  </Row>
+                </Container>
+            </Col>
+            <Col>
+              <Container>
+                <Row>Sign up</Row>
+                  <Row>
+                    <Form>
+                        <Form.Group className="mb-3" controlID="formBasicUsername">
+                          <Form.Label>Username </Form.Label>
+                          <Form.Control type="username" placeholder="enter username" />
+                        </Form.Group>
+                        <Form.Group className="mb-3" controlId="formBasicEmail">
+                          <Form.Label>Email address</Form.Label>
+                          <Form.Control type="email" placeholder="Enter email" />
+                        </Form.Group>
+                        <Form.Group className="mb-3" controlId="formBasicPassword">
+                          <Form.Label>Password</Form.Label>
+                          <Form.Control type="password" placeholder="Password" />
+                          </Form.Group>
+                    </Form>
                 </Row>
               </Container>
-          </Col>
-          <Col>
+            </Col>
+          </Row>
+          <Row>
             <Container>
-              <Row>Sign up</Row>
-                <Row>
-                  <Form>
-                      <Form.Group className="mb-3" controlID="formBasicUsername">
-                        <Form.Label>Username </Form.Label>
-                        <Form.Control type="username" placeholder="enter username" />
-                      </Form.Group>
-                      <Form.Group className="mb-3" controlId="formBasicEmail">
-                        <Form.Label>Email address</Form.Label>
-                        <Form.Control type="email" placeholder="Enter email" />
-                      </Form.Group>
-                      <Form.Group className="mb-3" controlId="formBasicPassword">
-                        <Form.Label>Password</Form.Label>
-                        <Form.Control type="password" placeholder="Password" />
-                        </Form.Group>
-                  </Form>
+              <Row>Continue as guest</Row>
+              <Row>
+                <Form>
+                  <Form.Group className="mb-3" controlID="formBasicUsername">
+                    <Form.Label>Username </Form.Label>
+                    <Form.Control type="username" placeholder="enter username" />
+                  </Form.Group>
+                </Form>
               </Row>
             </Container>
-          </Col>
-        </Row>
-        <Row>
-          <Container>
-            <Row>Continue as guest</Row>
-            <Row>
-              <Form>
-                <Form.Group className="mb-3" controlID="formBasicUsername">
-                  <Form.Label>Username </Form.Label>
-                  <Form.Control type="username" placeholder="enter username" />
-                </Form.Group>
-              </Form>
-            </Row>
-          </Container>
-        </Row>
-      </Container>
-  </div>
+          </Row>
+        </Container>
+      </div>
     );
   }
 }
