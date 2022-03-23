@@ -1,19 +1,13 @@
-# JamShare
-Is a music sharing experience with up to ? live participants in a Jam Session.
+# Branch History
 
-# Contributers
-* Yang, Jihui	
-* Stone Pedraza, Cristina C.	
-* Santangelo, Zachariah
-* Saleh, Muhsen H. (AKA: badeed)	
-* Rojas, Casey G.	
-* Murphy, Nicholas A.	
-* Courvoisier, Morgan	
-* Berry, Devon L.
-
-# Sponsors
-* Dave Howell
+Copy of morgj Branch
+Fix some bugs for set up
+Added Chat component. with socket.io
 
 
-# Getting Started
-* Run the shell script 
+# Branch History
+start server first (app.js) with:
+npm start
+
+then cd client
+npm start
