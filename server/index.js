@@ -33,42 +33,42 @@ const io = new Server(httpServer, {
 // io.engine.generateId = (req) => {  return uuid.v4(); }// must be unique across all Socket.IO servers
 
 //customizing initial headers on request ("initial_headers", "headers", and "connection_error" are specially emitted by socket.io)
-// io.engine.on("initial_headers", (headers, req) => {
-//     headers["JamShare"] = "JamShare";
-//     headers["set-cookie"] = "mycookie=JamShare";
-// });
 //environments
 
-// allowing express to load external resources
 // app.use('/cors', require('cors')());
 
 // socket events
-io.on('connection', (socket) => {
-	let clientID = socket.id;
-	console.log('Client Connected', clientID);
+io.on("connection", (socket) => {
+    let clientID = socket.id;
+    console.log("Client Connected", clientID);
+    
+    // add server actions here
+    //sessions
+    socket.on("join-session", (sessionID) => joinSession(clientID, sessionID));
 
-	// add server actions here
-	//sessions
-	socket.on('join-session', (sessionID) => joinSession(clientID, sessionID));
+    //streaming 
+    // socket.on("music-stream", (musicData, sessionID) => 
 
-	//database
+    //database
 
-	//serverside audio
+    //serverside audio
+
 });
 
-io.engine.on('connection_error', (err) => {
-	console.log(err.req); // the request object
-	console.log(err.code); // the error code, for example 1
-	console.log(err.message); // the error message, for example "Session ID unknown"
-	console.log(err.context); // some additional error context
+io.engine.on("connection_error", (err) => {
+      console.log(err.req);      // the request object  
+      console.log(err.code);     // the error code, for example 1  
+      console.log(err.message);  // the error message, for example "Session ID unknown"  
+      console.log(err.context);  // some additional error context
 });
 
-//set listen port, and log it.
+
+  //set listen port, and log it.
 httpServer.listen(PORT, () => {
-	console.log(`Server listening on ${PORT}`);
+    console.log(`Server listening on ${PORT}`);
 });
 // app.use(path);//path, callback
-
+  
 // app.use((req, res, next) => {
 //     // For example, a GET request to `/test` will print "GET /test"
 //     console.log(`${req.method} ${req.url}`);

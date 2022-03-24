@@ -6,13 +6,7 @@ Fix some bugs for set up
 
 Added Chat component. with socket.io
 
-
-
-# Branch History
-start server first (app.js) with:
-
-npm start
-
-then cd client
-
-npm start
+# Getting Started
+* Run the shell script: "sh installnode.sh" or by double clicking
+* run "npm run build" to install all dependancies.
+* run "npm run start" to begin listening on localhost:3000
