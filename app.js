@@ -13,10 +13,12 @@ var app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
+//just a response if people access server directly
 app.get('/', function (request, response) {
   response.sendFile(__dirname + '/message.json');
 });
 
+//Some cors and socket io things to make requests accepted from outsources
 app.post('/chat', function (request, response) {
   console.log(request.body);
   response.set('Access-Control-Allow-Origin', '*');
@@ -39,27 +41,36 @@ const io = socket(server, {
   },
 });
 
-// Listening for incoming connections
+//Room sockets and locations
+//Chat history on server
 const socketMap = {};
 const socketHistory = {};
+
+// Listening for incoming connections
 io.on('connection', (socket) => {
-  let socketRoom;
+  let socketRoom; //Current room of the socket
+
   console.log('connected Id:', socket.id);
 
   //socket.emit('me', socket.id);
 
+  //Handle disconnect requests
   socket.on('disconnectRoom', () => {
     console.log(`Disconnected: ${socket.id}`);
   });
 
+  //Joining a room and sending them chat history
   socket.on('joinRoom', ({ username, room }) => {
     socket.join(room);
+
+    //sock
     socketRoom = room;
     socketMap[socket.id] = username;
-
+    //Send chat history to client
     socket.emit('joinResponse', socketHistory[socketRoom]);
   });
 
+  //Switch rooms
   socket.on('switchRoom', (data) => {
     const { prevRoom, nextRoom } = data;
     const userId = socketMap[socket.id];
@@ -71,22 +82,31 @@ io.on('connection', (socket) => {
       socket.join(nextRoom);
       //socketMap[socket.id] = userId;
 
+      //send Chat history on room swap
       socket.emit('joinResponse', socketHistory[nextRoom]);
     }
 
     socketRoom = nextRoom;
   });
 
-  socket.on('chatRoom', (data) => {
+  //Send a msg to the current chat
+  socket.on('sendChatMessage', (data) => {
     const { message, room, name } = data;
+    let newMsg = message;
+    if (name) {
+      newMsg = `${name}: ${message}`;
+    }
+    socket.broadcast.to(socketRoom).emit('sendChatMessage', newMsg, name);
 
-    socket.broadcast.to(socketRoom).emit('chatRoom', message, name);
-    let newMsg = `${name}: ${message}`;
+    //this can be changed TODO
+
+    //let newMsg = message;
     socketHistory[socketRoom] = socketHistory[socketRoom]
       ? [newMsg, ...socketHistory[socketRoom]]
       : [newMsg];
   });
 
+  //Change username of the socket
   socket.on('setSocketName', (username) => {
     socketMap[socket.id] = username;
   });

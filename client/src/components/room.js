@@ -11,9 +11,9 @@ import {
 
 function Room() {
   const rooms = ['Room 1', 'Room 2', 'Room 3'];
-  const [room, setRoom] = useState(rooms[0]);
+  const [room, setRoom] = useState(rooms[0]); // rooms[0] is default value which is "Room 1"
   const [message, setMessage] = useState('');
-  const [username, setUsername] = useState('tempName');
+  const [username, setUsername] = useState('tempName'); //tempName is default value
   const [chat, setChat] = useState([]);
   const prevRoomRef = useRef();
   const messageBoxRef = useRef();
@@ -23,17 +23,18 @@ function Room() {
   });
   const prevRoom = prevRoomRef.current;
 
+  //Hook on "room" state change
+  //Clear chat then create room if it doesnt exist or move to new room if it does
+  //Load chat history on room switches
   useEffect(() => {
     setChat([]);
     if (prevRoom && room) {
       switchRooms(prevRoom, room);
     } else if (room) {
       let newName = prompt('Enter Username, can be changed later');
-      do {
-        if (username === 'tempName') {
-          setUsername(newName);
-        }
-      } while (username === null || username === '');
+      if (username === 'tempName') {
+        setUsername(newName);
+      }
       initiateSocket(username, room);
 
       loadInitialChat((err, data) => {
@@ -49,6 +50,7 @@ function Room() {
     }
   }, [room]);
 
+  //Load once, on load mostly
   useEffect(() => {
     joinChatRoom((err, data) => {
       if (err) {
