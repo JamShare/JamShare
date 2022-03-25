@@ -23,7 +23,13 @@
     "web-vitals": "^2.1.4",
     "socket.io-client": "^4.4.1",
     "express": "^4.17.3",
-    "request": "^2.88.0"
+    "@material-ui/core": "^4.12.3",
+    "@material-ui/icons": "^4.11.2",
+    "add": "^2.0.6",
+    "peerjs": "^1.3.2",
+    "react-copy-to-clipboard": "^5.0.4",
+    "simple-peer": "^9.11.1",
+    "yarn": "^1.22.18"
   },
   "scripts": {
     "start": "react-scripts start",

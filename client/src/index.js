@@ -19,7 +19,7 @@ ReactDOM.render(
       <Routes>
         <Route path='/landing' element={<Landing />} />
         <Route path='/signup' element={<Signup />} />
-        <Route path='/room:id' element={<Room />} />
+        <Route path='/room' element={<Room />} />
         <Route path='/chat' element={<Chat />} />
       </Routes>
     </BrowserRouter>
