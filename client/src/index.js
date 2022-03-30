@@ -7,6 +7,7 @@ import {
   Signup,
   Room,
   Chat,
+  Recorder
 } from './components/component_export';
 import registerServiceWorker from './registerServiceWorker';
 import './index.css';
@@ -21,6 +22,7 @@ ReactDOM.render(
         <Route path='/signup' element={<Signup />} />
         <Route path='/room' element={<Room />} />
         <Route path='/chat' element={<Chat />} />
+        <Route path="/recording" element={<Recorder />}/>
       </Routes>
     </BrowserRouter>
   </div>,
