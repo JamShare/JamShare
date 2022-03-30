@@ -1,0 +1,22 @@
+@font-face {
+    font-family: 'IndieFlower';
+    src: local('IndieFlower'), 
+    url(./fonts/Indie_Flower/IndieFlower-Regular.ttf) format('truetype');
+}
+.orange{
+    color: orange;
+}
+.purple{
+    color: purple; 
+}
+.gentext{
+    font-family: "IndieFlower";
+}
+
+.bgcolor{
+    height: 100vh;
+    background-color: grey;
+}
+.childbox{
+    background-color: lightgray;
+}

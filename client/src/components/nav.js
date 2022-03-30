@@ -6,6 +6,11 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import FormLabel from "react-bootstrap/esm/FormLabel";
 
+
+// import TodoContainer from "./components/TodoContainer" 
+//Style Sheet
+
+
 export class Nav extends React.Component {
   constructor(props) {
     super(props);
@@ -13,21 +18,21 @@ export class Nav extends React.Component {
 
   render() {
     return (
-      <div class='Nav'>
-        <Container fluid>
+      <div class='Nav' className={"bgcolor"}>
+        <Container fluid className={"gentext orange"}>
           <Row className="justify-content-lg-center">JamShare</Row>
           <Row>
             <Col>
               <Container>
                   <Row>Sign in</Row>
                   <Row>
-                    <Form>
+                    <Form className={"childbox"}>
                         <Form.Group className="mb-3" controlID="formBasicUsername">
-                          <Form.Label>Username </Form.Label>
+                          <Form.Label className={"purple"}>Username </Form.Label>
                           <Form.Control type="username" placeholder="enter username" />
                         </Form.Group>
                         <Form.Group className="mb-3" controlId="formBasicPassword">
-                          <Form.Label>Password</Form.Label>
+                          <Form.Label className={"purple"}>Password</Form.Label>
                           <Form.Control type="password" placeholder="Password" />
                           </Form.Group>
                     </Form>
@@ -38,17 +43,17 @@ export class Nav extends React.Component {
               <Container>
                 <Row>Sign up</Row>
                   <Row>
-                    <Form>
+                    <Form className={"childbox"}>
                         <Form.Group className="mb-3" controlID="formBasicUsername">
-                          <Form.Label>Username </Form.Label>
+                          <Form.Label className={"purple"} >Username </Form.Label>
                           <Form.Control type="username" placeholder="enter username" />
                         </Form.Group>
                         <Form.Group className="mb-3" controlId="formBasicEmail">
-                          <Form.Label>Email address</Form.Label>
+                          <Form.Label className={"purple"}>Email address</Form.Label>
                           <Form.Control type="email" placeholder="Enter email" />
                         </Form.Group>
                         <Form.Group className="mb-3" controlId="formBasicPassword">
-                          <Form.Label>Password</Form.Label>
+                          <Form.Label className={"purple"}>Password</Form.Label>
                           <Form.Control type="password" placeholder="Password" />
                           </Form.Group>
                     </Form>
@@ -60,9 +65,9 @@ export class Nav extends React.Component {
             <Container>
               <Row>Continue as guest</Row>
               <Row>
-                <Form>
+                <Form className={"childbox"}>
                   <Form.Group className="mb-3" controlID="formBasicUsername">
-                    <Form.Label>Username </Form.Label>
+                    <Form.Label className={"purple"}>Username </Form.Label>
                     <Form.Control type="username" placeholder="enter username" />
                   </Form.Group>
                 </Form>

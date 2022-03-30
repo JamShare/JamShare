@@ -10,6 +10,7 @@ import {
   Recorder
 } from './components/component_export';
 import registerServiceWorker from './registerServiceWorker';
+import './fonts/Indie_Flower/IndieFlower-Regular.ttf';
 import './index.css';
 
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
@@ -23,6 +24,8 @@ ReactDOM.render(
         <Route path='/room' element={<Room />} />
         <Route path='/chat' element={<Chat />} />
         <Route path="/recording" element={<Recorder />}/>
+        <Route path="/nav" element={<Nav />}/>
+
       </Routes>
     </BrowserRouter>
   </div>,
