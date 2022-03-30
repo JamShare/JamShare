@@ -1,23 +1,36 @@
 import React from 'react';
-import RecordRTC, { invokeSaveAsDialog } from 'recordrtc';
 
 class Recorder extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            blob: null,
-            recorder: null,
-            audio: null,
             isRecording: false,
             isPlaying: false,
         };
 
+        this.chunks = [];
+        this.recorder = null;
+        this.audio = null;
+
+        // bind functions to instance
+        this.onDataAvailable = this.onDataAvailable.bind(this);
+        this.onStop = this.onStop.bind(this);
         this.getAudioDevice = this.getAudioDevice.bind(this);
         this.startRecording = this.startRecording.bind(this);
         this.stopRecording = this.stopRecording.bind(this);
         this.playRecording = this.playRecording.bind(this);
-        this.saveBlob = this.saveBlob.bind(this);
+    }
+
+    // event handlers for recorder
+    onDataAvailable(e) {
+        this.chunks.push(e.data);
+    }
+
+    onStop(e) {
+        let blob = new Blob(this.chunks, {'type': 'audio/ogg; codecs=opus'})
+        let audioURL = URL.createObjectURL(blob);
+        this.audio = new Audio(audioURL);
     }
 
     // asks for permission to use audio device from user
@@ -31,65 +44,58 @@ class Recorder extends React.Component {
             stream = null;
         }
         
-        var recorder = null;
+        this.recorder = null;
         if (stream) {
-            recorder = RecordRTC(stream, { // settings
-                type: 'audio',
-            });
-        }
-        this.setState({recorder: recorder});   
-        console.log("Recording device acquired successfully.");
+            this.recorder = new MediaRecorder(stream)
+        
+            // initialize event handlers for recorder
+            this.recorder.ondataavailable = this.onDataAvailable;
+            this.recorder.onstop = this.onStop;
+
+            console.log("Recording device acquired successfully.");
+            }
         return;
     }
 
     startRecording() {
-        if (this.recorder) {
+        if (!this.recorder) {
             return;
         }
         if (this.state.isRecording) {
             return;
         }
-        this.state.recorder.startRecording();
+        this.recorder.start();
         this.setState({ isRecording: true});
         console.log("Recording started successfully.");
         return;
     }
 
     stopRecording() {
-        if (!this.state.recorder) {
+        if (!this.recorder) {
             return;
         }
         if (!this.state.isRecording) {
             return;
         }
-        this.state.recorder.stopRecording(() => { 
-            this.setState({blob : this.state.recorder.getBlob()})   
-            this.setState({audio : new Audio(URL.createObjectURL(this.state.recorder.getBlob()))});
-            console.log(this.state.audio)
-        });
+        this.recorder.stop();
         this.setState({ isRecording: false});
         console.log("Recording stopped successfully.");
         return;
     }
 
     playRecording() {
-        if (!this.state.recorder) {
+        if (!this.recorder) {
             return;
         }
 
-        if (!this.state.isPlaying) {
-            this.state.audio.pause();
+        if (this.state.isPlaying) {
+            this.audio.pause();
         } else {
-            this.state.audio.play();
+            this.audio.play();
         }
 
-        this.setState({ isPlaying: this.state.isPlaying });
+        this.setState({ isPlaying: !this.state.isPlaying });
         console.log("Recording played/stopped successfully.");
-        return;
-    }
-
-    saveBlob() {
-        invokeSaveAsDialog(this.state.blob, "blob.mp3");
         return;
     }
 
@@ -105,8 +111,8 @@ class Recorder extends React.Component {
             <button onClick={this.stopRecording}>
                 Stop recording
             </button>
-            <button onClick={this.saveBlob}>
-                Save Recording
+            <button onClick={this.playRecording}>
+                Play/pause recording
             </button>
             </div>
         );
