@@ -8,7 +8,7 @@ import { BrowserRouter as BrowserRouter, Routes, Route, Link } from "react-route
 ReactDOM.render((
   render(
     <div>
-    <Nav />
+    <Landing />
     <BrowserRouter>
       <Routes>
         <Route path="/landing" element={<Landing />}/>
