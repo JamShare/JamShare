@@ -26,7 +26,6 @@ export class Session extends React.Component {
                     </Container>
                   </Col>
               </Row>
-
           </Container>
       );
     }
