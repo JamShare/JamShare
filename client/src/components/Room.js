@@ -13,6 +13,7 @@ import io from "socket.io-client";
 import Chat from './Chat';
 import Recorder from './Recorder';
 import Viewer from './Viewer';
+import Participants from './Participants';
 
 function Room() {
   const rooms = ['Room 1', 'Room 2', 'Room 3'];
@@ -121,7 +122,7 @@ function Room() {
       </button>
       {chat && chat.map((m, i) => <p key={i}>{m}</p>)}
       
-
+      <Participants></Participants>
       <Viewer></Viewer>
       <Recorder></Recorder>
       <Chat></Chat>

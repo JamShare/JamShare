@@ -24,14 +24,14 @@ app.post('/chat', function (request, response) {
   response.set('Access-Control-Allow-Origin', '*');
 });
 
-app.post('/sample_request', async (req, res) => {
-  console.log(req.body);
-  res.send({
-    important_information: '3better pizza3',
-    more_important_info: '3better ingredients3',
-    test: req.body.test + '356783',
-  });
-});
+// app.post('/sample_request', async (req, res) => {
+//   console.log(req.body);
+//   res.send({
+//     important_information: '3better pizza3',
+//     more_important_info: '3better ingredients3',
+//     test: req.body.test + '356783',
+//   });
+// });
 
 //Server
 const server = http.createServer(app);
