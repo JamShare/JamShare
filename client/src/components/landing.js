@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -6,10 +6,16 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import FormLabel from "react-bootstrap/esm/FormLabel";
 import GoogleLogin from 'react-google-login';
-import { Navigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
+//import Join from './join';
+import "@popperjs/core";
 
-export class Landing extends React.Component {
+function Landing() {
 
+  const guest = useState("");
+  const redirect = useState(false);
+
+  /*
   constructor(props) {
     super(props);
     this.state = {
@@ -17,27 +23,15 @@ export class Landing extends React.Component {
       redirect: false
     }
   }
-
-  handleSubmit = (e) => {
+  */
+  const navigate = useNavigate();
+  
+  const handleSubmit = (e) => {
     e.preventDefault();
     console.log(e.target.elements.username.value)
-    this.setState({
-      redirect: true
-    })
+    let path = 'Join';
+    navigate(path, {state:{guest}});
   }
-
-  render() {
-    const handleFailure = (result) => {
-      alert(result);
-    };
-    const handleLogin = (googleData) => {
-      console.log(googleData);
-    };
-    const { redirect } = this.state;
-
-    if(redirect === true) {
-       <Navigate to="/join" replac={true} />;
-    }
 
     return (
       <Container fluid>
@@ -78,13 +72,6 @@ export class Landing extends React.Component {
                           <Form.Control type="password" placeholder="Password" />
                           </Form.Group>
                     </Form>
-                    <GoogleLogin
-                      clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
-                      buttonText="log in with Google"
-                      onSuccess={handleLogin}
-                      onFailure={handleFailure}
-                      cookiePolicy={'single_host_origin'}
-                    ></GoogleLogin>
                 </Row>
               </Container>
             </Col>
@@ -93,7 +80,7 @@ export class Landing extends React.Component {
             <Container flex>
               <Row>Continue as guest</Row>
               <Row>
-                <Form onSubmit={this.handleSubmit}>
+                <Form onSubmit={handleSubmit}>
                   <Form.Group className="mb-3" controlID="formBasicUsername">
                     <Form.Label>Username </Form.Label>
                     <Form.Control type="username" name="username" placeholder="enter username" />
@@ -105,9 +92,15 @@ export class Landing extends React.Component {
               </Row>
             </Container>
           </Row>
+                  <Link 
+                    to={{
+                      pathname: "/session",
+                      state: {guest}
+                    }}
+                  />
+ 
         </Container>
     );
-  }
 }
 
 export default Landing;

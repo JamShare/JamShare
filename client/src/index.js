@@ -8,10 +8,9 @@ import { BrowserRouter as BrowserRouter, Routes, Route, Link } from "react-route
 ReactDOM.render((
   render(
     <div>
-    <Landing />
     <BrowserRouter>
       <Routes>
-        <Route path="/landing" element={<Landing />}/>
+        <Route exact path="/" element={<Landing />}/>
         <Route path="/signup" element={<Signup />}/>
         <Route path="/room:id" element={<Room />}/>
         <Route path="/join" element={<Join />}/>
