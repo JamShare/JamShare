@@ -17,7 +17,7 @@ export const streamToServer = () => {
 //Joining rooms logic 
 //send joinRoom to server
 export const initiateSocket = (username, room) => {
-  socket = io.connect('http://localhost:3000');
+  socket = io.connect('http://localhost:3001');
   //const socket = io.connect('http://localhost:3000');
   console.log(`Connecting socket...`);
   if (socket && room) {
