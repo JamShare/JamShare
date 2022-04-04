@@ -8,6 +8,7 @@ class Recorder extends React.Component {
             isRecording: false,
             isPlaying: false,
             icon: '',
+            text: 'Jam!',
         };
 
         this.chunks = [];
@@ -25,8 +26,6 @@ class Recorder extends React.Component {
         this.playRecording = this.playRecording.bind(this);
         
     }
-
-
 
     // event handlers for recorder
     onDataAvailable(e) {
@@ -113,11 +112,13 @@ class Recorder extends React.Component {
         if (this.state.isRecording) {
             this.stopRecording();
             this.setState({icon: this.playingIcon});
+            this.setState({text: 'Recording'});
         }   
 
         if (!this.state.isRecording) {
             this.startRecording();
             this.setState({icon: this.recordIcon});
+            this.setState({text: 'stopped'});
         }
 
     }
@@ -126,8 +127,8 @@ class Recorder extends React.Component {
         return (
             <div id="container" >
             <button onClick={this.featureRun}>
-                <img src={this.icon} alt=""></img>
-                Jam!
+                <image src={this.icon} alt=""></image>
+                {this.text}
             </button>
             <button onClick={this.getAudioDevice}>
                 Choose audio device

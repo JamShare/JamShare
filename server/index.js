@@ -5,14 +5,9 @@ const { createServer } = require('http');
 const httpServer = createServer(app);
 const { Server } = require('socket.io');
 const PORT = 3000;
-// var mongoose = require('mongoose');
-
-//for server side audio manipulations
-// const AudioContext = window.AudioContext || window.webkitAudioContext; //https://developer.mozilla.org/en-US/docs/Web/API/AudioContext
-// const audioContext = new AudioContext(); //https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API
 
 // import server functions
-const {} = require('./audio.js');
+// const {} = require('./audio.js');
 
 //sessions
 const {
@@ -20,9 +15,7 @@ const {
 } = require('./session.js');
 
 // database
-// const{
-
-// } = require("./database.js");
+// const{} = require("./database.js");
 
 const io = new Server(httpServer, {
 	/* options */
@@ -45,7 +38,7 @@ io.on("connection", (socket) => {
     // add server actions here
     //sessions
     socket.on("join-session", (sessionID) => joinSession(clientID, sessionID));
-
+  
     //streaming 
     // socket.on("music-stream", (musicData, sessionID) => 
 
@@ -67,26 +60,11 @@ io.engine.on("connection_error", (err) => {
 httpServer.listen(PORT, () => {
     console.log(`Server listening on ${PORT}`);
 });
-// app.use(path);//path, callback
-  
-// app.use((req, res, next) => {
-//     // For example, a GET request to `/test` will print "GET /test"
-//     console.log(`${req.method} ${req.url}`);
-//     res.send(`${req.method} ${req.url}`);
-//     next();//allows code below to execute
-// });
-
-// app.get('/test', (req, res, next) => {
-//     res.send('ok');
-//     next();
-// });
 
 app.get('/client/public', (req, res, next) => {
-	// res.send('../client/public');
 	res.sendFile('../client/public/index.html', {
 		root: path.join(__dirname, '../client/public'),
 	});
-
 	next();
 });
 

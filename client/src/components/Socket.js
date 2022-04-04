@@ -1,7 +1,20 @@
 import io from 'socket.io-client';
-
+// import ss from 'socket.io-stream';
+// import path from 'path';//pathDownloadingFile = path.basename(data.name) //from data in stream
 let socket;
 
+// Streaming logic
+export const streamToServer = () => {
+  // print("hello");
+  // ss.on('client-stream'), function(stream, data){
+    // pathDownloadingFile = path.basename(data.name);
+    // stream.pipe((pathDownloadingFile));
+  // };
+};
+
+
+
+//Joining rooms logic 
 //send joinRoom to server
 export const initiateSocket = (username, room) => {
   socket = io.connect('http://localhost:3000');
@@ -62,3 +75,8 @@ export const setSocketName = (username) => {
     socket.on('setSocketName', { username });
   }
 };
+
+
+// socket.on("disconnect", () => {
+//   console.log(socket.connected); // false
+// });

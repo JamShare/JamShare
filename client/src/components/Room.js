@@ -9,6 +9,11 @@ import {
   setSocketName,
 } from './Socket';
 
+import io from "socket.io-client";
+import Chat from './Chat';
+import Recorder from './Recorder';
+import Viewer from './Viewer';
+
 function Room() {
   const rooms = ['Room 1', 'Room 2', 'Room 3'];
   const [room, setRoom] = useState(rooms[0]); // rooms[0] is default value which is "Room 1"
@@ -115,6 +120,11 @@ function Room() {
         Send
       </button>
       {chat && chat.map((m, i) => <p key={i}>{m}</p>)}
+      
+
+      <Viewer></Viewer>
+      <Recorder></Recorder>
+      <Chat></Chat>
     </div>
   );
 }

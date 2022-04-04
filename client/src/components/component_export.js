@@ -1,8 +1,7 @@
 export { default as Nav } from './nav';
-export { default as Landing } from './landing';
-export { default as Signup } from './signup';
-export { default as Room } from './room';
-export { default as Chat } from './chat';
-export { default as Recorder} from "./Recorder"
-//export { default as Record } from './record';
-//export { default as Voice } from './voice';
+export { default as Signup } from './Signup';
+export { default as Room } from './Room';
+export { default as Chat } from './Chat';
+export { default as Recorder} from "./Recorder";
+export { default as Viewer} from "./Viewer";
+export { default as Join} from "./Join";
