@@ -8,12 +8,14 @@ import {
   Join
 } from './components/component_export';
 
+
 import registerServiceWorker from './registerServiceWorker';
 
 import './fonts/Indie_Flower/IndieFlower-Regular.ttf';
 import './index.css';
 
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { Socket } from 'socket.io-client';
 
 ReactDOM.render(
   <div>

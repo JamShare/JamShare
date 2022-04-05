@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 var cors = require('cors');
 const http = require('http');
 const socket = require('socket.io');
-
+const socketStream = require('socket.io-stream')
 const port = process.env.PORT || 3001;
 
 var app = express();
@@ -131,6 +131,9 @@ io.on('connection', (socket) => {
   socket.on('SEND_MESSAGE', function (data) {
     io.emit('RECEIVE_MESSAGE', data);
   });
+
+  // socket.on()
+
 });
 
 server.listen(port, () => console.log(`Listening on port ${port}`));

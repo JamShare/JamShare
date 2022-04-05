@@ -125,6 +125,8 @@ function Room() {
       <Participants></Participants>
       <Viewer></Viewer>
       <Recorder></Recorder>
+
+      
       <Chat></Chat>
     </div>
   );
