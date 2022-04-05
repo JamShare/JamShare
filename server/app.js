@@ -135,12 +135,16 @@ io.on('connection', (socket) => {
   });
 
   socket.on('audio-stream', (data) => {
-      console.log("Audio streaming.");
-      chunks.push(data);
+      //console.log("Audio streaming.");
+      //chunks.push(data);
   });
 
-  socket.on('audio-stream-end', () => {
-    console.log("Audio streaming ended.");
+  //socket.on('audio-stream-end', () => {
+  //  console.log("Audio streaming ended.");
+  //});
+
+  socket.on("audio-stream-end", () => {
+      console.log("Audio streaming ended.");
   });
 
 });

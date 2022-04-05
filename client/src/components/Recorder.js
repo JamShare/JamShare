@@ -1,6 +1,10 @@
 import React from 'react';
 // import socket
-const socket = require('socket.io-client');
+const io = require('socket.io-client');
+
+const SERVER = "http://localhost:3001";
+
+
 
 class Recorder extends React.Component {
     constructor(props) {
@@ -27,29 +31,27 @@ class Recorder extends React.Component {
         this.stopRecording = this.stopRecording.bind(this);
         this.playRecording = this.playRecording.bind(this);
 
-        //this.socket = io.connect('http://localhost:3001');
-        //this.stream = ss.createStream();
-        
+        this.socket = io.connect(SERVER);
     }
 
     // event handlers for recorder
     onDataAvailable(e) {
         this.chunks.push(e.data);
 
-        socket.emit('audio-stream', e.data);
+        //socket.emit('audio-stream', e.data);
     }
 
     onStop(e) {
         let blob = new Blob(this.chunks, {'type': 'audio/ogg; codecs=opus'})
         let audioURL = URL.createObjectURL(blob);
         this.audio = new Audio(audioURL);
-
-        socket.emit('audio-stream-end');
     }
 
     // asks for permission to use audio device from user
     // if declined or error, returns a null stream
     async getAudioDevice() {
+        this.socket.emit("audio-stream-end");
+
         var stream = null;
         try {
             stream = await navigator.mediaDevices
@@ -102,6 +104,9 @@ class Recorder extends React.Component {
         this.recorder.stop();
         this.setState({ isRecording: false});
         console.log("Recording stopped successfully.");
+
+        
+
         return;
     }
 
