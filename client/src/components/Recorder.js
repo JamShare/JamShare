@@ -3,7 +3,6 @@ import React from 'react';
 var io = require('socket.io-client');
 var ss = require('socket.io-stream');
 
-
 class Recorder extends React.Component {
     constructor(props) {
         super(props);
@@ -29,8 +28,8 @@ class Recorder extends React.Component {
         this.stopRecording = this.stopRecording.bind(this);
         this.playRecording = this.playRecording.bind(this);
 
-        this.socket = io.connect('http://localhost:3001');
-        
+        //this.socket = io.connect('http://localhost:3001');
+        //this.stream = ss.createStream();
         
     }
 
@@ -38,7 +37,7 @@ class Recorder extends React.Component {
     onDataAvailable(e) {
         this.chunks.push(e.data);
 
-        socketio.emit('audio-stream', e.data);
+        //ss(socket).emit('audio-stream', {data: e.data});
     }
 
     onStop(e) {

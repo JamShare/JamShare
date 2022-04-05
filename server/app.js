@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 var cors = require('cors');
 const http = require('http');
 const socket = require('socket.io');
-const socketStream = require('socket.io-stream')
+const ss = require('socket.io-stream')
 const port = process.env.PORT || 3001;
 
 chunks = [];
@@ -136,11 +136,9 @@ io.on('connection', (socket) => {
 
   // socket.on()
 
-  socket.on('audio-stream', (data) => {
-      /*
+  ss(socket).on('audio-stream', function(stream, data) {
       console.log("Audio streaming.");
       chunks.push(data);
-      */
   });
 
   socket.on('audio-stream-end', () => {
