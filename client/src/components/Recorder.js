@@ -1,6 +1,6 @@
 import React from 'react';
 // import socket
-//var io = require('socket.io-client');
+var io = require('socket.io-client');
 var ss = require('socket.io-stream');
 
 

@@ -8,19 +8,6 @@
 // @remove-on-eject-end
 'use strict';
 
-const webpackConfig = {
-  resolve: {
-    fallback: {
-      buffer: require.resolve('buffer/'),
-    },
-  },
-  plugins: [
-    new webpack.ProvidePlugin({
-      Buffer: ['buffer', 'Buffer'],
-    }),
-  ],
-};
-
 const NodePolyfillPlugin = require("node-polyfill-webpack-plugin")
 const fs = require('fs');
 const path = require('path');
@@ -316,11 +303,11 @@ module.exports = function (webpackEnv) {
     },
     resolve: {
 
-        
+        /*
         fallback: {
             buffer: require.resolve('buffer/'),
         },
-        
+        */
      
       // This allows you to set a fallback for where webpack should look for modules.
       // We placed these paths second because we want `node_modules` to "win"
