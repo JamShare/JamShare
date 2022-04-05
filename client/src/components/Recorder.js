@@ -29,8 +29,7 @@ class Recorder extends React.Component {
         this.stopRecording = this.stopRecording.bind(this);
         this.playRecording = this.playRecording.bind(this);
 
-        //this.socket = io.connect('http://localhost:3001');
-        //this.stream = ss.createStream();
+        this.socket = io.connect('http://localhost:3001');
         
         
     }
@@ -39,8 +38,7 @@ class Recorder extends React.Component {
     onDataAvailable(e) {
         this.chunks.push(e.data);
 
-        //ss(socket).emit('audio-stream', stream, { data: e.data });
-        //fs.createReadStream(e.data).pipe(stream);
+        socketio.emit('audio-stream', e.data);
     }
 
     onStop(e) {
