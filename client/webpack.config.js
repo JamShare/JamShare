@@ -8,6 +8,19 @@
 // @remove-on-eject-end
 'use strict';
 
+const webpackConfig = {
+  resolve: {
+    fallback: {
+      buffer: require.resolve('buffer/'),
+    },
+  },
+  plugins: [
+    new webpack.ProvidePlugin({
+      Buffer: ['buffer', 'Buffer'],
+    }),
+  ],
+};
+
 const NodePolyfillPlugin = require("node-polyfill-webpack-plugin")
 const fs = require('fs');
 const path = require('path');
@@ -303,12 +316,11 @@ module.exports = function (webpackEnv) {
     },
     resolve: {
 
-        /*
+        
         fallback: {
-          util: require.resolve("util/"),
-          stream: false,
+            buffer: require.resolve('buffer/'),
         },
-        */
+        
      
       // This allows you to set a fallback for where webpack should look for modules.
       // We placed these paths second because we want `node_modules` to "win"
@@ -611,6 +623,9 @@ module.exports = function (webpackEnv) {
       ].filter(Boolean),
     },
     plugins: [
+      new webpack.ProvidePlugin({
+          Buffer: ['buffer', 'Buffer'],
+      }),
       // Generates an `index.html` file with the <script> injected.
       new HtmlWebpackPlugin(
         Object.assign(
