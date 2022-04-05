@@ -43,7 +43,15 @@ class Recorder extends React.Component {
     async getAudioDevice() {
         var stream = null;
         try {
-            stream = await navigator.mediaDevices.getUserMedia({audio: true, video: false});
+            stream = await navigator.mediaDevices
+                .getUserMedia({
+                    audio: {
+                        echoCancellation: false,
+                        autoGainControl: false,
+                        noiseSuppression: false,
+                        latency: 0
+                    }
+                });
         } catch (err) {
             console.error(err)
             stream = null;
