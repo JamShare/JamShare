@@ -28,7 +28,7 @@ class Recorder extends React.Component {
     }
 
     onStop(e) {
-        let blob = new Blob(this.chunks, {'type': 'audio/ogg; codecs=opus'})
+        let blob = new Blob(this.chunks, { 'type': 'audio/ogg; codecs=opus' })
         let audioURL = URL.createObjectURL(blob);
         this.audio = new Audio(audioURL);
     }
@@ -38,22 +38,30 @@ class Recorder extends React.Component {
     async getAudioDevice() {
         var stream = null;
         try {
-            stream = await navigator.mediaDevices.getUserMedia({audio: true, video: false});
+            stream = await navigator.mediaDevices
+                .getUserMedia({
+                    audio: {
+                        echoCancellation: false,
+                        autoGainControl: false,
+                        noiseSuppression: false,
+                        latency: 0
+                    }
+                });
         } catch (err) {
             console.error(err)
             stream = null;
         }
-        
+
         this.recorder = null;
         if (stream) {
             this.recorder = new MediaRecorder(stream)
-        
+
             // initialize event handlers for recorder
             this.recorder.ondataavailable = this.onDataAvailable;
             this.recorder.onstop = this.onStop;
 
             console.log("Recording device acquired successfully.");
-            }
+        }
         return;
     }
 
@@ -65,7 +73,7 @@ class Recorder extends React.Component {
             return;
         }
         this.recorder.start();
-        this.setState({ isRecording: true});
+        this.setState({ isRecording: true });
         console.log("Recording started successfully.");
         return;
     }
@@ -78,7 +86,7 @@ class Recorder extends React.Component {
             return;
         }
         this.recorder.stop();
-        this.setState({ isRecording: false});
+        this.setState({ isRecording: false });
         console.log("Recording stopped successfully.");
         return;
     }
@@ -102,18 +110,18 @@ class Recorder extends React.Component {
     render() {
         return (
             <div id="container">
-            <button onClick={this.getAudioDevice}>
-                Choose audio device
-            </button>
-            <button onClick={this.startRecording}>
-                Start recording
-            </button>
-            <button onClick={this.stopRecording}>
-                Stop recording
-            </button>
-            <button onClick={this.playRecording}>
-                Play/pause recording
-            </button>
+                <button onClick={this.getAudioDevice}>
+                    Choose audio device
+                </button>
+                <button onClick={this.startRecording}>
+                    Start recording
+                </button>
+                <button onClick={this.stopRecording}>
+                    Stop recording
+                </button>
+                <button onClick={this.playRecording}>
+                    Play/pause recording
+                </button>
             </div>
         );
     }
