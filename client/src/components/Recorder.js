@@ -1,5 +1,9 @@
 import React from 'react';
 // import socket
+var io = require('socket.io-client');
+var ss = require('socket.io-stream');
+
+
 class Recorder extends React.Component {
     constructor(props) {
         super(props);
@@ -24,18 +28,26 @@ class Recorder extends React.Component {
         this.startRecording = this.startRecording.bind(this);
         this.stopRecording = this.stopRecording.bind(this);
         this.playRecording = this.playRecording.bind(this);
+
+        //this.socket = io.connect('http://localhost:3001');
+        //this.stream = ss.createStream();
+        
         
     }
 
     // event handlers for recorder
     onDataAvailable(e) {
         this.chunks.push(e.data);
+
+        //ss(socket).emit('audio-stream', stream, { data: e.data });
+        //fs.createReadStream(e.data).pipe(stream);
     }
 
     onStop(e) {
         let blob = new Blob(this.chunks, {'type': 'audio/ogg; codecs=opus'})
         let audioURL = URL.createObjectURL(blob);
         this.audio = new Audio(audioURL);
+        ///ss(socket).emit('audio-stream-end');
     }
 
     // asks for permission to use audio device from user
