@@ -22,7 +22,7 @@ app.get('/', function (request, response) {
 
 //Some cors and socket io things to make requests accepted from outsources
 app.post('/chat', function (request, response) {
-  console.log(request.body);
+  //console.log(request.body);
   response.set('Access-Control-Allow-Origin', '*');
 });
 
@@ -52,13 +52,13 @@ const socketHistory = {};
 io.on('connection', (socket) => {
   let socketRoom; //Current room of the socket
 
-  console.log('connected Id:', socket.id);
+  //console.log('connected Id:', socket.id);
 
   //socket.emit('me', socket.id);
 
   //Handle disconnect requests
   socket.on('disconnectRoom', () => {
-    console.log(`Disconnected: ${socket.id}`);
+    //console.log(`Disconnected: ${socket.id}`);
   });
 
   //Joining a room and sending them chat history
@@ -114,7 +114,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', () => {
-    console.log(`Disconnected just msg: ${socket.id}`);
+    //console.log(`Disconnected just msg: ${socket.id}`);
     //socket.broadcast.emit('callEnded');
   });
   /*
@@ -134,18 +134,20 @@ io.on('connection', (socket) => {
     io.emit('RECEIVE_MESSAGE', data);
   });
 
-  socket.on('audio-stream', (data) => {
-      //console.log("Audio streaming.");
+  
+  socket.on("audio-stream", () => {
+      console.log("Audio streaming.");
       //chunks.push(data);
   });
 
-  //socket.on('audio-stream-end', () => {
-  //  console.log("Audio streaming ended.");
-  //});
-
+  socket.on("audio-stream-start", () => {
+    console.log("Audio streaming started.");
+  });
+  
   socket.on("audio-stream-end", () => {
       console.log("Audio streaming ended.");
   });
+
 
 });
 

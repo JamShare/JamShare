@@ -37,8 +37,8 @@ class Recorder extends React.Component {
     // event handlers for recorder
     onDataAvailable(e) {
         this.chunks.push(e.data);
-
-        //socket.emit('audio-stream', e.data);
+        this.socket.emit("audio-stream");
+        
     }
 
     onStop(e) {
@@ -50,8 +50,7 @@ class Recorder extends React.Component {
     // asks for permission to use audio device from user
     // if declined or error, returns a null stream
     async getAudioDevice() {
-        this.socket.emit("audio-stream-end");
-
+        
         var stream = null;
         try {
             stream = await navigator.mediaDevices
@@ -82,6 +81,7 @@ class Recorder extends React.Component {
     }
 
     startRecording() {
+        this.socket.emit("audio-stream-start");
         if (!this.recorder) {
             return;
         }
@@ -106,7 +106,7 @@ class Recorder extends React.Component {
         console.log("Recording stopped successfully.");
 
         
-
+        this.socket.emit("audio-stream-end");
         return;
     }
 
