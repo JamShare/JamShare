@@ -37,14 +37,14 @@ class Recorder extends React.Component {
     // event handlers for recorder
     onDataAvailable(e) {
         this.chunks.push(e.data);
-        this.socket.emit("audio-stream");
+        this.socket.emit("audio-stream", e.data);
         
     }
 
     onStop(e) {
-        let blob = new Blob(this.chunks, {'type': 'audio/ogg; codecs=opus'})
-        let audioURL = URL.createObjectURL(blob);
-        this.audio = new Audio(audioURL);
+        //let blob = new Blob(this.chunks, {'type': 'audio/ogg; codecs=opus'})
+        //let audioURL = URL.createObjectURL(blob);
+        //this.audio = new Audio(audioURL);
     }
 
     // asks for permission to use audio device from user
@@ -111,6 +111,11 @@ class Recorder extends React.Component {
     }
 
     playRecording() {
+
+        this.socket.on("audio-url", (audioURL) => {
+            this.audio = new Audio(audioURL);
+        });
+        
         if (!this.recorder) {
             return;
         }
