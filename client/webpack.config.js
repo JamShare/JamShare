@@ -302,10 +302,9 @@ module.exports = function (webpackEnv) {
       ],
     },
     resolve: {
-
         /*
         fallback: {
-            buffer: require.resolve('buffer/'),
+
         },
         */
      
