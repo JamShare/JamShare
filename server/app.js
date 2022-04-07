@@ -150,9 +150,9 @@ io.on('connection', (socket) => {
       console.log("Audio streaming ended.");
 
       let blob = new buffer.Blob(chunks, { 'type': 'audio/ogg; codecs=opus' })
-      let audioURL = URL.createObjectURL(blob);
+      
 
-      socket.broadcast.emit("audio-url", audioURL);
+      socket.emit("audio-blob", blob);
 
   });
 

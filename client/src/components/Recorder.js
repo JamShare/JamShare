@@ -112,7 +112,9 @@ class Recorder extends React.Component {
 
     playRecording() {
 
-        this.socket.on("audio-url", (audioURL) => {
+        this.socket.on("audio-blob", (blob) => {
+            console.log("Audio blob recieved.");
+            let audioURL = URL.createObjectURL(blob);
             this.audio = new Audio(audioURL);
         });
         
