@@ -1,5 +1,8 @@
 import React from 'react';
-// import socket
+import io from 'socket.io-client';
+// import ss from 'socket.io-stream';
+// window.Buffer = window.Buffer || require("buffer").Buffer;
+
 class Recorder extends React.Component {
     constructor(props) {
         super(props);
@@ -24,8 +27,28 @@ class Recorder extends React.Component {
         this.startRecording = this.startRecording.bind(this);
         this.stopRecording = this.stopRecording.bind(this);
         this.playRecording = this.playRecording.bind(this);
-        
+
+        // this.filename = 'local-stream.webm';
+        // this.stream = ss.createStream();
+        // this.middleBuffer = [];
+        // this.filestream = fs.createWriteStream(filename);
     }
+
+    // useEffect(unknownParameter = () => {
+    //     const interval = setInterval(() => {
+        
+    //         console.log('This will run every second!');
+              
+    //         // ss(socket).emit('client-stream', stream, {name: filename});
+    //         // ss(socket).on('stream', function(this.stream) {};
+    //         // this.filestream.pipe(this.chunks);
+
+    //         ss(socket).emit('client-stream', this.stream);
+    //         this.stream.pipe(fs.createWriteStream(this.filename));
+
+    //     }, 1000);
+    //     return () => clearInterval(interval);
+    // },[]);
 
     // event handlers for recorder
     onDataAvailable(e) {
@@ -33,9 +56,10 @@ class Recorder extends React.Component {
     }
 
     onStop(e) {
+        
         let blob = new Blob(this.chunks, {'type': 'audio/ogg; codecs=opus'})
         let audioURL = URL.createObjectURL(blob);
-        this.audio = new Audio(audioURL);
+        this.audio = new Audio(audioURL);        
     }
 
     // asks for permission to use audio device from user

@@ -5,10 +5,12 @@ const bodyParser = require('body-parser');
 var cors = require('cors');
 const http = require('http');
 const socket = require('socket.io');
-const socketStream = require('socket.io-stream')
 const port = process.env.PORT || 3001;
 
 var app = express();
+
+//Active sessions
+const Sessions = require('./Sessions.js');
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -48,9 +50,28 @@ const socketHistory = {};
 
 // Listening for incoming connections
 io.on('connection', (socket) => {
+  console.log('connected Id:', socket.id);
+  //recieve the data from the user 
+  clientObject = undefined;
+  socket.on("create-session", (data) => { Sessions.creatSession(socket.id)});
+
+  //'join-session' emitted from client when user clicks 'join jam session' in /Join.js modal popup, or when user enters session ID in orange box and presses enter. 
+  //apparently, does not require adding the client's socket.id to a list for each session.   
+  socket.on('join-session' , (data) => { Sessions.joinSession(data.SessionID, socket.id)
+    // try{
+    //   //get client info
+    //   clientObject = Clients.clientInfo(socket.id);
+    //   if (clientObject !== undefined) {
+    //     //recieve the data from the client in a room
+    //     Sessions.recieveData(socket.id, data);
+    //   }
+    // } catch (error) {
+    //   console.error(error);
+    // }
+  });
+
   let socketRoom; //Current room of the socket
 
-  console.log('connected Id:', socket.id);
 
   //socket.emit('me', socket.id);
 
@@ -132,8 +153,16 @@ io.on('connection', (socket) => {
     io.emit('RECEIVE_MESSAGE', data);
   });
 
-  // socket.on()
+  // socket.on('client-stream')
 
+
+  // socket.on('create-audio-file', function(data)  {
+  //   let blob = new Blob(this.chunks, {'type': 'audio/ogg; codecs=opus'})
+  //   let audioURL = URL.createObjectURL(blob);
+  //   this.audio = new Audio(audioURL);
+  // });
+
+  
 });
 
 server.listen(port, () => console.log(`Listening on port ${port}`));

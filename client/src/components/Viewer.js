@@ -11,7 +11,10 @@ class Viewer extends React.Component {
             };
         
             this.files = [];
-            
+        //     this.stream = ss.createStream();
+        // this.middleBuffer = [];
+        // this.filestream = fs.createReadStream(filename);
+
 
         }
 
