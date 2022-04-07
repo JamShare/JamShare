@@ -8,13 +8,7 @@ import {
   loadInitialChat,
   setSocketName,
 } from './Socket';
-
-import io from "socket.io-client";
-import Chat from './Chat';
-import Recorder from './Recorder';
-import Viewer from './Viewer';
-import Participants from './Participants';
-
+import './App.css'
 function Room() {
   const rooms = ['Room 1', 'Room 2', 'Room 3'];
   const [room, setRoom] = useState(rooms[0]); // rooms[0] is default value which is "Room 1"
@@ -82,50 +76,49 @@ function Room() {
   };
 
   return (
-    <div>
-      <h1>Room: {room}</h1>
+    <div className='a0'>
+      <h1 className='a1'>Room: {room}</h1>
       {rooms.map((r, i) => (
-        <button onClick={() => setRoom(r)} key={i}>
-          {r}
-        </button>
+        <div className='a3'>
+          <button className='a2' onClick={() => setRoom(r)} key={i}>
+            {r}
+          </button>
+        </div>
       ))}
-      <h1>Online Chat:</h1>
-      <input
-        type='text'
-        name='username'
-        value={username}
-        onChange={(e) => {
-          setUsername(e.target.value);
-        }}
-      />
-      <button
-        onClick={() => {
-          setUsername(username);
-          setSocketName(username);
-        }}>
-        Set
-      </button>
-      <br></br>
-      <input
-        type='text'
-        name='message'
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-      />
-      <button
-        onClick={() => {
-          let newMsg = `${username}: ${message}`;
-          setChat((oldChats) => [newMsg, ...oldChats]);
-          sendMessage(room, message, username);
-        }}>
-        Send
-      </button>
-      {chat && chat.map((m, i) => <p key={i}>{m}</p>)}
-      
-      <Participants></Participants>
-      <Viewer></Viewer>
-      <Recorder></Recorder>
-      <Chat></Chat>
+      <h1 className='a1'>Online Chat:</h1>
+      <div className='a3'>
+       <input
+         type='text'
+         name='username'
+         value={username}
+         onChange={(e) => {
+           setUsername(e.target.value);
+         }}
+       />
+       <button className='a2'
+          onClick={() => {
+           setUsername(username);
+           setSocketName(username);
+         }}>
+         Set
+       </button>
+       <br></br>
+        <input
+          type='text'
+         name='message'
+         value={message}
+         onChange={(e) => setMessage(e.target.value)}
+       />
+       <button className='a2'
+         onClick={() => {
+           let newMsg = `${username}: ${message}`;
+           setChat((oldChats) => [newMsg, ...oldChats]);
+           sendMessage(room, message, username);
+         }}>
+         Send
+        </button>
+       {chat && chat.map((m, i) => <p key={i}>{m}</p>)}
+      </div>
     </div>
   );
 }
