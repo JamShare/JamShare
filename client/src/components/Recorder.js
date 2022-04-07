@@ -30,19 +30,56 @@ class Recorder extends React.Component {
 
         this.socket = io.connect(SERVER);
 
+        /*
         this.socket.on("audio-blob", (chunks) => {
             console.log("Audio blob recieved.");
             let blob = new Blob(chunks, { 'type': 'audio/ogg; codecs=opus' })
             let audioURL = URL.createObjectURL(blob);
             this.audio = new Audio(audioURL);
         });
+        */
+
+        this.socket.on("audio-blob", (chunks) => {
+            console.log("Audio blob recieved.");
+        
+
+        this.mediaSource = new MediaSource();
+
+        this.mediaSource.addEventListener('sourceopen', function () {
+            var sourceBuffer = this.mediaSource.addSourceBuffer('audio/mpeg');
+
+            console.log("Media source.");
+
+            function onAudioLoaded(data, index) {
+                // Append the ArrayBuffer data into our new SourceBuffer.
+                sourceBuffer.appendBuffer(data);
+            }
+
+            // Retrieve an audio segment via XHR.  For simplicity, we're retrieving the
+            // entire segment at once, but we could also retrieve it in chunks and append
+            // each chunk separately.  MSE will take care of assembling the pieces.
+            //GET('sintel/sintel_0.mp3', function (data) { onAudioLoaded(data, 0); });
+            var index = 0;
+            
+            for (let i in chunks) {
+                onAudioLoaded(i, index);
+                index++;
+            }
+            
+
+            let audioURL = URL.createObjectURL(this.mediaSource);
+            console.log("URL created.");
+            this.audio = new Audio(audioURL);
+        });
+
+        });
+
     }
 
     // event handlers for recorder
     onDataAvailable(e) {
         //this.chunks.push(e.data);
         this.socket.emit("audio-stream", e.data);
-        
     }
 
     onStop(e) {
