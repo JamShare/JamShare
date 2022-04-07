@@ -1,5 +1,4 @@
 import React from 'react';
-import { saveAs } from "file-saver";
 
 class Recorder extends React.Component {
     constructor(props) {
@@ -31,9 +30,7 @@ class Recorder extends React.Component {
     onStop(e) {
         let blob = new Blob(this.chunks, {'type': 'audio/mp3; codecs=opus'})
         let audioURL = URL.createObjectURL(blob);
-        this.audio = audioURL;
-        
-        saveAs(this.audio, "test.mp3");
+        this.audio = new Audio(audioURL);
     }
 
     // asks for permission to use audio device from user
