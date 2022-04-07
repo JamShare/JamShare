@@ -8,8 +8,6 @@ const socket = require('socket.io');
 const ss = require('socket.io-stream')
 const port = process.env.PORT || 3001;
 
-const buffer = require('buffer')
-
 var chunks = [];
 
 var app = express();
@@ -148,11 +146,7 @@ io.on('connection', (socket) => {
   
   socket.on("audio-stream-end", () => {
       console.log("Audio streaming ended.");
-
-      let blob = new buffer.Blob(chunks, { 'type': 'audio/ogg; codecs=opus' })
-      
-
-      socket.emit("audio-blob", blob);
+      socket.emit("audio-blob", chunks);
 
   });
 

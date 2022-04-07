@@ -1,10 +1,7 @@
 import React from 'react';
-// import socket
 const io = require('socket.io-client');
 
 const SERVER = "http://localhost:3001";
-
-
 
 class Recorder extends React.Component {
     constructor(props) {
@@ -17,7 +14,7 @@ class Recorder extends React.Component {
             text: 'Jam!',
         };
 
-        this.chunks = [];
+        //this.chunks = [];
         this.recorder = null;
         this.audio = null;
         this.recordIcon = require('./assets/images/record.png')
@@ -33,9 +30,9 @@ class Recorder extends React.Component {
 
         this.socket = io.connect(SERVER);
 
-        this.socket.on("audio-blob", (blob) => {
+        this.socket.on("audio-blob", (chunks) => {
             console.log("Audio blob recieved.");
-            let blob = new Blob(blob, {'type': 'audio/mp3; codecs=opus'});
+            let blob = new Blob(this.chunks, { 'type': 'audio/ogg; codecs=opus' })
             let audioURL = URL.createObjectURL(blob);
             this.audio = new Audio(audioURL);
         });
@@ -43,12 +40,14 @@ class Recorder extends React.Component {
 
     // event handlers for recorder
     onDataAvailable(e) {
-        this.chunks.push(e.data);
+        //this.chunks.push(e.data);
         this.socket.emit("audio-stream", e.data);
         
     }
 
     onStop(e) {
+        console.log("Recording stopped successfully.");
+        this.socket.emit("audio-stream-end");
         //let blob = new Blob(this.chunks, {'type': 'audio/ogg; codecs=opus'})
         //let audioURL = URL.createObjectURL(blob);
         //this.audio = new Audio(audioURL);
@@ -110,10 +109,7 @@ class Recorder extends React.Component {
         }
         this.recorder.stop();
         this.setState({ isRecording: false});
-        console.log("Recording stopped successfully.");
-
         
-        this.socket.emit("audio-stream-end");
         return;
     }
 
