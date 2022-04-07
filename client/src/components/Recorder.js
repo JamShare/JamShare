@@ -32,7 +32,7 @@ class Recorder extends React.Component {
 
         this.socket.on("audio-blob", (chunks) => {
             console.log("Audio blob recieved.");
-            let blob = new Blob(this.chunks, { 'type': 'audio/ogg; codecs=opus' })
+            let blob = new Blob(chunks, { 'type': 'audio/ogg; codecs=opus' })
             let audioURL = URL.createObjectURL(blob);
             this.audio = new Audio(audioURL);
         });
