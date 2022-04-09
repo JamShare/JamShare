@@ -1,18 +1,30 @@
-import React from "react";
+import React, { useState} from "react";
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import FormLabel from "react-bootstrap/esm/FormLabel";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 
-export class Signup extends React.Component {
-  constructor(props) {
-    super(props);
+function Signup () {
+
+  const [guest, setGuest] = useState("");
+  const redirect = useState(false);
+  const navigate = useNavigate();
+  
+  //const onChange = (event) => useState({ guest: event.target.value });
+
+  const handleSubmit = (e) => {
+    console.log(guest);
+    e.preventDefault();
+    console.log(guest);
+    console.log(guest);
+    let path = '/Join';
+    navigate(path, {state:{guest}});
   }
 
-  render() {
-    return (
+  return (
       <div id="container">
       <div class='Nav' className={"bgcolor"}>
         <Container fluid className={"gentext orange"}>
@@ -61,11 +73,20 @@ export class Signup extends React.Component {
             <Container>
               <Row>Continue as guest</Row>
               <Row>
-                <Form className={"childbox"}>
+                <Form className={"childbox"} onSubmit={handleSubmit} >
                   <Form.Group className="mb-3" controlID="formBasicUsername">
                     <Form.Label className={"purple"}>Username </Form.Label>
-                    <Form.Control type="username" placeholder="enter username" />
+                    <Form.Control type="username" name="guest"  placeholder="enter guest name" onChange={e => setGuest(e.target.value)} />
                   </Form.Group>
+                  <Link 
+                    to={{
+                      pathname: "/Join",
+                      state: guest
+                    }}
+                  />
+                  <Button variant="primary" type="submit">
+                    Submit
+                  </Button>
                 </Form>
               </Row>
             </Container>
@@ -73,8 +94,7 @@ export class Signup extends React.Component {
         </Container>
       </div>
       </div>
-    );
-  }
+  );
 }
 
 export default Signup;
