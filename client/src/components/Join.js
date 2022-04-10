@@ -11,7 +11,7 @@ function Join() {
 
     const [sessionID, setSessionID] = useState("");
     const navigate = useNavigate();
-    let { state: { guest } = {} } = useLocation();
+    let { state: { guest } = {} } = useLocation(); //gets the variable we passed from navigate
     const handleSubmit = (e) => {
       e.preventDefault();
       console.log(guest)
