@@ -12,17 +12,17 @@ function Signup () {
   const [guest, setGuest] = useState("");
   const redirect = useState(false);
   const navigate = useNavigate();
-  
+  let data = localStorage.getItem('guest');
+
   //const onChange = (event) => useState({ guest: event.target.value });
 
   const handleSubmit = (e) => {
-    console.log(guest);
     e.preventDefault();
-    console.log(guest);
-    console.log(guest);
     let path = '/Join';
+    console.log(guest);
     navigate(path, {state:{guest}});
   }
+
 
   return (
       <div id="container">
@@ -78,12 +78,6 @@ function Signup () {
                     <Form.Label className={"purple"}>Username </Form.Label>
                     <Form.Control type="username" name="guest"  placeholder="enter guest name" onChange={e => setGuest(e.target.value)} />
                   </Form.Group>
-                  <Link 
-                    to={{
-                      pathname: "/Join",
-                      state: guest
-                    }}
-                  />
                   <Button variant="primary" type="submit">
                     Submit
                   </Button>

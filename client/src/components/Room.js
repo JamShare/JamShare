@@ -14,6 +14,7 @@ import Chat from './Chat';
 import Recorder from './Recorder';
 import Viewer from './Viewer';
 import Participants from './Participants';
+import { Link, Navigate, useNavigate, useLocation } from "react-router-dom";
 
 function Room() {
   const rooms = ['Room 1', 'Room 2', 'Room 3'];
@@ -23,11 +24,12 @@ function Room() {
   const [chat, setChat] = useState([]);
   const prevRoomRef = useRef();
   const messageBoxRef = useRef();
-
+  const location = useLocation();
   useEffect(() => {
     prevRoomRef.current = room;
   });
   const prevRoom = prevRoomRef.current;
+  const { state: { guest, sessionID } = {} } = useLocation();
 
   //Hook on "room" state change
   //Clear chat then create room if it doesnt exist or move to new room if it does
@@ -37,7 +39,7 @@ function Room() {
     if (prevRoom && room) {
       switchRooms(prevRoom, room);
     } else if (room) {
-      let newName = prompt('Enter Username, can be changed later');
+      let newName = guest;
       if (username === 'tempName') {
         setUsername(newName);
       }

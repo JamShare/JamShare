@@ -9,16 +9,15 @@ import { Link, Navigate, useNavigate, useLocation } from "react-router-dom";
 // Join or create a Jam session room with link ID
 function Join() {
 
-    const sessionID = useState("");
+    const [sessionID, setSessionID] = useState("");
     const navigate = useNavigate();
-    const { state: { guest } = {} } = useLocation();
-
+    let { state: { guest } = {} } = useLocation();
     const handleSubmit = (e) => {
       e.preventDefault();
       console.log(guest)
       console.log(e.target.elements.session.value)
-      //let path = '/Room';
-      //navigate(path, {state:{sessionID}});
+      let path = '/Room';
+      navigate(path, {state:{sessionID, guest}});
     }
 
 
@@ -35,7 +34,7 @@ function Join() {
                             </Row>
                             <Row>
                                 <form onSubmit={handleSubmit} >
-                                    <input type="text" name="session" />
+                                    <input type="text" name="session" onChange={e => setSessionID(e.target.value)}  />
                                     <input type="submit" value="Submit" />
                                 </form>
                             </Row>
