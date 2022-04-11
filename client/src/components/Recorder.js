@@ -39,13 +39,11 @@ class Recorder extends React.Component {
         });
         */
 
-        this.socket.on("audio-blob", (chunks) => {
-            console.log("Audio blob recieved.");
-        
-
         this.mediaSource = new MediaSource();
 
-        this.mediaSource.addEventListener('sourceopen', function () {
+        this.socket.on("audio-blob", (chunks) => {
+            console.log("Audio blob recieved.");
+
             var sourceBuffer = this.mediaSource.addSourceBuffer('audio/mpeg');
 
             console.log("Media source.");
@@ -65,15 +63,11 @@ class Recorder extends React.Component {
                 onAudioLoaded(i, index);
                 index++;
             }
-            
-
-            let audioURL = URL.createObjectURL(this.mediaSource);
-            console.log("URL created.");
-            this.audio = new Audio(audioURL);
         });
 
-        });
-
+        let audioURL = URL.createObjectURL(this.mediaSource);
+        console.log("URL created.");
+        this.audio = new Audio(audioURL);
     }
 
     // event handlers for recorder
