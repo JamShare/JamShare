@@ -1,7 +1,7 @@
 import React from 'react';
-import io from 'socket.io-client';
-// import ss from 'socket.io-stream';
-// window.Buffer = window.Buffer || require("buffer").Buffer;
+const io = require('socket.io-client');
+
+const SERVER = "http://localhost:3001";
 
 class Recorder extends React.Component {
     constructor(props) {
@@ -14,12 +14,12 @@ class Recorder extends React.Component {
             text: 'Jam!',
         };
 
-        this.chunks = [];
+        //this.chunks = [];
         this.recorder = null;
         this.audio = null;
         this.recordIcon = require('./assets/images/record.png')
         this.playingIcon = require('./assets/images/playing.png')
-        // this.icon = this.playingIcon
+
         // bind functions to instance
         this.onDataAvailable = this.onDataAvailable.bind(this);
         this.onStop = this.onStop.bind(this);
@@ -28,10 +28,14 @@ class Recorder extends React.Component {
         this.stopRecording = this.stopRecording.bind(this);
         this.playRecording = this.playRecording.bind(this);
 
-        // this.filename = 'local-stream.webm';
-        // this.stream = ss.createStream();
-        // this.middleBuffer = [];
-        // this.filestream = fs.createWriteStream(filename);
+        this.socket = io.connect(SERVER);
+
+        this.socket.on("audio-blob", (chunks) => {
+            console.log("Audio blob recieved.");
+            let blob = new Blob(chunks, { 'type': 'audio/ogg; codecs=opus' })
+            let audioURL = URL.createObjectURL(blob);
+            this.audio = new Audio(audioURL);
+        });
     }
 
     // useEffect(unknownParameter = () => {
@@ -52,19 +56,19 @@ class Recorder extends React.Component {
 
     // event handlers for recorder
     onDataAvailable(e) {
-        this.chunks.push(e.data);
+        //this.chunks.push(e.data);
+        this.socket.emit("audio-stream", e.data);
     }
 
     onStop(e) {
-        
-        let blob = new Blob(this.chunks, {'type': 'audio/ogg; codecs=opus'})
-        let audioURL = URL.createObjectURL(blob);
-        this.audio = new Audio(audioURL);        
+        console.log("Recording stopped successfully.");
+        this.socket.emit("audio-stream-end");
     }
 
     // asks for permission to use audio device from user
     // if declined or error, returns a null stream
     async getAudioDevice() {
+        
         var stream = null;
         try {
             stream = await navigator.mediaDevices
@@ -104,6 +108,7 @@ class Recorder extends React.Component {
         this.recorder.start();
         this.setState({ isRecording: true});
         console.log("Recording started successfully.");
+        this.socket.emit("audio-stream-start");
         return;
     }
 
@@ -116,23 +121,14 @@ class Recorder extends React.Component {
         }
         this.recorder.stop();
         this.setState({ isRecording: false});
-        console.log("Recording stopped successfully.");
         return;
     }
 
     playRecording() {
-        if (!this.recorder) {
+        if (!this.audio) {
             return;
         }
-
-        if (this.state.isPlaying) {
-            this.audio.pause();
-        } else {
-            this.audio.play();
-        }
-
-        this.setState({ isPlaying: !this.state.isPlaying });
-        console.log("Recording played/stopped successfully.");
+        this.audio.play();
         return;
     }
 

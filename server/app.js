@@ -5,7 +5,10 @@ const bodyParser = require('body-parser');
 var cors = require('cors');
 const http = require('http');
 const socket = require('socket.io');
+const ss = require('socket.io-stream')
 const port = process.env.PORT || 3001;
+
+var chunks = [];
 
 var app = express();
 
@@ -22,7 +25,7 @@ app.get('/', function (request, response) {
 
 //Some cors and socket io things to make requests accepted from outsources
 app.post('/chat', function (request, response) {
-  console.log(request.body);
+  //console.log(request.body);
   response.set('Access-Control-Allow-Origin', '*');
 });
 
@@ -42,7 +45,6 @@ const socketHistory = {};
 
 // Listening for incoming connections
 io.on('connection', (socket) => {
-  console.log('connected Id:', socket.id);
   //recieve the data from the user 
   clientObject = undefined;
   socket.on("create-session", (data) => { Sessions.creatSession(socket.id)});
@@ -67,14 +69,7 @@ io.on('connection', (socket) => {
 
 
 
-  let socketRoom; //Current room of the socket
-
-  //socket.emit('me', socket.id);
-
-  //Handle disconnect requests
-  socket.on('disconnectRoom', () => {
-    console.log(`Disconnected: ${socket.id}`);
-  });
+  let socketRoom; //Current room of the socket for chat prototype
 
   //Joining a room and sending them chat history
   socket.on('joinRoom', ({ username, room }) => {
@@ -129,7 +124,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', () => {
-    console.log(`Disconnected just msg: ${socket.id}`);
+    //console.log(`Disconnected just msg: ${socket.id}`);
     //socket.broadcast.emit('callEnded');
   });
   /*
@@ -144,12 +139,28 @@ io.on('connection', (socket) => {
   socket.on('answerCall', (data) => {
     io.to(data.to).emit('callAccepted', data.signal);
   });
-*/
+  */
   socket.on('SEND_MESSAGE', function (data) {
     io.emit('RECEIVE_MESSAGE', data);
   });
 
-  // socket.on('client-stream')
+  
+  socket.on("audio-stream", (data) => {
+      //console.log("Audio streaming.");
+      chunks.push(data);
+  });
+
+  socket.on("audio-stream-start", () => {
+    console.log("Audio streaming started.");
+  });
+  
+  socket.on("audio-stream-end", () => {
+      console.log("Audio streaming ended.");
+      // emits to all connected clients
+      // TODO change this when we establish multiple rooms
+      io.emit("audio-blob", chunks);
+      chunks = [];
+  });
 
 
   // socket.on('create-audio-file', function(data)  {
