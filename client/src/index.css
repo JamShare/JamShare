@@ -18,18 +18,69 @@
     background-color: rgb(46, 46, 46);
 }
 .childbox{
-    background-color: lightgray;
+    margin: 10vh;
+    height: 70vh;
+    background-color: rgb(117, 117, 117);
+    text-align: center;
+    border-radius: 10px;
+}
+.childbox-signups { 
+    background-color: rgb(216, 216, 216);
+    display: inline-block;
+    margin-left: 5vh;
+    margin-right: 5vh;
+    margin-bottom: 5vh;
+    vertical-align: middle;
+    width: 60vh;
+    height: 30vh;
+    padding: 2vh;
+    font-size: large;
+    border-radius: 10px;
+}
+.childbox-guest {
+    background-color: rgb(216, 216, 216);
+    display: inline-block;
+    margin-left: 5vh;
+    margin-right: 5vh;
+    vertical-align: middle;
+    width: 85%;
+    height: 20vh;
+    border-radius: 10px;
 }
 .a-button{ 
     font-weight: 400;
+    font-size: larger;
     font-family: 'IndieFlower';
     text-align: center;
     border: 1px solid transparent;
-    height: 50px;
-    margin: 10px;
+    height: 200%;
+    width: 200%;
+    margin-top: 50px;
+    padding-left: 5px;
+    padding-right: 5px;
     font-size: 1rem;
     border-radius: .25rem;
     cursor: pointer;
     background-color: purple;
+    color: orange;
+}
+.jamshare-logo {
+    width: 10%;
+    height: 10%;
+    display: inline-flex;
+    justify-content: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+div {
+    font-family: "IndieFlower";
+}
+h1 {
+    text-align: center;
     color: orange
+}
+input [type=text], select {
+    font-family: "IndieFlower";
+    border-color: none;
+    width: 100%;
 }
