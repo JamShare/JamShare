@@ -19,7 +19,7 @@ class Recorder extends React.Component {
         this.audio = null;
         this.recordIcon = require('./assets/images/record.png')
         this.playingIcon = require('./assets/images/playing.png')
-        
+
         // bind functions to instance
         this.onDataAvailable = this.onDataAvailable.bind(this);
         this.onStop = this.onStop.bind(this);
@@ -112,15 +112,7 @@ class Recorder extends React.Component {
         if (!this.recorder) {
             return;
         }
-
-        if (this.state.isPlaying) {
-            this.audio.pause();
-        } else {
-            this.audio.play();
-        }
-
-        this.setState({ isPlaying: !this.state.isPlaying });
-        console.log("Recording played/stopped successfully.");
+        this.audio.play();
         return;
     }
 
