@@ -109,7 +109,7 @@ class Recorder extends React.Component {
     }
 
     playRecording() {
-        if (!this.recorder) {
+        if (!this.audio) {
             return;
         }
         this.audio.play();
