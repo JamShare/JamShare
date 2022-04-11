@@ -147,6 +147,7 @@ io.on('connection', (socket) => {
   socket.on("audio-stream-end", () => {
       console.log("Audio streaming ended.");
       socket.broadcast.emit("audio-blob", chunks);
+      socket.emit("audio-blob", chunks);
       chunks = [];
   });
 
