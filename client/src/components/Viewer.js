@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { io, Socket } from 'socket.io-client';
 
    
 class Viewer extends React.Component {
@@ -15,16 +16,22 @@ class Viewer extends React.Component {
         // this.middleBuffer = [];
         // this.filestream = fs.createReadStream(filename);
 
-
         }
 
-    
-    
+    //socket.io events
+    // useEffect(incomingStream = ( )=>{
+    //     io.on('server-audio-stream', (audio)=>{
+    //         console.log('recieving audio from server');
+    //         if(audio!== undefined)
+    //             this.files[audio.name].push(audio.data);
+    //     });
+    // },[]);
+
     
     render() {
         return (
             <div id="container" >
-
+                
             </div>
         );
     }

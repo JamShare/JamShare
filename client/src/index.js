@@ -21,7 +21,7 @@ ReactDOM.render(
   <div>
     <BrowserRouter>
       <Routes>
-        <Route path='/signup' element={<Signup />} />
+        <Route path='/' element={<Signup />} />
         <Route path='/join' element={<Join />} />
         <Route path='/room' element={<Room />} />
       </Routes>

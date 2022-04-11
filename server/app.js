@@ -26,14 +26,6 @@ app.post('/chat', function (request, response) {
   response.set('Access-Control-Allow-Origin', '*');
 });
 
-// app.post('/sample_request', async (req, res) => {
-//   console.log(req.body);
-//   res.send({
-//     important_information: '3better pizza3',
-//     more_important_info: '3better ingredients3',
-//     test: req.body.test + '356783',
-//   });
-// });
 
 //Server
 const server = http.createServer(app);
@@ -70,8 +62,12 @@ io.on('connection', (socket) => {
     // }
   });
 
-  let socketRoom; //Current room of the socket
+  //broadcast incoming stream to all clients in session
+  socket.on('client-audio-stream', (data)=> { Sessions.streamToSession(data, socket.id)});
 
+
+
+  let socketRoom; //Current room of the socket
 
   //socket.emit('me', socket.id);
 
@@ -161,8 +157,6 @@ io.on('connection', (socket) => {
   //   let audioURL = URL.createObjectURL(blob);
   //   this.audio = new Audio(audioURL);
   // });
-
-  
 });
 
 server.listen(port, () => console.log(`Listening on port ${port}`));

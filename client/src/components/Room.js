@@ -17,7 +17,6 @@ import Participants from './Participants';
 
 function Room() {
 
-
   return (
     <div>
 

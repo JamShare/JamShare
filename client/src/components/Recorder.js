@@ -152,7 +152,6 @@ class Recorder extends React.Component {
             this.setState({icon: this.recordIcon});
             this.setState({text: 'stopped'});
         }
-
     }
 
     render() {
