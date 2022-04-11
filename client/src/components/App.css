@@ -1,0 +1,18 @@
+
+.a0{
+    height: 100vh;
+    background-color: grey;
+} 
+.a1{
+    color: orange;
+    font-family: "IndieFlower";
+}
+.a2{
+    color: purple;
+    font-family: "IndieFlower";
+}
+.a3{
+    background-color: lightgray;
+    width: 100%;
+    margin-top: -5px;
+}

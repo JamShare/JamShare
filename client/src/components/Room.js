@@ -15,6 +15,7 @@ import Recorder from './Recorder';
 import Viewer from './Viewer';
 import Participants from './Participants';
 
+import './App.css'
 function Room() {
 
   return (
