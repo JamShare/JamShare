@@ -3,6 +3,41 @@ const io = require('socket.io-client');
 
 const SERVER = "http://localhost:3001";
 
+var blob;
+
+var mediaSource = new MediaSource();
+
+mediaSource.addEventListener('sourceopen', function () {
+    console.log("Audio blob recieved.");
+
+    var sourceBuffer = mediaSource.addSourceBuffer('audio/mpeg');
+
+    console.log("Media source.");
+
+    function onAudioLoaded(data) {
+        // Append the ArrayBuffer data into our new SourceBuffer.
+        sourceBuffer.appendBuffer(data);
+
+    }
+
+    // Retrieve an audio segment via XHR.  For simplicity, we're retrieving the
+    // entire segment at once, but we could also retrieve it in chunks and append
+    // each chunk separately.  MSE will take care of assembling the pieces.
+    //GET('sintel/sintel_0.mp3', function (data) { onAudioLoaded(data, 0); });
+
+    onAudioLoaded(blob);
+
+    /*
+    for (let i in chunks) {
+        onAudioLoaded(i);
+    }
+    */
+});
+
+//var audioURL = URL.createObjectURL(this.mediaSource);
+//console.log("URL created.");
+
+
 class Recorder extends React.Component {
     constructor(props) {
         super(props);
@@ -39,35 +74,11 @@ class Recorder extends React.Component {
         });
         */
 
-        this.mediaSource = new MediaSource();
-
         this.socket.on("audio-blob", (chunks) => {
-            console.log("Audio blob recieved.");
-
-            var sourceBuffer = this.mediaSource.addSourceBuffer('audio/mpeg');
-
-            console.log("Media source.");
-
-            function onAudioLoaded(data, index) {
-                // Append the ArrayBuffer data into our new SourceBuffer.
-                sourceBuffer.appendBuffer(data);
-            }
-
-            // Retrieve an audio segment via XHR.  For simplicity, we're retrieving the
-            // entire segment at once, but we could also retrieve it in chunks and append
-            // each chunk separately.  MSE will take care of assembling the pieces.
-            //GET('sintel/sintel_0.mp3', function (data) { onAudioLoaded(data, 0); });
-            var index = 0;
-            
-            for (let i in chunks) {
-                onAudioLoaded(i, index);
-                index++;
-            }
+            blob = new Blob(chunks, { 'type': 'audio/mpeg; codecs=opus' });
         });
 
-        let audioURL = URL.createObjectURL(this.mediaSource);
-        console.log("URL created.");
-        this.audio = new Audio(audioURL);
+        //this.audio = new Audio(audioURL);
     }
 
     // event handlers for recorder
