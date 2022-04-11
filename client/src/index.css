@@ -15,8 +15,21 @@
 
 .bgcolor{
     height: 100vh;
-    background-color: grey;
+    background-color: rgb(46, 46, 46);
 }
 .childbox{
     background-color: lightgray;
+}
+.a-button{ 
+    font-weight: 400;
+    font-family: 'IndieFlower';
+    text-align: center;
+    border: 1px solid transparent;
+    height: 50px;
+    margin: 10px;
+    font-size: 1rem;
+    border-radius: .25rem;
+    cursor: pointer;
+    background-color: purple;
+    color: orange
 }
