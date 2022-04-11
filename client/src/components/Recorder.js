@@ -19,7 +19,7 @@ class Recorder extends React.Component {
         this.audio = null;
         this.recordIcon = require('./assets/images/record.png')
         this.playingIcon = require('./assets/images/playing.png')
-        // this.icon = this.playingIcon
+        
         // bind functions to instance
         this.onDataAvailable = this.onDataAvailable.bind(this);
         this.onStop = this.onStop.bind(this);
@@ -42,15 +42,11 @@ class Recorder extends React.Component {
     onDataAvailable(e) {
         //this.chunks.push(e.data);
         this.socket.emit("audio-stream", e.data);
-        
     }
 
     onStop(e) {
         console.log("Recording stopped successfully.");
         this.socket.emit("audio-stream-end");
-        //let blob = new Blob(this.chunks, {'type': 'audio/ogg; codecs=opus'})
-        //let audioURL = URL.createObjectURL(blob);
-        //this.audio = new Audio(audioURL);
     }
 
     // asks for permission to use audio device from user
@@ -87,7 +83,6 @@ class Recorder extends React.Component {
     }
 
     startRecording() {
-        this.socket.emit("audio-stream-start");
         if (!this.recorder) {
             return;
         }
@@ -97,6 +92,7 @@ class Recorder extends React.Component {
         this.recorder.start();
         this.setState({ isRecording: true});
         console.log("Recording started successfully.");
+        this.socket.emit("audio-stream-start");
         return;
     }
 
@@ -109,7 +105,6 @@ class Recorder extends React.Component {
         }
         this.recorder.stop();
         this.setState({ isRecording: false});
-        
         return;
     }
 
