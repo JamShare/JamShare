@@ -53,47 +53,25 @@ class Recorder extends React.Component {
     // if declined or error, returns a null stream
     async getAudioDevice() {
 
-        const constraints = {
-            'audio': { 'echoCancellation': true },
-        }
-        const openMediaDevices = async (constraints) => {
-            return await navigator.mediaDevices.getUserMedia(constraints);
-        }
-        /*
-        try {
-            const stream = openMediaDevices({ 'video': true, 'audio': true });
-            console.log('Got MediaStream:', stream);
-        } catch (error) {
-            console.error('Error accessing media devices.', error);
-        }
-        
-        var stream = null;
-        try {
-            stream = await navigator.mediaDevices
-                .getUserMedia({
+        async function playAudio() {
+            try {
+                const constraints = {
                     audio: {
                         echoCancellation: false,
                         autoGainControl: false,
                         noiseSuppression: false,
                         latency: 0
-                    }
-                });
-        } catch (err) {
-            console.error(err)
-            stream = null;
-        }
-        
-        this.recorder = null;
-        if (stream) {
-            this.recorder = new MediaRecorder(stream)
-        
-            // initialize event handlers for recorder
-            this.recorder.ondataavailable = this.onDataAvailable;
-            this.recorder.onstop = this.onStop;
-
-            console.log("Recording device acquired successfully.");
+                    } 
+                };
+                const stream = await navigator.mediaDevices.getUserMedia(constraints);
+                const audioElement = document.querySelector('audio#localAudio');
+                audioElement.srcObject = stream;
+            } catch (error) {
+                console.error('Error opening audio .', error);
             }
-        */
+        }
+
+        playAudio();
         return;
     }
 
