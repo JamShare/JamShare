@@ -14,9 +14,15 @@ import Chat from './Chat';
 import Recorder from './Recorder';
 import Viewer from './Viewer';
 import Participants from './Participants';
+import { Link, Navigate, useNavigate, useLocation } from "react-router-dom";
+
 
 import './App.css'
 function Room() {
+  
+  //breaks the rendering 
+  // const location = useLocation();
+  // const { state: { guest, sessionID } = {} } = useLocation();
 
   return (
     <div>
