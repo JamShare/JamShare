@@ -59,7 +59,7 @@ class Recorder extends React.Component {
         const openMediaDevices = async (constraints) => {
             return await navigator.mediaDevices.getUserMedia(constraints);
         }
-
+        /*
         try {
             const stream = openMediaDevices({ 'video': true, 'audio': true });
             console.log('Got MediaStream:', stream);
@@ -93,6 +93,7 @@ class Recorder extends React.Component {
 
             console.log("Recording device acquired successfully.");
             }
+        */
         return;
     }
 
