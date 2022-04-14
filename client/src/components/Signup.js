@@ -19,14 +19,12 @@ function Signup () {
   let data = localStorage.getItem('guest');
   const [isOpen, setIsOpen] = useState(false);
 
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   if(guest === " ")
-  //     alert('no blank guest')
-  //   let path = '/join';
-  //   console.log(guest);
-  //   navigate(path, {state:{guest}}); //navigate redirects to join and gets the guest state
-  // }
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    let path = '/Join';
+    console.log(guest);
+    navigate(path, {state:{guest}}); //navigate redirects to join and gets the guest state
+  }
 
   // render() {
     return (
@@ -77,13 +75,17 @@ function Signup () {
           </div>
           <div class="childbox-guest">
             <h1>Continue as Guest</h1>
-            <FormLabel className={"purple"}>Username </FormLabel>
-            <Form.Control type="username" placeholder="Enter Username" />
-            <br></br>
-            <br></br>
-            <Link to="/join" className="a-button">
-              Jam as a Guest!
-            </Link>
+            <Form onSubmit={handleSubmit} >
+              <Form.Group className="mb-3" controlID="formBasicUsername">
+                <FormLabel className={"purple"}>Username </FormLabel>
+                <Form.Control type="username" name="guest" placeholder="Enter Username" onChange={e => setGuest(e.target.value)} />
+              </Form.Group>
+              <br></br>
+              <br></br>
+              <Button variant="primary" type="submit" /*className="a-button" */>
+                Jam as a Guest!
+              </Button>
+            </Form>
           </div>
           <Transition show={true}>
               <Dialog 

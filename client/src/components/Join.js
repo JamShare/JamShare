@@ -12,18 +12,18 @@ function Join() {
     const [sessionID, setSessionID] = useState("");
     
     //breaks rendering
-    // const navigate = useNavigate();
-    // let { state: { guest } = {} } = useLocation(); //gets the variable we passed from navigate
+    const navigate = useNavigate();
+    let { state: { guest } = {} } = useLocation(); //gets the variable we passed from navigate
     
     const handleSubmit = (e) => {
-    //   e.preventDefault();
-    //   console.log(guest)
-    //   console.log(e.target.elements.session.value)
-    //   let path = '/room';
-    //   navigate(path, {state:{sessionID, guest}});
+        e.preventDefault();
+        console.log(guest)
+        console.log(e.target.elements.session.value)
+        let path = '/Room';
+        navigate(path, {state:{sessionID, guest}});
     }
 
-
+    console.log(guest);
     return (
         <div id="container" >
             <Container flex style={{backgroundColor:"silver"}}>
@@ -38,7 +38,7 @@ function Join() {
                             <Row>
                                 <form onSubmit={handleSubmit} >
                                     <input type="text" name="session" onChange={e => setSessionID(e.target.value)}  />
-                                    <Link to="/room" className="a-button">submit</Link>
+                                    <input type="submit" value="Submit"/*className="a-button" */ /> 
                                 </form>
                             </Row>
                         </Container>
