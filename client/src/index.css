@@ -83,3 +83,9 @@ input [type=text], select {
     border-color: none;
     width: 100%;
 }
+
+.border::hover {
+    border: red;
+    border-radius: 5px;
+
+}

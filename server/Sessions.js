@@ -25,7 +25,7 @@ class Sessions {
 
       //Create a new session accessed by sessionID.
       this.sessions[generatedSessionID] = ({sessionID: generatedSessionID, clients: [new Client(socketID, username)]});
-      socket.to(socketID).emit('create-session-response', generateSessionID);//emit to only that client so they can view the code 
+      socket.to(socketID).emit('create-session-response', generatedSessionID);//emit to only that client so they can view the code 
     }
 
     // joinSession(socketID, sessionID){

@@ -1,4 +1,4 @@
-import React, { useState} from "react"
+import React, { Fragment, useState} from "react"
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -6,7 +6,8 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import FormLabel from "react-bootstrap/esm/FormLabel";
 import { Link, Navigate, useNavigate } from "react-router-dom";
-import Modal from 'react-modal';
+import Modal from 'react-bootstrap/Modal';
+
 import { Transition, Dialog } from "@headlessui/react";
 // export class Signup extends React.Component {
 //   constructor(props) {
@@ -14,20 +15,39 @@ import { Transition, Dialog } from "@headlessui/react";
   
 function Signup () {
   const [guest, setGuest] = useState("");
+  const [showModal, setModal] = useState(false);
   const redirect = useState(false);
   const navigate = useNavigate();
   let data = localStorage.getItem('guest');
   const [isOpen, setIsOpen] = useState(false);
+  const handleClose = () => setModal(false);
+  const handleShow = () => setModal(true);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (guest.length > 1)
+      handleShow()
     let path = '/Join';
     console.log(guest);
     navigate(path, {state:{guest}}); //navigate redirects to join and gets the guest state
   }
-
   // render() {
     return (
+      <>
+            <Modal show={showModal} onHide={handleClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>Modal heading</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleClose}>
+              Close
+            </Button>
+            <Button variant="primary" onClick={handleClose}>
+              Save Changes
+            </Button>
+          </Modal.Footer>
+        </Modal>
       <div class='Signup' className={"bgcolor"}>
         <div class="jamshare-logo">
           <img src='./assets/images/JamShareLogo.jpg' alt=""></img>
@@ -82,22 +102,15 @@ function Signup () {
               </Form.Group>
               <br></br>
               <br></br>
-              <Button variant="primary" type="submit" /*className="a-button" */>
+              <Button variant="primary" type="submit"  /*className="a-button" */>
                 Jam as a Guest!
               </Button>
             </Form>
           </div>
-          <Transition show={true}>
-              <Dialog 
-                as="div"
-                className="fixed inset-0 z-30 overflow-y-auto"
-                onClose={() => setIsOpen(false)}
-              />
-              Example Pop Up text
-            </Transition>
         </div>
-      </div>
 
+      </div>
+      </>
     );
   // }
 }

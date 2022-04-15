@@ -6,20 +6,26 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import FormLabel from "react-bootstrap/esm/FormLabel";
 import { Link, Navigate, useNavigate, useLocation } from "react-router-dom";
+import Modal from 'react-bootstrap/Modal';
+
 // Join or create a Jam session room with link ID
 function Join() {
 
     const [sessionID, setSessionID] = useState("");
-    
+    const [showModal, setModal] = useState(false);
+    const handleClose = () => setModal(false);
+    const handleShow = () => setModal(true);
+
     //breaks rendering
     const navigate = useNavigate();
     let { state: { guest } = {} } = useLocation(); //gets the variable we passed from navigate
-    
+   //room code is invalid  
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log(guest)
         console.log(e.target.elements.session.value)
         let path = '/Room';
+        handleShow();
         navigate(path, {state:{sessionID, guest}});
     }
 
@@ -52,6 +58,20 @@ function Join() {
                         </Container>
                     </Col>
                 </Row>
+                <Modal show={showModal} onHide={handleClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>Modal heading</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleClose}>
+              Close
+            </Button>
+            <Button variant="primary" onClick={handleClose}>
+              Save Changes
+            </Button>
+          </Modal.Footer>
+        </Modal>
             </Container>
         </div>
     );
