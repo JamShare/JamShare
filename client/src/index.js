@@ -5,7 +5,9 @@ import { render } from 'react-dom';
 import {
   Signup,
   Room,
-  Join
+  Join,
+  Morg_Signup,
+  Morg_Signin
 } from './components/component_export';
 
 
@@ -24,6 +26,8 @@ ReactDOM.render(
         <Route path='/signup' element={<Signup />} />
         <Route path='/join' element={<Join />} />
         <Route path='/room' element={<Room />} />
+        <Route path='/signup2' element={<Morg_Signup />} />
+        <Route path='/signin2' element={<Morg_Signin />} />
       </Routes>
     </BrowserRouter>
   </div>,

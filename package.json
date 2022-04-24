@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js",
+    "start": "node ./server/app.js",
     "heroku-postbuild": "cd client && npm install && npm run build"
   },
   "dependencies": {
@@ -23,7 +23,8 @@
     "pg": "^8.7.3",
     "pug": "^3.0.2",
     "request": "^2.88.2",
-    "socket.io": "^4.4.1"
+    "socket.io": "^4.4.1",
+    "socket.io-stream": "^0.9.1"
   },
   "author": "",
   "license": "ISC"

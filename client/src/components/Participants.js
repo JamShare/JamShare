@@ -19,9 +19,6 @@ class Participants extends React.Component {
         
             this.participants = [];    
         }
-
-    
-    
     
     render() {
         return (

@@ -7,6 +7,8 @@ const http = require('http');
 const socket = require('socket.io');
 const port = process.env.PORT || 3001;
 
+const {register_new_user, validate_creds} = require("./auth/auth.js")
+
 var app = express();
 
 //Active sessions
@@ -26,14 +28,19 @@ app.post('/chat', function (request, response) {
   response.set('Access-Control-Allow-Origin', '*');
 });
 
-// app.post('/sample_request', async (req, res) => {
-//   console.log(req.body);
-//   res.send({
-//     important_information: '3better pizza3',
-//     more_important_info: '3better ingredients3',
-//     test: req.body.test + '356783',
-//   });
-// });
+//Auth
+app.post('/auth/signup', async (req, res) => {
+  const [username, password] = ["username", "password"].map(e=> req.body[e])
+  res.send(await register_new_user(username, password));
+})
+
+app.post('/auth/signin', async (req, res) => {
+  const [username, password] = ["username", "password"].map(e=> req.body[e])
+  res.send(await validate_creds(username, password))
+})
+
+
+///// end auth
 
 //Server
 const server = http.createServer(app);
@@ -71,7 +78,6 @@ io.on('connection', (socket) => {
   });
 
   let socketRoom; //Current room of the socket
-
 
   //socket.emit('me', socket.id);
 
