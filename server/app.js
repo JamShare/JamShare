@@ -47,7 +47,7 @@ const socketHistory = {};
 io.on('connection', (socket) => {
   //recieve the data from the user 
   clientObject = undefined;
-  socket.on("create-session", (data) => { Sessions.creatSession(socket.id)});
+  socket.on("create-session", (data) => { Sessions.createSession(socket.id, data)});
 
   //'join-session' emitted from client when user clicks 'join jam session' in /Join.js modal popup, or when user enters session ID in orange box and presses enter. 
   //apparently, does not require adding the client's socket.id to a list for each session.   
