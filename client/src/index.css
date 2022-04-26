@@ -13,42 +13,66 @@
     font-family: "IndieFlower";
 }
 .bgcolor{
-    height: 100vh;
+    height: 120vh;
     background-color: rgb(46, 46, 46);
 }
+
+.banner {
+    color: orange;
+    width: 100%;
+    padding-top: 1%;
+    justify-content: center;
+    display: flex;
+}
+
 .childbox{
-    margin: 10vh;
-    height: 70vh;
+    margin-left: 10vh;
+    margin-right: 10vh;
+    margin-top:2vh;
+    margin-bottom: 1vh;
+    height: 95vh;
     background-color: rgb(117, 117, 117);
     text-align: center;
     border-radius: 10px;
+    /* display: inline-flex; */
+    /* justify-content: center; */
 }
-.childbox-signups { 
-    background-color: rgb(216, 216, 216);
-    display: inline-block;
-    margin-left: 5vh;
-    margin-right: 5vh;
-    margin-bottom: 5vh;
-    vertical-align: middle;
-    width: 60vh;
-    height: 30vh;
-    padding: 2vh;
-    font-size: large;
-    border-radius: 10px;
+@media (min-width:1300px){
+    .signupbox{
+        display: inline-flex;
+    }
+    .childbox-signups { 
+        background-color: rgb(216, 216, 216);
+        display: inline-block;
+        /* display: inline-flex; */
+        margin-left: 5vh;
+        margin-right: 5vh;
+        margin-bottom: 5vh;
+        width: 60vh;
+        height: 45vh;
+        /* width: 100%;
+        height: 100%; */
+        padding: 2vh;
+        border-radius: 10px;
+        justify-content: center;
+        align-items: center;
+    }
+    .childbox-guest {
+        background-color: rgb(216, 216, 216);
+        display: inline-block;
+        margin-left: 5vh;
+        margin-right: 5vh;
+        vertical-align: middle;
+        width: 80%;
+        height: 25vh;
+        /* width: 1300px;
+        height: 300px; */
+        border-radius: 10px;
+    }
 }
-.childbox-guest {
-    background-color: rgb(216, 216, 216);
-    display: inline-block;
-    margin-left: 5vh;
-    margin-right: 5vh;
-    vertical-align: middle;
-    width: 85%;
-    height: 20vh;
-    border-radius: 10px;
-}
+
 .a-button{ 
     font-weight: 400;
-    font-size: larger;
     font-family: 'IndieFlower';
     text-align: center;
     border: 1px solid transparent;
@@ -64,17 +88,20 @@
     color: orange;
 }
 .jamshare-logo {
-    width: 10%;
-    height: 10%;
+    width: 15%;
+    height: 15%;
     display: inline-flex;
     justify-content: center;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 5px;
 }
 div {
     font-family: "IndieFlower";
 }
 h1 {
+    text-align: center;
+    color: orange
+}
+h2 {
     text-align: center;
     color: orange
 }
