@@ -6,6 +6,7 @@ var cors = require('cors');
 const http = require('http');
 const socket = require('socket.io');
 const mediasoup = require('mediasoup');
+const Peer = require('./peer');
 const port = process.env.PORT || 3001;
 
 var chunks = [];
@@ -72,6 +73,8 @@ function getMediasoupWorker() {
   return worker;
 }
 
+const peers = new Map();
+
 var app = express();
 
 app.use(bodyParser.json());
@@ -113,6 +116,38 @@ const socketHistory = {};
 // Listening for incoming connections
 io.on('connection', (socket) => {
   let socketRoom; //Current room of the socket
+
+  try {
+    const sessionId = uuidv1();
+    socket.sessionId = sessionId;
+    const peer = new Peer(sessionId);
+    peers.set(sessionId, peer);
+
+    const message = JSON.stringify({
+      action: 'router-rtp-capabilities',
+      routerRtpCapabilities: router.rtpCapabilities,
+      sessionId: peer.sessionId
+    });
+
+    console.log('router.rtpCapabilities:', router.rtpCapabilities)
+
+    socket.send(message);
+  } catch (error) {
+    console.error('Failed to create new peer [error:%o]', error);
+    socket.terminate();
+    return;
+  }
+
+  socket.once('close', () => {
+    console.log('socket::close [sessionId:%s]', socket.sessionId);
+
+    const peer = peers.get(socket.sessionId);
+
+    if (peer && peer.process) {
+      peer.process.kill();
+      peer.process = undefined;
+    }
+  });
 
   //console.log('connected Id:', socket.id);
 
@@ -216,6 +251,149 @@ io.on('connection', (socket) => {
 
 
 });
+
+const handleJsonMessage = async (jsonMessage) => {
+  const { action } = jsonMessage;
+
+  switch (action) {
+    case 'create-transport':
+      return await handleCreateTransportRequest(jsonMessage);
+    case 'connect-transport':
+      return await handleTransportConnectRequest(jsonMessage);
+    case 'produce':
+      return await handleProduceRequest(jsonMessage);
+    case 'start-record':
+      return await handleStartRecordRequest(jsonMessage);
+    case 'stop-record':
+      return await handleStopRecordRequest(jsonMessage);
+    default: console.log('handleJsonMessage() unknown action [action:%s]', action);
+  }
+};
+
+const handleCreateTransportRequest = async (jsonMessage) => {
+  const transport = await createTransport('webRtc', router);
+
+  const peer = peers.get(jsonMessage.sessionId);
+  peer.addTransport(transport);
+
+  return {
+    action: 'create-transport',
+    id: transport.id,
+    iceParameters: transport.iceParameters,
+    iceCandidates: transport.iceCandidates,
+    dtlsParameters: transport.dtlsParameters
+  };
+};
+
+const handleTransportConnectRequest = async (jsonMessage) => {
+  const peer = peers.get(jsonMessage.sessionId);
+
+  if (!peer) {
+    throw new Error(`Peer with id ${jsonMessage.sessionId} was not found`);
+  }
+
+  const transport = peer.getTransport(jsonMessage.transportId);
+
+  if (!transport) {
+    throw new Error(`Transport with id ${jsonMessage.transportId} was not found`);
+  }
+
+  await transport.connect({ dtlsParameters: jsonMessage.dtlsParameters });
+  console.log('handleTransportConnectRequest() transport connected');
+  return {
+    action: 'connect-transport'
+  };
+};
+
+const handleProduceRequest = async (jsonMessage) => {
+  console.log('handleProduceRequest [data:%o]', jsonMessage);
+
+  const peer = peers.get(jsonMessage.sessionId);
+
+  if (!peer) {
+    throw new Error(`Peer with id ${jsonMessage.sessionId} was not found`);
+  }
+
+  const transport = peer.getTransport(jsonMessage.transportId);
+
+  if (!transport) {
+    throw new Error(`Transport with id ${jsonMessage.transportId} was not found`);
+  }
+
+  const producer = await transport.produce({
+    kind: jsonMessage.kind,
+    rtpParameters: jsonMessage.rtpParameters
+  });
+
+  peer.addProducer(producer);
+
+  console.log('handleProducerRequest() new producer added [id:%s, kind:%s]', producer.id, producer.kind);
+
+  return {
+    action: 'produce',
+    id: producer.id,
+    kind: producer.kind
+  };
+};
+
+const handleStartRecordRequest = async (jsonMessage) => {
+  console.log('handleStartRecordRequest() [data:%o]', jsonMessage);
+  const peer = peers.get(jsonMessage.sessionId);
+
+  if (!peer) {
+    throw new Error(`Peer with id ${jsonMessage.sessionId} was not found`);
+  }
+
+  startRecord(peer);
+};
+
+const handleStopRecordRequest = async (jsonMessage) => {
+  console.log('handleStopRecordRequest() [data:%o]', jsonMessage);
+  const peer = peers.get(jsonMessage.sessionId);
+
+  if (!peer) {
+    throw new Error(`Peer with id ${jsonMessage.sessionId} was not found`);
+  }
+
+  if (!peer.process) {
+    throw new Error(`Peer with id ${jsonMessage.sessionId} is not recording`);
+  }
+
+  peer.process.kill();
+  peer.process = undefined;
+
+  // Release ports from port set
+  for (const remotePort of peer.remotePorts) {
+    releasePort(remotePort);
+  }
+};
+
+const publishProducerRtpStream = async (peer, producer, ffmpegRtpCapabilities) => {
+  console.log('publishProducerRtpStream()');
+
+  // Create the mediasoup RTP Transport used to send media to the GStreamer process
+  const rtpTransportConfig = config.plainRtpTransport;
+
+  // If the process is set to GStreamer set rtcpMux to false
+  if (PROCESS_NAME === 'GStreamer') {
+    rtpTransportConfig.rtcpMux = false;
+  }
+
+  const rtpTransport = await createTransport('plain', router, rtpTransportConfig);
+
+  // Set the receiver RTP ports
+  const remoteRtpPort = await getPort();
+  peer.remotePorts.push(remoteRtpPort);
+
+  let remoteRtcpPort;
+  // If rtpTransport rtcpMux is false also set the receiver RTCP ports
+  if (!rtpTransportConfig.rtcpMux) {
+    remoteRtcpPort = await getPort();
+    peer.remotePorts.push(remoteRtcpPort);
+  }
+
+
+
 
 server.listen(port, () => console.log(`Listening on port ${port}`));
 
