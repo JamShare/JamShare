@@ -114,5 +114,40 @@ input [type=text], select {
 .border::hover {
     border: red;
     border-radius: 5px;
-
 }
+
+.join-button {
+    height: 250px;
+    width: 300px;
+    background-color: pink;
+    font-size: 1.5rem;
+}
+
+.btn-flat {
+    background-color: purple;
+    color: white;
+  }
+
+.centered {
+    height: 100vh; /* Magic here */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(46, 46, 46);
+    padding-top: 50px;
+    padding-right: 30px;
+    padding-bottom: 50px;
+    padding-left: 80px;
+    font-size: x-large;
+  }
+
+  .container{
+    background-color: silver;
+  }
+
+  .session-id {
+    background-color: rgb(221, 88, 0);
+    height: 250px;
+    width: 300px;
+  }
+

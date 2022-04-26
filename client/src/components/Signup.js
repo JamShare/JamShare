@@ -24,11 +24,18 @@ function Signup () {
   // const [isOpen, setIsOpen] = useState(false);
   const handleClose = () => setModal(false);
   const handleShow = () => setModal(true);
+  const regex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/;
 
+  const checkPassword = (p) => {
+    if(!regex.test(p) && p.length <= 30)
+      handleShow();
+  }
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (guest.length > 1)
+    if (guest.length > 15 || guest.length == 0){
       handleShow()
+      return;
+    }
     let path = '/Join';
     console.log(guest);
     navigate(path, {state:{guest}}); //navigate redirects to join and gets the guest state
@@ -36,11 +43,11 @@ function Signup () {
   // render() {
     return (
       <>
-        <Modal show={showModal} onHide={handleClose}>
+            <Modal show={showModal} onHide={handleClose} enforceFocus={true} >
           <Modal.Header closeButton>
-            <Modal.Title>Modal heading</Modal.Title>
+            <Modal.Title>Alert</Modal.Title>
           </Modal.Header>
-          <Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
+          <Modal.Body>Must enter a guest name that is less than 15 characters</Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={handleClose}>
               Close
