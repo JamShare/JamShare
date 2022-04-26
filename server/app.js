@@ -5,10 +5,72 @@ const bodyParser = require('body-parser');
 var cors = require('cors');
 const http = require('http');
 const socket = require('socket.io');
-const ss = require('socket.io-stream')
+const mediasoup = require('mediasoup');
 const port = process.env.PORT || 3001;
 
 var chunks = [];
+
+// mediasoup Workers.
+// @type {Array<mediasoup.Worker>}
+const mediasoupWorkers = [];
+
+// Index of next mediasoup Worker to use.
+// @type {Number}
+let nextMediasoupWorkerIdx = 0;
+
+run();
+
+async function run() {
+  await runMediasoupWorkers();
+
+}
+
+/**
+ * Launch as many mediasoup Workers as given in the configuration file.
+ */
+async function runMediasoupWorkers() {
+  const { numWorkers } = config.mediasoup;
+
+  logger.info('running %d mediasoup Workers...', numWorkers);
+
+  for (let i = 0; i < numWorkers; ++i) {
+    const worker = await mediasoup.createWorker(
+      {
+        logLevel: config.mediasoup.workerSettings.logLevel,
+        logTags: config.mediasoup.workerSettings.logTags,
+        rtcMinPort: Number(config.mediasoup.workerSettings.rtcMinPort),
+        rtcMaxPort: Number(config.mediasoup.workerSettings.rtcMaxPort)
+      });
+
+    worker.on('died', () => {
+      logger.error(
+        'mediasoup Worker died, exiting  in 2 seconds... [pid:%d]', worker.pid);
+
+      setTimeout(() => process.exit(1), 2000);
+    });
+
+    mediasoupWorkers.push(worker);
+
+    // Log worker resource usage every X seconds.
+    setInterval(async () => {
+      const usage = await worker.getResourceUsage();
+
+      logger.info('mediasoup Worker resource usage [pid:%d]: %o', worker.pid, usage);
+    }, 120000);
+  }
+}
+
+/**
+ * Get next mediasoup Worker.
+ */
+function getMediasoupWorker() {
+  const worker = mediasoupWorkers[nextMediasoupWorkerIdx];
+
+  if (++nextMediasoupWorkerIdx === mediasoupWorkers.length)
+    nextMediasoupWorkerIdx = 0;
+
+  return worker;
+}
 
 var app = express();
 
