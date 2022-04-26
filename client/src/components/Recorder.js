@@ -52,20 +52,6 @@ class Recorder extends React.Component {
     // asks for permission to use audio device from user
     // if declined or error, returns a null stream
     async getAudioDevice() {
-
-        const constraints = {
-            'audio': { 'echoCancellation': true },
-        }
-        const openMediaDevices = async (constraints) => {
-            return await navigator.mediaDevices.getUserMedia(constraints);
-        }
-
-        try {
-            const stream = openMediaDevices({ 'video': true, 'audio': true });
-            console.log('Got MediaStream:', stream);
-        } catch (error) {
-            console.error('Error accessing media devices.', error);
-        }
         
         var stream = null;
         try {
@@ -152,9 +138,6 @@ class Recorder extends React.Component {
     render() {
         return (
             <div id="container" >
-            <body>
-                <audio id="localAudio" autoplay playsinline controls="false" />
-            </body>
             <button onClick={this.featureRun}>
                 <image src={this.icon} alt=""></image>
                 {this.text}
