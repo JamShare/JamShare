@@ -5,6 +5,7 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import FormLabel from 'react-bootstrap/esm/FormLabel';
+import { Link, Navigate, useNavigate, useLocation } from "react-router-dom";
 
 import { io } from 'socket.io-client';
 import {
@@ -105,7 +106,8 @@ function Room() {
   const [chat, setChat] = useState([]);
   const prevRoomRef = useRef();
   const messageBoxRef = useRef();
-
+  const location = useLocation();
+  const { state: { guest, sessionID } = {} } = useLocation();
   useEffect(() => {
     prevRoomRef.current = room;
   });
@@ -119,7 +121,7 @@ function Room() {
     if (prevRoom && room) {
       switchRooms(prevRoom, room);
     } else if (room) {
-      let newName = prompt('Enter Username, can be changed later');
+      let newName = guest;
       if (username === 'tempName') {
         setUsername(newName);
       }

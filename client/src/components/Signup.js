@@ -1,101 +1,115 @@
-import React, { useState} from "react"
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
+import React, { Fragment, useState} from "react"
+// import Container from 'react-bootstrap/Container';
+// import Row from 'react-bootstrap/Row';
+// import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import FormLabel from "react-bootstrap/esm/FormLabel";
-import { Link, Navigate, useNavigate } from "react-router-dom";
-import Modal from 'react-modal';
-import { Transition, Dialog } from "@headlessui/react";
+// import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import Modal from 'react-bootstrap/Modal';
+import JamShareLogo from './assets/images/JamShareLogo.jpg'
+
+// import { Transition, Dialog } from "@headlessui/react";
 // export class Signup extends React.Component {
 //   constructor(props) {
 //     super(props);
   
 function Signup () {
   const [guest, setGuest] = useState("");
-  const redirect = useState(false);
+  const [showModal, setModal] = useState(false);
+  // const redirect = useState(false);
   const navigate = useNavigate();
-  let data = localStorage.getItem('guest');
-  const [isOpen, setIsOpen] = useState(false);
+  // let data = localStorage.getItem('guest');
+  // const [isOpen, setIsOpen] = useState(false);
+  const handleClose = () => setModal(false);
+  const handleShow = () => setModal(true);
 
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   if(guest === " ")
-  //     alert('no blank guest')
-  //   let path = '/join';
-  //   console.log(guest);
-  //   navigate(path, {state:{guest}}); //navigate redirects to join and gets the guest state
-  // }
-
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (guest.length > 1)
+      handleShow()
+    let path = '/Join';
+    console.log(guest);
+    navigate(path, {state:{guest}}); //navigate redirects to join and gets the guest state
+  }
   // render() {
     return (
+      <>
+        <Modal show={showModal} onHide={handleClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>Modal heading</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleClose}>
+              Close
+            </Button>
+            <Button variant="primary" onClick={handleClose}>
+              Save Changes
+            </Button>
+          </Modal.Footer>
+        </Modal>
+
       <div class='Signup' className={"bgcolor"}>
-        <div class="jamshare-logo">
-          <img src='./assets/images/JamShareLogo.jpg' alt=""></img>
-          <h1 className={"gentext orange"}>JamShare Logo Here!</h1>
+      <div class='banner'>
+          <img class='jamshare-logo' src={JamShareLogo} alt='logo'/>
         </div>
         <div class="childbox">
+          <br></br>
           <h1 className={"gentext orange"}>Let's get Jammin'</h1>
-          {/* <div text-align="center">
-            <h1 vertical-align="middle" display="inline-block">Sign In</h1>
-            <h1 vertical-align="middle" display="inline-block">Sign Up</h1>
-          </div> */}
-
-          <div class="childbox-signups">
-            <h1>Sign In</h1>
-            <form>
-              <FormLabel className={"purple"}>Username </FormLabel>
-              <Form.Control type="username" placeholder="Enter Username" />
-              <br></br>
-              <FormLabel className={"purple"}>Password </FormLabel>
-              <Form.Control type="password" placeholder="Enter Password" />
-              <br></br>
-              <br></br>
-              <Link to="/join" className="a-button">
-                Sign In and Jam!
-              </Link>
-            </form>
-          </div>
-          <div class="childbox-signups">
-            <h1>Sign Up</h1>
-            <form>
-              <FormLabel className={"purple"}>Username </FormLabel>
-              <Form.Control type="username" placeholder="Enter Username" />
-              <br></br>
-              <FormLabel className={"purple"}>Email </FormLabel>
-              <Form.Control type="email" placeholder="Enter Valid Email" />
-              <br></br>
-              <FormLabel className={"purple"}>Password </FormLabel>
-              <Form.Control type="password" placeholder="Enter Password" />
-              <br></br>
-              <br></br>
-              <Link to="/join" className="a-button">
-                Sign Up and Jam!
-              </Link>
-            </form>
-          </div>
+          <br></br>
+          <div class="signupbox">
+            <div class="childbox-signups">
+              <h2>Sign In</h2>
+              <form>
+                <br></br>
+                <FormLabel className={"purple"}>Username </FormLabel>
+                <Form.Control type="username" placeholder="Enter Username" />
+                <FormLabel className={"purple"}>Password </FormLabel>
+                <Form.Control type="password" placeholder="Enter Password" />
+                <br></br>
+                <Link to="/join" className="a-button">
+                  Sign In and Jam!
+                </Link>
+              </form>
+            </div>
+            <div class="childbox-signups">
+              <h2>Sign Up</h2>
+              <form>
+                <FormLabel className={"purple"}>Username </FormLabel>
+                <Form.Control type="username" placeholder="Enter Username" />
+                <FormLabel className={"purple"}>Email </FormLabel>
+                <Form.Control type="email" placeholder="Enter Valid Email" />
+                <FormLabel className={"purple"}>Password </FormLabel>
+                <Form.Control type="password" placeholder="Enter Password" />
+                <br></br>
+                <Link to="/join" className="a-button">
+                  Sign Up and Jam!
+                </Link>
+              </form>
+            </div>
+          </div> 
           <div class="childbox-guest">
-            <h1>Continue as Guest</h1>
-            <FormLabel className={"purple"}>Username </FormLabel>
-            <Form.Control type="username" placeholder="Enter Username" />
-            <br></br>
-            <br></br>
-            <Link to="/join" className="a-button">
-              Jam as a Guest!
-            </Link>
+            <h2>Continue as Guest</h2>
+            <Form onSubmit={handleSubmit} >
+              <Form.Group className="mb-3" controlID="formBasicUsername">
+                <FormLabel className={"purple"}>Username </FormLabel>
+                <Form.Control type="username" name="guest" placeholder="Enter Username" onChange={e => setGuest(e.target.value)} />
+              </Form.Group>
+              {/* can't get button to fit styling (purple color) without changing to Link type */}
+              <Button variant="primary" type="submit" color="orange">
+                Jam as a Guest!
+              </Button>
+              {/* <Link to="/join" className="a-button">
+                  Sign Up and Jam!
+              </Link> */}
+            </Form>
           </div>
-          <Transition show={true}>
-              <Dialog 
-                as="div"
-                className="fixed inset-0 z-30 overflow-y-auto"
-                onClose={() => setIsOpen(false)}
-              />
-              Example Pop Up text
-            </Transition>
         </div>
-      </div>
 
+      </div>
+      </>
     );
   // }
 }

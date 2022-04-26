@@ -19,10 +19,9 @@ import { Link, Navigate, useNavigate, useLocation } from "react-router-dom";
 
 import './App.css'
 function Room() {
-  
-  //breaks the rendering 
-  // const location = useLocation();
-  // const { state: { guest, sessionID } = {} } = useLocation();
+  let { state: { guest } = {} } = useLocation(); //gets the variable we passed from navigate
+  //const navigate = useNavigate();
+  //navigate('/Chat', {state:{sessionID, guest}});
 
   return (
     <div>
