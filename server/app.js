@@ -47,27 +47,20 @@ const socketHistory = {};
 io.on('connection', (socket) => {
   //recieve the data from the user 
   clientObject = undefined;
-  socket.on("create-session", (data) => { Sessions.creatSession(socket.id)});
+  socket.on("create-session", (data) => { Sessions.creatSession(socket.id, data)});
 
   //'join-session' emitted from client when user clicks 'join jam session' in /Join.js modal popup, or when user enters session ID in orange box and presses enter. 
   //apparently, does not require adding the client's socket.id to a list for each session.   
-  socket.on('join-session' , (data) => { Sessions.joinSession(data.SessionID, socket.id)
-    // try{
-    //   //get client info
-    //   clientObject = Clients.clientInfo(socket.id);
-    //   if (clientObject !== undefined) {
-    //     //recieve the data from the client in a room
-    //     Sessions.recieveData(socket.id, data);
-    //   }
-    // } catch (error) {
-    //   console.error(error);
-    // }
-  });
+  socket.on('join-session' , (data) => { Sessions.joinSession(data.SessionID, socket.id)});
 
   //broadcast incoming stream to all clients in session
   socket.on('client-audio-stream', (data)=> { Sessions.streamToSession(data, socket.id)});
 
 
+
+
+  
+  // socket.on('chat')
 
   let socketRoom; //Current room of the socket for chat prototype
 

@@ -6,6 +6,7 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import FormLabel from "react-bootstrap/esm/FormLabel";
 import { Link, Navigate, useNavigate, useLocation } from "react-router-dom";
+import { Socket } from 'socket.io-client';
 // Join or create a Jam session room with link ID
 function Join() {
 
@@ -14,7 +15,6 @@ function Join() {
     //breaks rendering
     // const navigate = useNavigate();
     // let { state: { guest } = {} } = useLocation(); //gets the variable we passed from navigate
-    
     const handleSubmit = (e) => {
     //   e.preventDefault();
     //   console.log(guest)
@@ -23,6 +23,7 @@ function Join() {
     //   navigate(path, {state:{sessionID, guest}});
     }
 
+    
 
     return (
         <div id="container" >

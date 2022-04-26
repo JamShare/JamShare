@@ -13,7 +13,6 @@ class Sessions {
       this.sessions = [
         { sessionID: 'session0', clients: []},//example format of session object list 
       ]
-  
     }
 
     createSession(socketID, username){
@@ -21,7 +20,7 @@ class Sessions {
       //should wrap in a try catch block?
       generatedSessionID = generateSessionID();
       if(this.sessions[generateSessionID].clients.length > 0) //recurse
-        return createSession(socketID)
+        return createSession(socketID, username)
 
       //Create a new session accessed by sessionID.
       this.sessions[generatedSessionID] = ({sessionID: generatedSessionID, clients: [new Client(socketID, username)]});
@@ -62,11 +61,31 @@ class Sessions {
       socket.brodcast.to(sessionID).emit('server-audio-stream', streamData);
     }
 
+    // chat(){
+      // const { message, room, name } = data;
+      // let newMsg = message;
+      // if (name) {
+      //   newMsg = `${name}: ${message}`;
+      // }
+      // socket.broadcast.to(socketRoom).emit('sendChatMessage', newMsg, name);
+  
+      // //this can be changed TODO
+  
+      // //let newMsg = message;
+      // socketHistory[socketRoom] = socketHistory[socketRoom]
+      //   ? [newMsg, ...socketHistory[socketRoom]]
+      //   : [newMsg];
+    // }
+
     generateSessionID(){
+      // var crypto = require("crypto");
+      // var id = crypto.randomBytes(20).toString('hex');
+
+      length = 20;
       var genSessionID = "";
       var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
       for (var i = 0; i < length; i++) {
-        genSessionID += characters.charAt(Math.floor(Math.random() * charactersLength));
+        genSessionID += characters.charAt(Math.floor(Math.random() * characters.length));
       }
         return genSessionID;
     }
