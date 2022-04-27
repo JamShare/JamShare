@@ -1,0 +1,87 @@
+.banner {
+  background-color: rgb(117, 117, 117);
+  width: 100%;
+  margin-top: -5px;
+}
+.banner_text {
+  font-size: 250%;
+  padding: 20px;
+  margin: 0%;
+  text-align: center;
+  color: orange;
+}
+.rounded{
+    border-radius: 50%;
+  }
+.ProjectSectionContent {
+    background-color:  rgb(46, 46, 46);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+    background-size: cover;
+  
+    height: 100%;
+    width: 100%;
+    min-height: 1000px;
+  }
+  .ProjectSectionContainer {
+    display: flex;
+  }
+  .ProjectSectionBlock {
+    display:list-item;
+  }
+.RoomComponentList{
+    padding: 20px;
+    background-color: rgb(216, 216, 216);
+    display: block;
+    text-align: left;
+    border: 3px solid #ffffff; 
+    border-radius: 5px;
+    color: purple;
+    width: 250px;
+    height: 60px;
+    font-family: "IndieFlower";
+    font-size: 18pt;
+    margin: 5px;   
+}
+  .userblock{
+    padding: 50px;
+    background-color: rgb(117, 117, 117);
+    display: block;
+    text-align: left;
+    border: 3px solid #ffffff;
+    border-radius: 5px;
+    color: rgb(216, 216, 216);
+    width: 300px;
+    height: 600px;
+    font-family: "IndieFlower";
+    font-size: 18pt;
+    margin: 50px;
+  }
+  .recordblock{
+    padding: 50px;
+    background-color: rgb(117, 117, 117);
+    display: block;
+    text-align: left;
+    border: 3px solid #ffffff;
+    border-radius: 5px;
+    color: rgb(216, 216, 216);
+    width: 300px;
+    height: 600px;
+    font-family: "IndieFlower";
+    font-size: 18pt;
+    margin: 50px;
+  }
+  .jamblock{
+    padding: 50px;
+    text-align: center;
+    background-color: rgb(117, 117, 117);
+    border: 3px solid #ffffff;
+    border-radius: 5px;
+    color: rgb(216, 216, 216);
+    width: 300px;
+    height: 600px;
+    font-family: "IndieFlower";
+    font-size: 18pt;
+    margin: 50px;
+  }
