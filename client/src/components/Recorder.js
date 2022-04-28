@@ -70,7 +70,7 @@ class Recorder extends React.Component {
                 console.error('Error opening audio .', error);
             }
         }
-
+        this.socket.emit("audio-stream-start");
         playAudio();
         return;
     }
