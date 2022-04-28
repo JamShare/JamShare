@@ -73,7 +73,7 @@ async function runWebServer() {
 
   await new Promise((resolve) => {
     const { listenIp, listenPort } = config;
-    server.listen(listenPort, listenIp, () => {
+    server.listen(port, () => {
       const listenIps = config.mediasoup.webRtcTransport.listenIps[0];
       const ip = listenIps.announcedIp || listenIps.ip;
       console.log('server is running');

@@ -6,7 +6,6 @@ const config = require('../clientConfig');
 
 const SERVER = "http://localhost:3001";
 const hostname = window.location.hostname;
-let connectData = null;
 
 class Recorder extends React.Component {
     constructor(props) {
@@ -47,6 +46,7 @@ class Recorder extends React.Component {
 
 
         //his.socket = io.connect(SERVER);    
+        /*
         (async () => {
             try {
                 await this.connect();
@@ -56,47 +56,8 @@ class Recorder extends React.Component {
                 console.error(err);
             }
         })();
+        */
 
-        //console.log(this.data);
-        //while(connectData === null) {
-        //    console.log(connectData);
-        //}
-        this.transport = this.device.createSendTransport();
-        this.transport.on('connect', async ({ dtlsParameters }, callback, errback) => {
-            this.socket.request('connectProducerTransport', { dtlsParameters })
-                .then(callback)
-                .catch(errback);
-        });
-
-        this.transport.on('produce', async ({ kind, rtpParameters }, callback, errback) => {
-            try {
-                const { id } = await this.socket.request('produce', {
-                    transportId: this.transport.id,
-                    kind,
-                    rtpParameters,
-                });
-                callback({ id });
-            } catch (err) {
-                errback(err);
-            }
-        });
-
-        this.transport.on('connectionstatechange', (state) => {
-            switch (state) {
-                case 'connecting':
-                    break;
-
-                case 'connected':
-                    document.querySelector('audio#localAudio').srcObject = this.stream;
-                    break;
-
-                case 'failed':
-                    this.transport.close();
-                    break;
-
-                default: break;
-            }
-        });
     }
 
     async connect() {
@@ -145,15 +106,69 @@ class Recorder extends React.Component {
     }
 
     async publish(e) {
-        const data = await this.socket.request('createProducerTransport', {
-            forceTcp: false,
-            rtpCapabilities: this.device.rtpCapabilities,
-        });
-        if (data.error) {
-            console.error(data.error);
-            return;
-        }
+    const isWebcam = (e.target.id === 'btn_webcam');
+
+    const data = await this.socket.request('createProducerTransport', {
+        forceTcp: false,
+        rtpCapabilities: this.device.rtpCapabilities,
+    });
+    if (data.error) {
+        console.error(data.error);
+        return;
     }
+
+    console.log(data);
+    const transport = this.device.createSendTransport(data);
+    transport.on('connect', async ({ dtlsParameters }, callback, errback) => {
+        this.socket.request('connectProducerTransport', { dtlsParameters })
+            .then(callback)
+            .catch(errback);
+    });
+
+    transport.on('produce', async ({ kind, rtpParameters }, callback, errback) => {
+        try {
+            const { id } = await this.socket.request('produce', {
+                transportId: transport.id,
+                kind,
+                rtpParameters,
+            });
+            callback({ id });
+        } catch (err) {
+            errback(err);
+        }
+    });
+
+    transport.on('connectionstatechange', (state) => {
+        switch (state) {
+            case 'connecting':
+                
+                break;
+
+            case 'connected':
+                document.querySelector('audio#localAudio').srcObject = stream;
+                
+                break;
+
+            case 'failed':
+                transport.close();
+                
+                break;
+
+            default: break;
+        }
+    });
+
+    let stream;
+    try {
+        stream = await this.getUserMedia(transport, isWebcam);
+        const track = stream.getVideoTracks()[0];
+        const params = { track };
+        
+        this.producer = await transport.produce(params);
+    } catch (err) {
+        
+    }
+}
 
     async consume(transport) {
         const { rtpCapabilities } = this.device;
@@ -346,13 +361,13 @@ class Recorder extends React.Component {
                     <image src={this.icon} alt=""></image>
                     {this.text}
                 </button>
-                <button onClick={this.getAudioDevice}>
+                <button onClick={this.connect}>
                     Choose audio device
                 </button>
-                <button onClick={this.startRecording}>
+                <button onClick={this.subscribe}>
                     Start recording
                 </button>
-                <button onClick={this.stopRecording}>
+                <button onClick={this.publish}>
                     Stop recording
                 </button>
                 <button onClick={this.playRecording}>
