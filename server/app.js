@@ -113,6 +113,7 @@ async function runSocketServer() {
     });
 
     socket.on('getRouterRtpCapabilities', (data, callback) => {
+      //console.log(mediasoupRouter.rtpCapabilities);
       callback(mediasoupRouter.rtpCapabilities);
     });
 
@@ -293,6 +294,8 @@ async function createWebRtcTransport() {
     maxIncomingBitrate,
     initialAvailableOutgoingBitrate
   } = config.mediasoup.webRtcTransport;
+
+  
 
   const transport = await mediasoupRouter.createWebRtcTransport({
     listenIps: config.mediasoup.webRtcTransport.listenIps,

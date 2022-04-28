@@ -6,6 +6,7 @@ const config = require('../clientConfig');
 
 const SERVER = "http://localhost:3001";
 const hostname = window.location.hostname;
+let connectData = null;
 
 class Recorder extends React.Component {
     constructor(props) {
@@ -41,7 +42,7 @@ class Recorder extends React.Component {
         this.device = null;
         this.socket = null;
         this.producer = null;
-        this.data = null;
+        //this.data = null;
         this.stream = null;
 
 
@@ -56,7 +57,11 @@ class Recorder extends React.Component {
             }
         })();
 
-        this.transport = this.device.createSendTransport(this.data);
+        //console.log(this.data);
+        //while(connectData === null) {
+        //    console.log(connectData);
+        //}
+        this.transport = this.device.createSendTransport();
         this.transport.on('connect', async ({ dtlsParameters }, callback, errback) => {
             this.socket.request('connectProducerTransport', { dtlsParameters })
                 .then(callback)
@@ -82,7 +87,7 @@ class Recorder extends React.Component {
                     break;
 
                 case 'connected':
-                    document.querySelector('#local_video').srcObject = this.stream;
+                    document.querySelector('audio#localAudio').srcObject = this.stream;
                     break;
 
                 case 'failed':
@@ -104,9 +109,8 @@ class Recorder extends React.Component {
         this.socket.request = socketPromise(this.socket);
 
         this.socket.on('connect', async () => {
-            this.data = await this.socket.request('getRouterRtpCapabilities');
-            //console.log(this.data);
-            await this.loadDevice(this.data);
+            const data = await this.socket.request('getRouterRtpCapabilities');
+            await this.loadDevice(data);
         });
 
         this.socket.on('disconnect', () => {
@@ -141,26 +145,25 @@ class Recorder extends React.Component {
     }
 
     async publish(e) {
-
-        this.data = await this.socket.request('createProducerTransport', {
+        const data = await this.socket.request('createProducerTransport', {
             forceTcp: false,
             rtpCapabilities: this.device.rtpCapabilities,
         });
-        if (this.data.error) {
-            console.error(this.data.error);
+        if (data.error) {
+            console.error(data.error);
             return;
         }
     }
 
     async consume(transport) {
         const { rtpCapabilities } = this.device;
-        this.data = await this.socket.request('consume', { rtpCapabilities });
+        const data = await this.socket.request('consume', { rtpCapabilities });
         const {
             producerId,
             id,
             kind,
             rtpParameters,
-        } = this.data;
+        } = data;
 
         let codecOptions = {};
         const consumer = await transport.consume({
@@ -175,17 +178,23 @@ class Recorder extends React.Component {
         return stream;
     }
 
-    async getUserMedia(transport, isWebcam) {
-        if (!this.device.canProduce('video')) {
-            console.error('cannot produce video');
+    async getUserMedia() {
+        if (!this.device.canProduce('audio')) {
+            console.error('cannot produce audio');
             return;
         }
 
         let stream;
         try {
-            stream = isWebcam ?
-                await navigator.mediaDevices.getUserMedia({ video: true }) :
-                await navigator.mediaDevices.getDisplayMedia({ video: true });
+            const constraints = {
+                audio: {
+                    echoCancellation: false,
+                    autoGainControl: false,
+                    noiseSuppression: false,
+                    latency: 0
+                }
+            };
+            stream = await navigator.mediaDevices.getUserMedia(constraints);
         } catch (err) {
             console.error('getUserMedia() failed:', err.message);
             throw err;
@@ -194,15 +203,15 @@ class Recorder extends React.Component {
     }
 
     async subscribe() {
-        this.data = await this.socket.request('createConsumerTransport', {
+        const data = await this.socket.request('createConsumerTransport', {
             forceTcp: false,
         });
-        if (this.data.error) {
-            console.error(this.data.error);
+        if (data.error) {
+            console.error(data.error);
             return;
         }
 
-        const transport = this.device.createRecvTransport(this.data);
+        const transport = this.device.createRecvTransport(data);
         transport.on('connect', ({ dtlsParameters }, callback, errback) => {
             this.socket.request('connectConsumerTransport', {
                 transportId: transport.id,
@@ -219,7 +228,7 @@ class Recorder extends React.Component {
                     break;
 
                 case 'connected':
-                    document.querySelector('#remote_video').srcObject = await stream;
+                    document.querySelector('#remote_audio').srcObject = await stream;
                     await this.socket.request('resume');
 
                     break;
