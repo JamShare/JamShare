@@ -31,70 +31,77 @@ class Recorder extends React.Component {
         this.startRecording = this.startRecording.bind(this);
         this.stopRecording = this.stopRecording.bind(this);
         this.playRecording = this.playRecording.bind(this);
+        this.connect = this.connect.bind(this);
+        this.loadDevice = this.loadDevice.bind(this);
+        this.publish = this.publish.bind(this);
 
-        this.socket = io.connect(SERVER);
-        connect()
-
-        async function connect() {
-            const opts = {
-                transports: ['websocket'],
-            };
-
-            const serverUrl = `https://${hostname}:${config.listenPort}`;
-            this.socket = io(SERVER);
-            this.socket.request = socketPromise(this.socket);
-
-            this.socket.on('connect', async () => {
-                const data = await this.socket.request('getRouterRtpCapabilities');
-
-                await loadDevice(data);
-            });
-
-            this.socket.on('disconnect', () => {
-
-            });
-
-            this.socket.on('connect_error', (error) => {
-                console.error('could not connect to %s%s (%s)', SERVER, opts.path, error.message);
-            });
-
-            this.socket.on('newProducer', () => {
-
-            });
-
-            this.socket.on("audio-blob", (chunks) => {
-                console.log("Audio blob recieved.");
-                let blob = new Blob(chunks, { 'type': 'audio/ogg; codecs=opus' })
-                let audioURL = URL.createObjectURL(blob);
-                this.audio = new Audio(audioURL);
-            });
-        }
-
-        async function loadDevice(routerRtpCapabilities) {
+        //his.socket = io.connect(SERVER);    
+        (async () => {
             try {
-                this.device = new mediasoup.Device();
-            } catch (error) {
-                if (error.name === 'UnsupportedError') {
-                    console.error('browser not supported');
-                }
+                await this.connect();
+            } catch (err) {
+                console.error(err);
             }
-            await this.device.load({ routerRtpCapabilities });
-        }
-
-        async function publish(e) {
-
-            const data = await this.socket.request('createProducerTransport', {
-                forceTcp: false,
-                rtpCapabilities: this.device.rtpCapabilities,
-            });
-            if (data.error) {
-                console.error(data.error);
-                return;
-            }
-    }
+        })();
 }
 
+    async connect() {
+        const opts = {
+            transports: ['websocket'],
+        };
 
+        const serverUrl = `https://${hostname}:${config.listenPort}`;
+        this.socket = io(SERVER);
+        this.socket.request = socketPromise(this.socket);
+
+        this.socket.on('connect', async () => {
+            const data = await this.socket.request('getRouterRtpCapabilities');
+
+            await this.loadDevice(data);
+        });
+
+        this.socket.on('disconnect', () => {
+
+        });
+
+        this.socket.on('connect_error', (error) => {
+            console.error('could not connect to %s%s (%s)', SERVER, opts.path, error.message);
+        });
+
+        this.socket.on('newProducer', () => {
+
+        });
+
+        this.socket.on("audio-blob", (chunks) => {
+            console.log("Audio blob recieved.");
+            let blob = new Blob(chunks, { 'type': 'audio/ogg; codecs=opus' })
+            let audioURL = URL.createObjectURL(blob);
+            this.audio = new Audio(audioURL);
+        });
+    }
+
+    async loadDevice(routerRtpCapabilities) {
+        try {
+            this.device = new mediasoup.Device();
+        } catch (error) {
+            if (error.name === 'UnsupportedError') {
+                console.error('browser not supported');
+            }
+        }
+        await this.device.load({ routerRtpCapabilities });
+    }
+
+    async publish(e) {
+
+        const data = await this.socket.request('createProducerTransport', {
+            forceTcp: false,
+            rtpCapabilities: this.device.rtpCapabilities,
+        });
+        if (data.error) {
+            console.error(data.error);
+            return;
+        }
+    }
 
     // event handlers for recorder
     onDataAvailable(e) {
