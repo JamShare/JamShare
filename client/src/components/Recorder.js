@@ -35,6 +35,11 @@ class Recorder extends React.Component {
         this.loadDevice = this.loadDevice.bind(this);
         this.publish = this.publish.bind(this);
 
+        this.device = null;
+        this.socket = null;
+        this.producer = null;
+
+
         //his.socket = io.connect(SERVER);    
         (async () => {
             try {
@@ -43,6 +48,13 @@ class Recorder extends React.Component {
                 console.error(err);
             }
         })();
+
+        this.transport = this.device.createSendTransport(data);
+        transport.on('connect', async ({ dtlsParameters }, callback, errback) => {
+            socket.request('connectProducerTransport', { dtlsParameters })
+                .then(callback)
+                .catch(errback);
+        });
 }
 
     async connect() {
@@ -56,7 +68,7 @@ class Recorder extends React.Component {
 
         this.socket.on('connect', async () => {
             const data = await this.socket.request('getRouterRtpCapabilities');
-
+            //console.log(data);
             await this.loadDevice(data);
         });
 
