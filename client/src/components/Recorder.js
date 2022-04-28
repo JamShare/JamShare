@@ -2,7 +2,7 @@ import React from 'react';
 const io = require('socket.io-client');
 const socketPromise = require('../socket.io-promise').promise;
 const mediasoup = require('mediasoup-client');
-const config = require('../../../config');
+const config = require('../clientConfig');
 
 const SERVER = "http://localhost:3001";
 
@@ -134,7 +134,7 @@ class Recorder extends React.Component {
         return (
             <div id="container" >
             <body>
-                <audio id="localAudio" autoplay playsinline controls="false" />
+                <audio id="localAudio" autoPlay playsInline controls={true} />
             </body>
             <button onClick={this.featureRun}>
                 <image src={this.icon} alt=""></image>
