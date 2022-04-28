@@ -7,12 +7,13 @@ const http = require('http');
 const socket = require('socket.io');
 const ss = require('socket.io-stream')
 const port = process.env.PORT || 3001;
+const config = require('./config');
 
 var chunks = [];
 
 // Global variables
 let worker;
-let webServer;
+let server;
 let socketServer;
 let app;
 let producer;
@@ -24,7 +25,7 @@ let mediasoupRouter;
 (async () => {
   try {
     await runExpressApp();
-    //await runWebServer();
+    await runWebServer();
     //await runSocketServer();
     //await runMediasoupWorker();
   } catch (err) {
@@ -64,14 +65,14 @@ async function runExpressApp() {
 }
 
 async function runWebServer() {
-  webServer = https.createServer(expressApp);
-  webServer.on('error', (err) => {
+  server = http.createServer(app);
+  server.on('error', (err) => {
     console.error('starting web server failed:', err.message);
   });
 
   await new Promise((resolve) => {
     const { listenIp, listenPort } = config;
-    webServer.listen(listenPort, listenIp, () => {
+    server.listen(listenPort, listenIp, () => {
       const listenIps = config.mediasoup.webRtcTransport.listenIps[0];
       const ip = listenIps.announcedIp || listenIps.ip;
       console.log('server is running');
@@ -91,7 +92,7 @@ async function runWebServer() {
 // });
 
 //Server
-const server = http.createServer(app);
+//const server = http.createServer(app);
 const io = socket(server, {
   cors: {
     methods: ['GET', 'POST'],
@@ -210,6 +211,6 @@ io.on('connection', (socket) => {
 
 });
 
-server.listen(port, () => console.log(`Listening on port ${port}`));
+//server.listen(port, () => console.log(`Listening on port ${port}`));
 
 module.exports = app;

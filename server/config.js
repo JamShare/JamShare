@@ -1,6 +1,6 @@
 module.exports = {
   listenIp: '0.0.0.0',
-  listenPort: 3000,
+  listenPort: 3001,
   mediasoup: {
     // Worker settings
     worker: {
