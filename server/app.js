@@ -8,7 +8,7 @@ const http = require('http');
 const socket = require('socket.io');
 const ss = require('socket.io-stream')
 const port = process.env.PORT || 3001;
-const config = require('./config');
+const config = require('../config');
 
 var chunks = [];
 

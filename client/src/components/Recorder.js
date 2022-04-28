@@ -1,5 +1,8 @@
 import React from 'react';
 const io = require('socket.io-client');
+const socketPromise = require('../socket.io-promise').promise;
+const mediasoup = require('mediasoup-client');
+const config = require('../../../config');
 
 const SERVER = "http://localhost:3001";
 
