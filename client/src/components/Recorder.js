@@ -5,6 +5,7 @@ const mediasoup = require('mediasoup-client');
 const config = require('../clientConfig');
 
 const SERVER = "http://localhost:3001";
+const hostname = window.location.hostname;
 
 class Recorder extends React.Component {
     constructor(props) {
@@ -32,14 +33,68 @@ class Recorder extends React.Component {
         this.playRecording = this.playRecording.bind(this);
 
         this.socket = io.connect(SERVER);
+        connect()
 
-        this.socket.on("audio-blob", (chunks) => {
-            console.log("Audio blob recieved.");
-            let blob = new Blob(chunks, { 'type': 'audio/ogg; codecs=opus' })
-            let audioURL = URL.createObjectURL(blob);
-            this.audio = new Audio(audioURL);
-        });
+        async function connect() {
+            const opts = {
+                transports: ['websocket'],
+            };
+
+            const serverUrl = `https://${hostname}:${config.listenPort}`;
+            this.socket = io(SERVER);
+            this.socket.request = socketPromise(this.socket);
+
+            this.socket.on('connect', async () => {
+                const data = await this.socket.request('getRouterRtpCapabilities');
+
+                await loadDevice(data);
+            });
+
+            this.socket.on('disconnect', () => {
+
+            });
+
+            this.socket.on('connect_error', (error) => {
+                console.error('could not connect to %s%s (%s)', SERVER, opts.path, error.message);
+            });
+
+            this.socket.on('newProducer', () => {
+
+            });
+
+            this.socket.on("audio-blob", (chunks) => {
+                console.log("Audio blob recieved.");
+                let blob = new Blob(chunks, { 'type': 'audio/ogg; codecs=opus' })
+                let audioURL = URL.createObjectURL(blob);
+                this.audio = new Audio(audioURL);
+            });
+        }
+
+        async function loadDevice(routerRtpCapabilities) {
+            try {
+                this.device = new mediasoup.Device();
+            } catch (error) {
+                if (error.name === 'UnsupportedError') {
+                    console.error('browser not supported');
+                }
+            }
+            await this.device.load({ routerRtpCapabilities });
+        }
+
+        async function publish(e) {
+
+            const data = await this.socket.request('createProducerTransport', {
+                forceTcp: false,
+                rtpCapabilities: this.device.rtpCapabilities,
+            });
+            if (data.error) {
+                console.error(data.error);
+                return;
+            }
     }
+}
+
+
 
     // event handlers for recorder
     onDataAvailable(e) {
@@ -55,7 +110,6 @@ class Recorder extends React.Component {
     // asks for permission to use audio device from user
     // if declined or error, returns a null stream
     async getAudioDevice() {
-
         async function playAudio() {
             try {
                 const constraints = {
@@ -73,6 +127,7 @@ class Recorder extends React.Component {
                 console.error('Error opening audio .', error);
             }
         }
+        this.socket.emit("audio-stream-start");
         playAudio();
         return;
     }
