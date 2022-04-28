@@ -10,21 +10,76 @@ const port = process.env.PORT || 3001;
 
 var chunks = [];
 
-var app = express();
+// Global variables
+let worker;
+let webServer;
+let socketServer;
+let app;
+let producer;
+let consumer;
+let producerTransport;
+let consumerTransport;
+let mediasoupRouter;
 
-app.use(bodyParser.json());
-app.use(cors());
+(async () => {
+  try {
+    await runExpressApp();
+    //await runWebServer();
+    //await runSocketServer();
+    //await runMediasoupWorker();
+  } catch (err) {
+    console.error(err);
+  }
+})();
 
-//just a response if people access server directly
-app.get('/', function (request, response) {
-  response.sendFile(__dirname + '/message.json');
-});
+async function runExpressApp() {
+  app = express();
+  app.use(bodyParser.json());
+  app.use(cors());
+  app.use(express.static(path.resolve(__dirname, './client/build')));
 
-//Some cors and socket io things to make requests accepted from outsources
-app.post('/chat', function (request, response) {
-  //console.log(request.body);
-  response.set('Access-Control-Allow-Origin', '*');
-});
+  //just a response if people access server directly
+  app.get('/', function (request, response) {
+    response.sendFile(__dirname + '/message.json');
+  });
+
+  //Some cors and socket io things to make requests accepted from outsources
+  app.post('/chat', function (request, response) {
+    //console.log(request.body);
+    response.set('Access-Control-Allow-Origin', '*');
+  });
+
+  app.use((error, req, res, next) => {
+    if (error) {
+      console.warn('Express app error,', error.message);
+
+      error.status = error.status || (error.name === 'TypeError' ? 400 : 500);
+
+      res.statusMessage = error.message;
+      res.status(error.status).send(String(error));
+    } else {
+      next();
+    }
+  });
+}
+
+async function runWebServer() {
+  webServer = https.createServer(expressApp);
+  webServer.on('error', (err) => {
+    console.error('starting web server failed:', err.message);
+  });
+
+  await new Promise((resolve) => {
+    const { listenIp, listenPort } = config;
+    webServer.listen(listenPort, listenIp, () => {
+      const listenIps = config.mediasoup.webRtcTransport.listenIps[0];
+      const ip = listenIps.announcedIp || listenIps.ip;
+      console.log('server is running');
+      console.log(`open https://${ip}:${listenPort} in your web browser`);
+      resolve();
+    });
+  });
+}
 
 // app.post('/sample_request', async (req, res) => {
 //   console.log(req.body);
@@ -156,7 +211,5 @@ io.on('connection', (socket) => {
 });
 
 server.listen(port, () => console.log(`Listening on port ${port}`));
-
-app.use(express.static(path.resolve(__dirname, './client/build')));
 
 module.exports = app;
