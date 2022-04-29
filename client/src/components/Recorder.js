@@ -5,7 +5,6 @@ const mediasoup = require('mediasoup-client');
 const config = require('../clientConfig');
 
 const SERVER = "http://localhost:3001";
-const hostname = window.location.hostname;
 
 class Recorder extends React.Component {
     constructor(props) {
@@ -45,13 +44,14 @@ class Recorder extends React.Component {
         this.stream = null;
 
 
-        //his.socket = io.connect(SERVER);    
+        this.socket = io.connect(SERVER);    
+        
         /*
         (async () => {
             try {
                 await this.connect();
-                await this.publish();
-                await this.subscribe();
+                //await this.publish();
+                //await this.subscribe();
             } catch (err) {
                 console.error(err);
             }
@@ -66,8 +66,7 @@ class Recorder extends React.Component {
             transports: ['websocket'],
         };
 
-        const serverUrl = `https://${hostname}:${config.listenPort}`;
-        this.socket = io(SERVER, opts);
+        this.socket = io(SERVER);
         this.socket.request = socketPromise(this.socket);
 
         this.socket.on('connect', async () => {

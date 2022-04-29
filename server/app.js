@@ -90,9 +90,6 @@ async function runSocketServer() {
   let socketRoom; //Current room of the socket
 
   io = socket(server, {
-    serveClient: false,
-    path: '/server',
-    log: false,
     cors: {
       methods: ['GET', 'POST']
     },
