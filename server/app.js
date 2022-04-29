@@ -6,7 +6,6 @@ const bodyParser = require('body-parser');
 var cors = require('cors');
 const http = require('http');
 const socket = require('socket.io');
-const ss = require('socket.io-stream')
 const port = process.env.PORT || 3001;
 const config = require('./serverConfig');
 
@@ -73,11 +72,11 @@ async function runWebServer() {
 
   await new Promise((resolve) => {
     const { listenIp, listenPort } = config;
-    server.listen(port, () => {
+    server.listen(listenPort, listenIp, () => {
       const listenIps = config.mediasoup.webRtcTransport.listenIps[0];
       const ip = listenIps.announcedIp || listenIps.ip;
       console.log('server is running');
-      console.log(`open https://${ip}:${listenPort} in your web browser`);
+      console.log(`open http://${ip}:${listenPort} in your web browser`);
       resolve();
     });
   });
@@ -91,10 +90,14 @@ async function runSocketServer() {
   let socketRoom; //Current room of the socket
 
   io = socket(server, {
+    serveClient: false,
+    path: '/server',
+    log: false,
     cors: {
       methods: ['GET', 'POST']
     },
   });
+
 
   io.on('connection', (socket) => {
     //console.log('client connected');
@@ -113,7 +116,6 @@ async function runSocketServer() {
     });
 
     socket.on('getRouterRtpCapabilities', (data, callback) => {
-      //console.log(mediasoupRouter.rtpCapabilities);
       callback(mediasoupRouter.rtpCapabilities);
     });
 
@@ -169,7 +171,7 @@ async function runSocketServer() {
 
 
 
-    
+
 
     //console.log('connected Id:', socket.id);
 
@@ -295,7 +297,7 @@ async function createWebRtcTransport() {
     initialAvailableOutgoingBitrate
   } = config.mediasoup.webRtcTransport;
 
-  
+
 
   const transport = await mediasoupRouter.createWebRtcTransport({
     listenIps: config.mediasoup.webRtcTransport.listenIps,
