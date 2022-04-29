@@ -190,6 +190,16 @@ class Recorder extends React.Component {
             console.error('getUserMedia() failed:', err.message);
             throw err;
         }
+
+        if (stream) {
+            this.recorder = new MediaRecorder(stream)
+
+            // initialize event handlers for recorder
+            this.recorder.ondataavailable = this.onDataAvailable;
+            this.recorder.onstop = this.onStop;
+
+            console.log("Recording device acquired successfully.");
+        }
         return stream;
     }
 
