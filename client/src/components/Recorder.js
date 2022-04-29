@@ -25,7 +25,6 @@ class Recorder extends React.Component {
         // Recording bindings
         this.onDataAvailable = this.onDataAvailable.bind(this);
         this.onStop = this.onStop.bind(this);
-        this.getAudioDevice = this.getAudioDevice.bind(this);
         this.startRecording = this.startRecording.bind(this);
         this.stopRecording = this.stopRecording.bind(this);
         this.playRecording = this.playRecording.bind(this);
@@ -253,31 +252,6 @@ class Recorder extends React.Component {
         this.socket.emit("audio-stream-end");
     }
 
-    // asks for permission to use audio device from user
-    // if declined or error, returns a null stream
-    async getAudioDevice() {
-        async function playAudio() {
-            try {
-                const constraints = {
-                    audio: {
-                        echoCancellation: false,
-                        autoGainControl: false,
-                        noiseSuppression: false,
-                        latency: 0
-                    }
-                };
-                const stream = await navigator.mediaDevices.getUserMedia(constraints);
-                const audioElement = document.querySelector('audio#local_audio');
-                audioElement.srcObject = stream;
-            } catch (error) {
-                console.error('Error opening audio .', error);
-            }
-        }
-        this.socket.emit("audio-stream-start");
-        playAudio();
-        return;
-    }
-
     startRecording() {
         if (!this.recorder) {
             return;
@@ -313,10 +287,6 @@ class Recorder extends React.Component {
     }
 
     featureRun() {
-        if (!this.recorder) {
-            this.getAudioDevice();
-        }
-
         if (this.state.isRecording) {
             this.stopRecording();
             this.setState({ icon: this.playingIcon });
@@ -352,9 +322,6 @@ class Recorder extends React.Component {
                 </button>
                 <button onClick={this.subscribe}>
                     Subscribe
-                </button>
-                <button onClick={this.getAudioDevice}>
-                    Choose audio device
                 </button>
                 <button onClick={this.startRecording}>
                     Start recording
