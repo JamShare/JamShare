@@ -159,7 +159,7 @@ async function runSocketServer() {
     });
 
     socket.on('consume', async (data, callback) => {
-      callback(await createConsumer(producer[0], data.rtpCapabilities));
+      callback(await createConsumer(producer, data.rtpCapabilities));
     });
 
     socket.on('resume', async (data, callback) => {
@@ -324,7 +324,7 @@ async function createWebRtcTransport() {
 async function createConsumer(producer, rtpCapabilities) {
   if (!mediasoupRouter.canConsume(
     {
-      producerId: producer.id,
+      producerId: producer[0].id,
       rtpCapabilities,
     })
   ) {
@@ -333,15 +333,20 @@ async function createConsumer(producer, rtpCapabilities) {
   }
   try {
     consumer.push(await consumerTransport.consume({
-      producerId: producer.id,
+      producerId: producer[0].id,
       rtpCapabilities,
-      paused: producer.kind === 'video',
+      paused: producer[0].kind === 'audio',
     }));
   } catch (error) {
     console.error('consume failed', error);
     return;
   }
 
+  return {
+    producer: producer,
+    consumer: consumer
+  }
+  /*
   return {
     producerId: producer.id,
     id: consumer[0].id,
@@ -350,6 +355,7 @@ async function createConsumer(producer, rtpCapabilities) {
     type: consumer[0].type,
     producerPaused: consumer[0].producerPaused
   };
+  */
 }
 
 //server.listen(port, () => console.log(`Listening on port ${port}`));
