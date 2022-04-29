@@ -149,10 +149,14 @@ class Recorder extends React.Component {
         const { rtpCapabilities } = this.device;
         const data = await this.socket.request('consume', { rtpCapabilities });
 
+        
         let producerArray = []; 
         producerArray = data[0];
         let consumerArray = [];
         consumerArray = data[1];
+        
+
+        
 
         /*
         const {
@@ -162,7 +166,10 @@ class Recorder extends React.Component {
             rtpParameters,
         } = data;
         */
+        console.log("Consumer");
         console.log(data);
+        console.log(data[1]);
+
         let id = consumerArray[0].id;
         let producerId = producerArray[0].id;
         let kind = consumerArray[0].kind;

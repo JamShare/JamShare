@@ -151,7 +151,7 @@ async function runSocketServer() {
     socket.on('produce', async (data, callback) => {
       const { kind, rtpParameters } = data;
       producer.push(await producerTransport.produce({ kind, rtpParameters }));
-      console.log(producer[0].id)
+      //console.log(producer[0].id)
       callback({ id: producer[0].id });
 
       // inform clients about new producer
@@ -160,6 +160,8 @@ async function runSocketServer() {
 
     socket.on('consume', async (data, callback) => {
       callback(await createConsumer(producer, data.rtpCapabilities));
+      console.log(producer[0].id);
+      console.log(consumer[0].id);
     });
 
     socket.on('resume', async (data, callback) => {
@@ -337,6 +339,7 @@ async function createConsumer(producer, rtpCapabilities) {
       rtpCapabilities,
       paused: producer[0].kind === 'audio',
     }));
+    console.log(consumer.length);
   } catch (error) {
     console.error('consume failed', error);
     return;
