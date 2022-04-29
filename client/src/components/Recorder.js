@@ -206,7 +206,7 @@ class Recorder extends React.Component {
                     echoCancellation: false,
                     autoGainControl: false,
                     noiseSuppression: false,
-                    latency: 0
+                    latency: 0,
                 }
             };
             stream = await navigator.mediaDevices.getUserMedia(constraints);
