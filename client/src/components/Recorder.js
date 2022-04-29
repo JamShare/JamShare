@@ -2,7 +2,6 @@ import React from 'react';
 const io = require('socket.io-client');
 const socketPromise = require('../socket.io-promise').promise;
 const mediasoup = require('mediasoup-client');
-const config = require('../clientConfig');
 
 const SERVER = "http://localhost:3001";
 
@@ -23,13 +22,14 @@ class Recorder extends React.Component {
         this.recordIcon = require('./assets/images/record.png')
         this.playingIcon = require('./assets/images/playing.png')
 
-        // bind functions to instance
+        // Recording bindings
         this.onDataAvailable = this.onDataAvailable.bind(this);
         this.onStop = this.onStop.bind(this);
         this.getAudioDevice = this.getAudioDevice.bind(this);
         this.startRecording = this.startRecording.bind(this);
         this.stopRecording = this.stopRecording.bind(this);
         this.playRecording = this.playRecording.bind(this);
+        //Mediasoup bindings
         this.connect = this.connect.bind(this);
         this.loadDevice = this.loadDevice.bind(this);
         this.publish = this.publish.bind(this);
@@ -40,32 +40,12 @@ class Recorder extends React.Component {
         this.device = null;
         this.socket = null;
         this.producer = null;
-        //this.data = null;
         this.stream = null;
 
-
-        this.socket = io.connect(SERVER);    
-        
-        /*
-        (async () => {
-            try {
-                await this.connect();
-                //await this.publish();
-                //await this.subscribe();
-            } catch (err) {
-                console.error(err);
-            }
-        })();
-        */
-
+        //this.socket = io.connect(SERVER);    
     }
 
     async connect() {
-        const opts = {
-            path: '/server',
-            transports: ['websocket'],
-        };
-
         this.socket = io(SERVER);
         this.socket.request = socketPromise(this.socket);
 
@@ -79,7 +59,7 @@ class Recorder extends React.Component {
         });
 
         this.socket.on('connect_error', (error) => {
-            console.error('could not connect to %s%s (%s)', SERVER, opts.path, error.message);
+            console.error('could not connect to %s%s (%s)', SERVER, error.message);
         });
 
         this.socket.on('newProducer', () => {
