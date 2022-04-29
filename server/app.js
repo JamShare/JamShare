@@ -71,12 +71,12 @@ async function runWebServer() {
   });
 
   await new Promise((resolve) => {
-    const { listenIp, listenPort } = config;
+    const { listenIp, listenPort, announcedPort } = config;
     server.listen(listenPort, listenIp, () => {
       const listenIps = config.mediasoup.webRtcTransport.listenIps[0];
       const ip = listenIps.announcedIp || listenIps.ip;
       console.log('server is running');
-      console.log(`open http://${ip}:${listenPort} in your web browser`);
+      console.log(`open http://${ip}:${announcedPort}/room in your web browser`);
       resolve();
     });
   });

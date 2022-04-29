@@ -305,9 +305,11 @@ class Recorder extends React.Component {
         return (
             <div id="container" >
                 <div>
+                    Local Audio
                     <audio id="local_audio" autoPlay playsInline controls={true} />
                 </div>
                 <div>
+                    Remote Audio
                     <audio id="remote_audio" autoPlay playsInline controls={true} />
                 </div>
                 <button onClick={this.featureRun}>
@@ -318,10 +320,10 @@ class Recorder extends React.Component {
                     Connect
                 </button>
                 <button onClick={this.publish}>
-                    Publish
+                    SendAudio
                 </button>
                 <button onClick={this.subscribe}>
-                    Subscribe
+                    RecieveAudio
                 </button>
                 <button onClick={this.startRecording}>
                     Start recording
