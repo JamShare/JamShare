@@ -136,7 +136,7 @@ class Recorder extends React.Component {
 
         let stream;
         try {
-            stream = await this.getUserMedia(transport);
+            stream = await this.getUserMedia();
             const track = stream.getAudioTracks()[0];
             const params = { track };
             this.producer = await transport.produce(params);
