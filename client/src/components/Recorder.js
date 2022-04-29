@@ -86,7 +86,7 @@ class Recorder extends React.Component {
     }
 
     async publish(e) {
-        const isAudio = (e.target.id === 'btn_audio');
+        //const isAudio = (e.target.id === 'btn_audio');
 
         const data = await this.socket.request('createProducerTransport', {
             forceTcp: false,
@@ -121,17 +121,14 @@ class Recorder extends React.Component {
         transport.on('connectionstatechange', (state) => {
             switch (state) {
                 case 'connecting':
-
                     break;
 
                 case 'connected':
                     document.querySelector('audio#local_audio').srcObject = stream;
-
                     break;
 
                 case 'failed':
                     transport.close();
-
                     break;
 
                 default: break;
@@ -143,7 +140,6 @@ class Recorder extends React.Component {
             stream = await this.getUserMedia(transport);
             const track = stream.getAudioTracks()[0];
             const params = { track };
-
             this.producer = await transport.produce(params);
         } catch (err) {
 
@@ -219,28 +215,22 @@ class Recorder extends React.Component {
         transport.on('connectionstatechange', async (state) => {
             switch (state) {
                 case 'connecting':
-
                     break;
 
                 case 'connected':
                     document.querySelector('#remote_audio').srcObject = await stream;
                     await this.socket.request('resume');
-
                     break;
 
                 case 'failed':
                     transport.close();
-
                     break;
 
                 default: break;
             }
         });
-
         const stream = this.consume(transport);
     }
-
-
 
     // event handlers for recorder
     onDataAvailable(e) {
