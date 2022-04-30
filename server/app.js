@@ -22,6 +22,10 @@ let producerTransport;
 let consumerTransport;
 let mediasoupRouter;
 
+let playerOne;
+let playerTwo;
+let playerThree;
+
 (async () => {
   try {
     await runExpressApp();
