@@ -22,20 +22,19 @@ let producerTransport;
 let consumerTransport;
 let mediasoupRouter;
 
-let playerOne;
-let playerTwo;
-let playerThree;
+let producersArray = [];
+let consumersArray = [];
 
-(async () => {
-  try {
-    await runExpressApp();
-    await runWebServer();
-    await runSocketServer();
-    await runMediasoupWorker();
-  } catch (err) {
-    console.error(err);
-  }
-})();
+  (async () => {
+    try {
+      await runExpressApp();
+      await runWebServer();
+      await runSocketServer();
+      await runMediasoupWorker();
+    } catch (err) {
+      console.error(err);
+    }
+  })();
 
 async function runExpressApp() {
   app = express();
@@ -117,7 +116,9 @@ async function runSocketServer() {
     });
 
     socket.on('getRouterRtpCapabilities', (data, callback) => {
+      if (mediasoupRouter != null) {
       callback(mediasoupRouter.rtpCapabilities);
+      }
     });
 
     socket.on('createProducerTransport', async (data, callback) => {
@@ -155,6 +156,10 @@ async function runSocketServer() {
     socket.on('produce', async (data, callback) => {
       const { kind, rtpParameters } = data;
       producer = await producerTransport.produce({ kind, rtpParameters });
+
+      //Add producer to array for data keeping.
+      producersArray.push(producer);
+
       callback({ id: producer.id });
 
       // inform clients about new producer
@@ -168,6 +173,10 @@ async function runSocketServer() {
     socket.on('resume', async (data, callback) => {
       await consumer.resume();
       callback();
+    });
+
+    socket.on('getPlayerID', async (data, callback) => {
+      callback(getPlayerID(data));
     });
 
 
@@ -340,6 +349,8 @@ async function createConsumer(producer, rtpCapabilities) {
       rtpCapabilities,
       paused: producer.kind === 'video',
     });
+    //Add producer to array for data keeping.
+    consumersArray.push(consumer);
   } catch (error) {
     console.error('consume failed', error);
     return;
@@ -360,5 +371,13 @@ async function createConsumer(producer, rtpCapabilities) {
 }
 
 //server.listen(port, () => console.log(`Listening on port ${port}`));
+
+function getPlayerID(consumerID) {
+  for (i in consumersArray) {
+    if (consumersArray[i].id === consumerID) {
+      return i
+    }
+  }
+}
 
 module.exports = app;

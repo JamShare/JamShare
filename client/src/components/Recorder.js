@@ -155,8 +155,9 @@ class Recorder extends React.Component {
             rtpParameters,
         } = data;
 
-        console.log("Data");
-        console.log(data);
+        console.log("Consumer ID", id)
+        const playerID = await this.socket.request('getPlayerID', id);
+        console.log("Player ID:", playerID);
 
         let codecOptions = {};
         const consumer = await transport.consume({
