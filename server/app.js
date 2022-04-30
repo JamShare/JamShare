@@ -339,26 +339,24 @@ async function createConsumer(producer, rtpCapabilities) {
       rtpCapabilities,
       paused: producer[0].kind === 'audio',
     }));
-    console.log(consumer.length);
+    console.log(consumer[0].id);
   } catch (error) {
     console.error('consume failed', error);
     return;
   }
 
+    return sendMediaSoupInfo(producer[0], consumer[0]);
+}
+
+function sendMediaSoupInfo(producerToSend, consumerToSend) {
   return {
-    producer: producer,
-    consumer: consumer
+    producerId: producerToSend.id,
+    id: consumerToSend.id,
+    kind: consumerToSend.kind,
+    rtpParameters: consumerToSend.rtpParameters,
+    type: consumerToSend.type,
+    producerPaused: consumerToSend.producerPaused,
   }
-  /*
-  return {
-    producerId: producer.id,
-    id: consumer[0].id,
-    kind: consumer[0].kind,
-    rtpParameters: consumer[0].rtpParameters,
-    type: consumer[0].type,
-    producerPaused: consumer[0].producerPaused
-  };
-  */
 }
 
 //server.listen(port, () => console.log(`Listening on port ${port}`));
