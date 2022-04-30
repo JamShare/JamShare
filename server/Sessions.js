@@ -5,8 +5,7 @@ const socket = require('socket.io');
 const Client = require('./Clients.js'); 
 const Streams = require('./Stream.js');
 
-
-class Sessions {
+export class Sessions {
 
     constructor(){
     //sessions indexed by sessionID containing array of clients
@@ -73,4 +72,4 @@ class Sessions {
 
 }
 
-// export default Sessions;
+module.exports = {Sessions}

@@ -1,3 +1,4 @@
+import {Sessions} from './Sessions.js'
 //Express Reqs
 var express = require('express');
 const path = require('path');
@@ -7,13 +8,12 @@ const http = require('http');
 const socket = require('socket.io');
 const ss = require('socket.io-stream')
 const port = process.env.PORT || 3001;
-
 var chunks = [];
 
 var app = express();
-
 //Active sessions
-const Sessions = require('./Sessions.js');
+
+//const Sessions = require('./Sessions.js');
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -47,7 +47,7 @@ const socketHistory = {};
 io.on('connection', (socket) => {
   //recieve the data from the user 
   clientObject = undefined;
-  socket.on("create-session", (data) => { Sessions.createSession(socket.id, data)});
+  socket.on("create-session", (data) => { createSession(socket.id, data)});
 
   //'join-session' emitted from client when user clicks 'join jam session' in /Join.js modal popup, or when user enters session ID in orange box and presses enter. 
   //apparently, does not require adding the client's socket.id to a list for each session.   

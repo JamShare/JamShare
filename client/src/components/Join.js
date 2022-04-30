@@ -34,7 +34,6 @@ function Join() {
     const createSession = (room) => {
         room.preventDefault();
         handleShow();
-        /*
         console.log('1');
         socket.emit("create-session", guest);
         console.log('2')
@@ -42,7 +41,6 @@ function Join() {
             console.log(session_ID)
             handleShow();
         })
-        */
     }
 
     return (
