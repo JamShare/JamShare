@@ -18,6 +18,7 @@ let io;
 let app;
 let producer = [];
 let consumer = [];
+let totalConsumers = [];
 let producerTransport;
 let consumerTransport;
 let mediasoupRouter;
@@ -152,7 +153,7 @@ async function runSocketServer() {
       const { kind, rtpParameters } = data;
       producer.push(await producerTransport.produce({ kind, rtpParameters }));
       //console.log(producer[0].id)
-      callback({ id: producer[0].id });
+      callback({ id: producer.id });
 
       // inform clients about new producer
       socket.broadcast.emit('newProducer');
@@ -160,18 +161,18 @@ async function runSocketServer() {
 
     socket.on('consume', async (data, callback) => {
       callback(await createConsumer(producer, data.rtpCapabilities));
-      console.log(producer[0].id);
-      console.log(consumer[0].id);
+      //console.log(producer.length);
+      //console.log(consumer.length);
     });
 
     socket.on('resume', async (data, callback) => {
-      await consumer[0].resume();
+      await consumer.resume();
       callback();
     });
 
-
-
-
+    socket.on('getPlayerID', async (data, callback) => {
+      callback(getPlayerID(data));
+    });
 
     //console.log('connected Id:', socket.id);
 
@@ -326,7 +327,7 @@ async function createWebRtcTransport() {
 async function createConsumer(producer, rtpCapabilities) {
   if (!mediasoupRouter.canConsume(
     {
-      producerId: producer[0].id,
+      producerId: producer.id,
       rtpCapabilities,
     })
   ) {
@@ -335,17 +336,23 @@ async function createConsumer(producer, rtpCapabilities) {
   }
   try {
     consumer.push(await consumerTransport.consume({
-      producerId: producer[0].id,
+      producerId: producer.id,
       rtpCapabilities,
-      paused: producer[0].kind === 'audio',
+      paused: producer.kind === 'audio',
     }));
-    console.log(consumer[0].id);
   } catch (error) {
     console.error('consume failed', error);
     return;
   }
 
-    return sendMediaSoupInfo(producer[0], consumer[0]);
+  return {
+    producerId: producer.id,
+    id: consumer.id,
+    kind: consumer.kind,
+    rtpParameters: consumer.rtpParameters,
+    type: consumer.type,
+    producerPaused: consumer.producerPaused
+  };
 }
 
 function sendMediaSoupInfo(producerToSend, consumerToSend) {
@@ -356,6 +363,14 @@ function sendMediaSoupInfo(producerToSend, consumerToSend) {
     rtpParameters: consumerToSend.rtpParameters,
     type: consumerToSend.type,
     producerPaused: consumerToSend.producerPaused,
+  }
+}
+
+function getPlayerID(consumerID) {
+  for (i in consumer) {
+    if (consumer[i].id === consumerID) {
+      return i
+    }
   }
 }
 

@@ -156,6 +156,8 @@ class Recorder extends React.Component {
             rtpParameters,
         } = data;
 
+        
+
         let codecOptions = {};
         const consumer = await transport.consume({
             id,
@@ -164,8 +166,14 @@ class Recorder extends React.Component {
             rtpParameters,
             codecOptions,
         });
+
+        console.log("Consumer ID", id)
+        const playerID = await this.socket.request('getPlayerID', id);
+        console.log("Player ID:", playerID);
         const stream = new MediaStream();
+
         stream.addTrack(consumer.track);
+
         return stream;
     }
 
