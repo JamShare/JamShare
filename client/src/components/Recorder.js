@@ -1,4 +1,5 @@
 import React from 'react';
+import image1 from './assets/images/playing.png'
 const io = require('socket.io-client');
 
 const SERVER = "http://localhost:3001";
@@ -152,23 +153,30 @@ class Recorder extends React.Component {
 
     render() {
         return (
-            <div id="container" >
-            <button onClick={this.featureRun}>
-                <image src={this.icon} alt=""></image>
-                {this.text}
-            </button>
-            <button onClick={this.getAudioDevice}>
-                Choose audio device
-            </button>
-            <button onClick={this.startRecording}>
-                Start recording
-            </button>
-            <button onClick={this.stopRecording}>
-                Stop recording
-            </button>
-            <button onClick={this.playRecording}>
-                Play/pause recording
-            </button>
+            <div class="jamblock">
+                <h1>JAM</h1>
+                <img class="rounded" src={image1} width="250" height="250"alt=" recording "></img>
+
+                <button onClick={this.featureRun}>
+                    <image src={this.icon} alt=""></image>
+                    {this.text}
+                </button>
+
+                <button onClick={this.getAudioDevice}>
+                    Choose audio device
+                </button>
+
+                <button onClick={this.startRecording}>
+                    Start recording
+                </button>
+
+                <button onClick={this.stopRecording}>
+                    Stop recording
+                </button>
+
+                <button onClick={this.playRecording}>
+                    Play/pause recording
+                </button>
             </div>
         );
     }
