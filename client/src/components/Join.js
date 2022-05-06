@@ -31,21 +31,15 @@ function Join() {
         handleShow();
         navigate(path, {state:{sessionID, guest}});
     }
-    socket.on("connect", () => {
-        console.log(socket.id); 
-      });
     const createSession = (room) => {
         room.preventDefault();
         handleShow();
-        /*
-        console.log('1');
-        socket.emit("create-session", guest);
-        console.log('2')
-        socket.on("create-session-response", (session_ID) => {
+        socket.on("create-session-response", session_ID => {
+            console.log("create session worked ?...")
             console.log(session_ID)
             handleShow();
         })
-        */
+        socket.emit("create-session", guest);
     }
 
     return (
