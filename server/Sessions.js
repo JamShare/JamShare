@@ -5,7 +5,7 @@ const socket = require('socket.io');
 const Client = require('./Clients.js'); 
 const Streams = require('./Stream.js');
 
-export class Sessions {
+class Sessions {
 
     constructor(){
     //sessions indexed by sessionID containing array of clients
@@ -18,6 +18,7 @@ export class Sessions {
     createSession(socketID, username){
       //Generate sessionID and ensure it is not a repeat in the list of sessions 
       //should wrap in a try catch block?
+      console.log('create session function in session.js')
       generatedSessionID = generateSessionID();
       if(this.sessions[generateSessionID].clients.length > 0) //recurse
         return createSession(socketID)
@@ -72,4 +73,6 @@ export class Sessions {
 
 }
 
-module.exports = {Sessions}
+module.exports = function() {
+  this.createSession = require('./Sessions.js');
+}

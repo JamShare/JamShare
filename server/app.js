@@ -1,4 +1,3 @@
-import {Sessions} from './Sessions.js'
 //Express Reqs
 var express = require('express');
 const path = require('path');
@@ -9,6 +8,7 @@ const socket = require('socket.io');
 const ss = require('socket.io-stream')
 const port = process.env.PORT || 3001;
 var chunks = [];
+require('./Sessions.js')();
 
 var app = express();
 //Active sessions
