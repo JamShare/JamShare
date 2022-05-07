@@ -15,6 +15,6 @@ module.exports = {
         
         //host: "berryhousehold.ddns.net",
         host: "192.168.1.11",
-        port: 8000,
+        port: 3000,
     }
 };

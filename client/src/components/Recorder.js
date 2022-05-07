@@ -2,7 +2,9 @@ import React from 'react';
 import image1 from './assets/images/playing.png'
 const io = require('socket.io-client');
 
-const SERVER = "http://localhost:3001";
+//const SERVER = "http://localhost:3001";
+const SERVER = "http://192.168.1.11:3001";
+
 
 class Recorder extends React.Component {
     constructor(props) {
