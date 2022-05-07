@@ -3,9 +3,10 @@ var express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 var cors = require('cors');
-const http = require('http');
+const https = require('https');
 const socket = require('socket.io');
 const ss = require('socket.io-stream')
+const fs = require("fs");
 const port = process.env.PORT || 3001;
 var chunks = [];
 require('./Sessions.js')();
@@ -29,9 +30,13 @@ app.post('/chat', function (request, response) {
   response.set('Access-Control-Allow-Origin', '*');
 });
 
+const tls = {
+  cert: fs.readFileSync("../fullchain.pem"),
+  key: fs.readFileSync("../privkey.pem"),
+};
 
 //Server
-const server = http.createServer(app);
+const server = https.createServer(tls, app);
 const io = socket(server, {
   cors: {
     methods: ['GET', 'POST'],
@@ -163,7 +168,7 @@ io.on('connection', (socket) => {
   // });
 });
 
-server.listen(port, () => console.log(`Listening on port ${port}`));
+server.listen(port, "berryhousehold.ddns.net", () => console.log(`Listening on port ${port}`));
 
 app.use(express.static(path.resolve(__dirname, './client/build')));
 
