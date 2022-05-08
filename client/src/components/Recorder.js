@@ -37,7 +37,7 @@ class Recorder extends React.Component {
             isShow: false
         };
 
-        this.webRTCAdaptor = null;   
+        this.webRTCAdaptor = null;
 
         //this.chunks = [];
         this.recorder = null;
@@ -65,9 +65,9 @@ class Recorder extends React.Component {
 
     // useEffect(unknownParameter = () => {
     //     const interval = setInterval(() => {
-        
+
     //         console.log('This will run every second!');
-              
+
     //         // ss(socket).emit('client-stream', stream, {name: filename});
     //         // ss(socket).on('stream', function(this.stream) {};
     //         // this.filestream.pipe(this.chunks);
@@ -90,12 +90,19 @@ class Recorder extends React.Component {
         this.socket.emit("audio-stream-end");
     }
 
+    componentDidMount() {
+        this.webRTCAdaptor = this.initiateWebrtc(false);
+        this.setState({
+            isShow: true
+        });
+    }
+
     // asks for permission to use audio device from user
     // if declined or error, returns a null stream
     async getAudioDevice() {
 
         let audiox = document.querySelector("#local_audio");
-        
+
         var stream = null;
         try {
             stream = await navigator.mediaDevices
@@ -111,24 +118,26 @@ class Recorder extends React.Component {
             console.error(err)
             stream = null;
         }
-        
+
         this.recorder = null;
         if (stream) {
             audiox.srcObject = stream;
 
             this.recorder = new MediaRecorder(stream)
-        
+
             // initialize event handlers for recorder
             this.recorder.ondataavailable = this.onDataAvailable;
             this.recorder.onstop = this.onStop;
 
-            this.webRTCAdaptor = this.initiateWebrtc();
+            /*
+            this.webRTCAdaptor = this.initiateWebrtc(false);
             this.setState({
                 isShow: true
             });
+            */
 
             console.log("Recording device acquired successfully.");
-            }
+        }
         return;
     }
 
@@ -138,11 +147,20 @@ class Recorder extends React.Component {
     }
 
     onStartPublishing(name) {
+        //this.webRTCAdaptor = this.initiateWebrtc(false);
+        console.log("playMode", this.webRTCAdaptor.isPlayMode);
         this.webRTCAdaptor.publish(this.state.streamName, this.state.token);
         //console.log("Current streamname:", this.state.streamName);
     }
 
-    initiateWebrtc() {
+    onStartPlaying(name) {
+        //this.webRTCAdaptor = this.initiateWebrtc(true);
+        this.webRTCAdaptor.isPlayMode = true;
+        console.log("playMode", this.webRTCAdaptor.isPlayMode);
+        this.webRTCAdaptor.play(this.state.streamName, this.state.token);
+    }
+
+    initiateWebrtc(playMode) {
         let thiz = this;
         return new WebRTCAdaptor({
             websocket_url: this.state.websocketURL,
@@ -152,9 +170,22 @@ class Recorder extends React.Component {
             localVideoId: "local_audio",
             debug: true,
             bandwidth: 900,
+            isPlayMode: playMode,
+            
+
+            remoteVideoId: "remote_audio",
+            candidateTypes: ["tcp", "udp"],
             callback: function (info, obj) {
                 if (info === "initialized") {
                     console.log("initialized");
+
+                } else if (info === "play_started") {
+                    //joined the stream
+                    console.log("play started");
+
+                } else if (info === "play_finished") {
+                    //leaved the stream
+                    console.log("play finished");
 
                 } else if (info === "publish_started") {
                     //stream is being published
@@ -221,7 +252,7 @@ class Recorder extends React.Component {
             return;
         }
         this.recorder.start();
-        this.setState({ isRecording: true});
+        this.setState({ isRecording: true });
         console.log("Recording started successfully.");
         this.socket.emit("audio-stream-start");
         return;
@@ -235,7 +266,7 @@ class Recorder extends React.Component {
             return;
         }
         this.recorder.stop();
-        this.setState({ isRecording: false});
+        this.setState({ isRecording: false });
         return;
     }
 
@@ -254,14 +285,14 @@ class Recorder extends React.Component {
 
         if (this.state.isRecording) {
             this.stopRecording();
-            this.setState({icon: this.playingIcon});
-            this.setState({text: 'Recording'});
-        }   
+            this.setState({ icon: this.playingIcon });
+            this.setState({ text: 'Recording' });
+        }
 
         if (!this.state.isRecording) {
             this.startRecording();
-            this.setState({icon: this.recordIcon});
-            this.setState({text: 'stopped'});
+            this.setState({ icon: this.recordIcon });
+            this.setState({ text: 'stopped' });
         }
     }
 
@@ -269,19 +300,19 @@ class Recorder extends React.Component {
         const { streamName, isShow } = this.state;
 
         return (
-            
+
             <div class="jamblock">
 
                 {
-                /*
-                <h1>JAM</h1>
-                <img class="rounded" src={image1} width="250" height="250"alt=" recording "></img>
-
-                <button onClick={this.featureRun}>
-                    <image src={this.icon} alt=""></image>
-                    {this.text}
-                </button>
-                */
+                    /*
+                    <h1>JAM</h1>
+                    <img class="rounded" src={image1} width="250" height="250"alt=" recording "></img>
+    
+                    <button onClick={this.featureRun}>
+                        <image src={this.icon} alt=""></image>
+                        {this.text}
+                    </button>
+                    */
                 }
 
                 <button onClick={this.getAudioDevice}>
@@ -303,12 +334,9 @@ class Recorder extends React.Component {
                 <div>
                     Local Audio
                     <audio id="local_audio" autoPlay muted playsInline controls={true} />
-                    Remote Audio
-                    <audio id="remote_audio" autoPlay playsInline controls={true} />
-
                     <input type="text" onChange={this.streamChangeHandler} />
                     {
-                        
+
                         isShow ? (
                             <button
                                 onClick={this.onStartPublishing.bind(this, streamName)}
@@ -317,10 +345,25 @@ class Recorder extends React.Component {
                                 Publish
                             </button>
                         ) : null
-                        
+
                     }
+                    Remote Audio
+                    <audio id="remote_audio" autoPlay playsInline controls={true} />
+                    <input type="text" onChange={this.streamChangeHandler} />
+                    {
+                        isShow ? (
+                            <button
+                                onClick={this.onStartPlaying.bind(this, streamName)}
+                                className="btn btn-primary"
+                                id="start_play_button"> Start
+                                Playing
+                            </button>
+                        ) : null
+                    }
+
+                    
                 </div>
-                
+
             </div>
         );
     }
