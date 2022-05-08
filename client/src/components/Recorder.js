@@ -155,7 +155,11 @@ class Recorder extends React.Component {
 
     render() {
         return (
+            
             <div class="jamblock">
+
+                {
+                /*
                 <h1>JAM</h1>
                 <img class="rounded" src={image1} width="250" height="250"alt=" recording "></img>
 
@@ -163,6 +167,8 @@ class Recorder extends React.Component {
                     <image src={this.icon} alt=""></image>
                     {this.text}
                 </button>
+                */
+                }
 
                 <button onClick={this.getAudioDevice}>
                     Choose audio device
@@ -179,6 +185,16 @@ class Recorder extends React.Component {
                 <button onClick={this.playRecording}>
                     Play/pause recording
                 </button>
+
+                <div>
+                    Local Audio
+                    <audio id="local_audio" autoPlay playsInline controls={true} />
+                </div>
+                <div>
+                    Remote Audio
+                    <audio id="remote_audio" autoPlay playsInline controls={true} />
+                </div>
+                
             </div>
         );
     }
