@@ -1,6 +1,8 @@
 import React from 'react';
 import image1 from './assets/images/playing.png'
+import WebRTCAdaptor from '../js/webrtc_adaptor';
 const io = require('socket.io-client');
+
 
 //const SERVER = "http://localhost:3001";
 const SERVER = "https://berryhousehold.ddns.net:3001";
@@ -15,7 +17,27 @@ class Recorder extends React.Component {
             isPlaying: false,
             icon: '',
             text: 'Jam!',
+
+            mediaConstraints: {
+                video: false,
+                audio: true
+            },
+            streamName: 'stream1',
+            token: '',
+            pc_config: {
+                'iceServers': [{
+                    'urls': 'stun:stun.l.google.com:19302'
+                }]
+            },
+            sdpConstraints: {
+                OfferToReceiveAudio: false,
+                OfferToReceiveVideo: false
+            },
+            websocketURL: "wss://berryhousehold.ddns.net:5443/WebRTCAppEE/websocket",
+            isShow: false
         };
+
+        this.webRTCAdaptor = null;   
 
         //this.chunks = [];
         this.recorder = null;
@@ -188,11 +210,23 @@ class Recorder extends React.Component {
 
                 <div>
                     Local Audio
-                    <audio id="local_audio" autoPlay playsInline controls={true} />
-                </div>
-                <div>
+                    <audio id="local_audio" autoPlay muted playsInline controls={true} />
                     Remote Audio
                     <audio id="remote_audio" autoPlay playsInline controls={true} />
+
+                    <input type="text" onChange={this.streamChangeHandler} />
+                    {
+                        /*
+                        isShow ? (
+                            <button
+                                onClick={this.onStartPublishing.bind(this, streamName)}
+                                className="btn btn-primary"
+                                id="start_play_button"> Start
+                                Publish
+                            </button>
+                        ) : null
+                        */
+                    }
                 </div>
                 
             </div>
