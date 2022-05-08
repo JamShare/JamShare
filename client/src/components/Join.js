@@ -11,7 +11,8 @@ import Modal from 'react-bootstrap/Modal';
 
 import JoinModal from './JoinModal';
 const io = require('socket.io-client');
-const SERVER = "http://localhost:3001";
+//const SERVER = "http://localhost:3001";
+const SERVER = "https://berryhousehold.ddns.net:3001";
 // Join or create a Jam session room with link ID
 function Join() {
 
