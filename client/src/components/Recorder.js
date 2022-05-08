@@ -93,6 +93,8 @@ class Recorder extends React.Component {
     // asks for permission to use audio device from user
     // if declined or error, returns a null stream
     async getAudioDevice() {
+
+        let audiox = document.querySelector("#local_audio");
         
         var stream = null;
         try {
@@ -112,15 +114,103 @@ class Recorder extends React.Component {
         
         this.recorder = null;
         if (stream) {
+            audiox.srcObject = stream;
+
             this.recorder = new MediaRecorder(stream)
         
             // initialize event handlers for recorder
             this.recorder.ondataavailable = this.onDataAvailable;
             this.recorder.onstop = this.onStop;
 
+            this.webRTCAdaptor = this.initiateWebrtc();
+            this.setState({
+                isShow: true
+            });
+
             console.log("Recording device acquired successfully.");
             }
         return;
+    }
+
+    streamChangeHandler = ({ target: { value } }) => {
+        console.log("Current value:", value);
+        this.setState({ streamName: value });
+    }
+
+    onStartPublishing(name) {
+        this.webRTCAdaptor.publish(this.state.streamName, this.state.token);
+        //console.log("Current streamname:", this.state.streamName);
+    }
+
+    initiateWebrtc() {
+        let thiz = this;
+        return new WebRTCAdaptor({
+            websocket_url: this.state.websocketURL,
+            mediaConstraints: this.state.mediaConstraints,
+            peerconnection_config: this.state.pc_config,
+            sdp_constraints: this.state.sdpConstraints,
+            localVideoId: "local_audio",
+            debug: true,
+            bandwidth: 900,
+            callback: function (info, obj) {
+                if (info === "initialized") {
+                    console.log("initialized");
+
+                } else if (info === "publish_started") {
+                    //stream is being published
+                    console.log("publish started");
+                    alert("publish started");
+                    thiz.setState({
+                        isShow: false
+                    });
+
+                } else if (info === "publish_finished") {
+                    //stream is being finished
+                    console.log("publish finished");
+                    thiz.setState({
+                        isShow: true
+                    });
+
+                } else if (info === "closed") {
+                    //console.log("Connection closed");
+                    if (typeof obj != "undefined") {
+                        console.log("Connecton closed: "
+                            + JSON.stringify(obj));
+                    }
+                } else if (info === "streamInformation") {
+
+
+                } else if (info === "ice_connection_state_changed") {
+                    console.log("iceConnectionState Changed: ", JSON.stringify(obj));
+                } else if (info === "updated_stats") {
+                    //obj is the PeerStats which has fields
+                    //averageIncomingBitrate - kbits/sec
+                    //currentIncomingBitrate - kbits/sec
+                    //packetsLost - total number of packet lost
+                    //fractionLost - fraction of packet lost
+                    console.log("Average incoming kbits/sec: " + obj.averageIncomingBitrate
+                        + " Current incoming kbits/sec: " + obj.currentIncomingBitrate
+                        + " packetLost: " + obj.packetsLost
+                        + " fractionLost: " + obj.fractionLost
+                        + " audio level: " + obj.audioLevel);
+
+                } else if (info === "data_received") {
+                    console.log("Data received: " + obj.event.data + " type: " + obj.event.type + " for stream: " + obj.streamId);
+                } else if (info === "bitrateMeasurement") {
+                    console.log(info + " notification received");
+
+                    console.log(obj);
+                } else {
+                    console.log(info + " notification received");
+                }
+            },
+            callbackError: function (error) {
+                //some of the possible errors, NotFoundError, SecurityError,PermissionDeniedError
+
+                console.log("error callback: " + JSON.stringify(error));
+                alert(JSON.stringify(error));
+            }
+        });
     }
 
     startRecording() {
@@ -176,6 +266,8 @@ class Recorder extends React.Component {
     }
 
     render() {
+        const { streamName, isShow } = this.state;
+
         return (
             
             <div class="jamblock">
@@ -216,7 +308,7 @@ class Recorder extends React.Component {
 
                     <input type="text" onChange={this.streamChangeHandler} />
                     {
-                        /*
+                        
                         isShow ? (
                             <button
                                 onClick={this.onStartPublishing.bind(this, streamName)}
@@ -225,7 +317,7 @@ class Recorder extends React.Component {
                                 Publish
                             </button>
                         ) : null
-                        */
+                        
                     }
                 </div>
                 
