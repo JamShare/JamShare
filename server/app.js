@@ -10,6 +10,8 @@ const port = process.env.PORT || 3001;
 var chunks = [];
 require('./Sessions.js')();
 
+const {register_new_user, validate_creds} = require("./auth/auth.js")
+
 var app = express();
 //Active sessions
 
@@ -29,6 +31,19 @@ app.post('/chat', function (request, response) {
   response.set('Access-Control-Allow-Origin', '*');
 });
 
+//Auth
+app.post('/auth/signup', async (req, res) => {
+  const [username, password] = ["username", "password"].map(e=> req.body[e])
+  res.send(await register_new_user(username, password));
+})
+
+app.post('/auth/signin', async (req, res) => {
+  const [username, password] = ["username", "password"].map(e=> req.body[e])
+  res.send(await validate_creds(username, password))
+})
+
+
+///// end auth
 
 //Server
 const server = http.createServer(app);
@@ -56,7 +71,7 @@ io.on('connection', (socket) => {
   //broadcast incoming stream to all clients in session
   socket.on('client-audio-stream', (data)=> { Sessions.streamToSession(data, socket.id)});
 
-
+  //socket.emit('me', socket.id);
 
 
   
