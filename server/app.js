@@ -12,6 +12,7 @@ var chunks = [];
 require('./Sessions.js')();
 
 var app = express();
+let players = [];
 //Active sessions
 
 //const Sessions = require('./Sessions.js');
@@ -151,6 +152,12 @@ io.on('connection', (socket) => {
   socket.on("audio-stream-start", () => {
     console.log("Audio streaming started.");
   });
+
+  socket.on("player-connected", (id) => {
+    
+    socket.emit("player-connected-server", assignPlayer(id));
+    console.log("Players", players);
+  });
   
   socket.on("audio-stream-end", () => {
       console.log("Audio streaming ended.");
@@ -160,7 +167,6 @@ io.on('connection', (socket) => {
       chunks = [];
   });
 
-
   // socket.on('create-audio-file', function(data)  {
   //   let blob = new Blob(this.chunks, {'type': 'audio/ogg; codecs=opus'})
   //   let audioURL = URL.createObjectURL(blob);
@@ -168,8 +174,19 @@ io.on('connection', (socket) => {
   // });
 });
 
+function assignPlayer(id) {
+  if(players.includes(id)) {
+    return players.length;
+  }
+  else { 
+    players.push(id);
+    return players.length;
+  }
+}
+
 server.listen(port, "berryhousehold.ddns.net", () => console.log(`Listening on port ${port}`));
 
 app.use(express.static(path.resolve(__dirname, './client/build')));
 
 module.exports = app;
+
