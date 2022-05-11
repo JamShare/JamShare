@@ -25,11 +25,11 @@ app.use(cors());
 
 //Buildy stuff
 if(BUILD_MODE === "heroku"){
-  const server = https.createServer(app);
+  const server = http.createServer(app);
   server.listen(port, () => console.log(`Listening on port ${port}`));
 }
 else if(BUILD_MODE === "berry_server"){
-  const server = http.createServer(tls, app);
+  const server = https.createServer(tls, app);
   server.listen(port, "berryhousehold.ddns.net", () => console.log(`Listening on port ${port}`));
 }
 app.use(express.static(path.resolve(__dirname, './client/build')));
