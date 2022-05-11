@@ -9,12 +9,14 @@ const ss = require('socket.io-stream')
 const fs = require("fs");
 const port = process.env.PORT || 3001;
 var chunks = [];
-require('./Sessions.js')();
+require('./server/Sessions.js')();
+
+const BUILD_MODE = "heroku";
 
 var app = express();
 //Active sessions
 
-//const Sessions = require('./Sessions.js');
+//const Sessions = require('./server/Sessions.js');
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -31,8 +33,8 @@ app.post('/chat', function (request, response) {
 });
 
 const tls = {
-  cert: fs.readFileSync("../fullchain.pem"),
-  key: fs.readFileSync("../privkey.pem"),
+  cert: fs.readFileSync("./fullchain.pem"),
+  key: fs.readFileSync("./privkey.pem"),
 };
 
 //Server
@@ -168,7 +170,12 @@ io.on('connection', (socket) => {
   // });
 });
 
-server.listen(port, "berryhousehold.ddns.net", () => console.log(`Listening on port ${port}`));
+if(BUILD_MODE === "heroku"){
+  server.listen(port, () => console.log(`Listening on port ${port}`));
+}
+else if(BUILD_MODE === "berry_server"){
+  server.listen(port, "berryhousehold.ddns.net", () => console.log(`Listening on port ${port}`));
+}
 
 app.use(express.static(path.resolve(__dirname, './client/build')));
 
