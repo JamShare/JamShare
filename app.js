@@ -4,6 +4,8 @@ const path = require('path');
 const bodyParser = require('body-parser');
 var cors = require('cors');
 const http = require('http');
+const https = require('https');
+
 const socket = require('socket.io');
 const ss = require('socket.io-stream')
 const fs = require("fs");
@@ -27,8 +29,8 @@ if(BUILD_MODE === "heroku"){
   server.listen(port, () => console.log(`Listening on port ${port}`));
 }
 else if(BUILD_MODE === "berry_server"){
-  server.listen(port, "berryhousehold.ddns.net", () => console.log(`Listening on port ${port}`));
   const server = http.createServer(tls, app);
+  server.listen(port, "berryhousehold.ddns.net", () => console.log(`Listening on port ${port}`));
 }
 app.use(express.static(path.resolve(__dirname, './client/build')));
 //
