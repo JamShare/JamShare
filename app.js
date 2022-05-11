@@ -3,7 +3,7 @@ var express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 var cors = require('cors');
-const https = require('https');
+const http = require('http');
 const socket = require('socket.io');
 const ss = require('socket.io-stream')
 const fs = require("fs");
@@ -38,7 +38,7 @@ const tls = {
 };
 
 //Server
-const server = https.createServer(tls, app);
+const server = http.createServer(tls, app);
 const io = socket(server, {
   cors: {
     methods: ['GET', 'POST'],
