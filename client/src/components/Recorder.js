@@ -143,8 +143,47 @@ class Recorder extends React.Component {
         return;
     }
 
-    getAudioDevicePlayer() {
-        this.webRTCAdaptor = this.initiateWebrtc(true);
+    async getAudioDevicePlayer() {
+
+        let audiox = document.querySelector("#local_audio");
+
+        var stream = null;
+        try {
+            stream = await navigator.mediaDevices
+                .getUserMedia({
+                    audio: {
+                        echoCancellation: false,
+                        autoGainControl: false,
+                        noiseSuppression: false,
+                        latency: 0
+                    }
+                });
+        } catch (err) {
+            console.error(err)
+            stream = null;
+        }
+
+        this.recorder = null;
+        if (stream) {
+            audiox.srcObject = stream;
+
+            this.recorder = new MediaRecorder(stream)
+
+            // initialize event handlers for recorder
+            this.recorder.ondataavailable = this.onDataAvailable;
+            this.recorder.onstop = this.onStop;
+
+
+            this.webRTCAdaptor = this.initiateWebrtc(true);
+            /*
+            this.setState({
+                isShow: true
+            });
+            */
+
+            console.log("Recording device acquired successfully.");
+        }
+        return;
     }
 
     streamChangeHandler = ({ target: { value } }) => {
