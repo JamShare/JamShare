@@ -17,13 +17,25 @@ var app = express();
 //Active sessions
 
 //const Sessions = require('./server/Sessions.js');
-
+ 
 app.use(bodyParser.json());
 app.use(cors());
 
+//Buildy stuff
+if(BUILD_MODE === "heroku"){
+  const server = https.createServer(app);
+  server.listen(port, () => console.log(`Listening on port ${port}`));
+}
+else if(BUILD_MODE === "berry_server"){
+  server.listen(port, "berryhousehold.ddns.net", () => console.log(`Listening on port ${port}`));
+  const server = http.createServer(tls, app);
+}
+app.use(express.static(path.resolve(__dirname, './client/build')));
+//
+
 //just a response if people access server directly
 app.get('/', function (request, response) {
-  response.sendFile(__dirname + '/message.json');
+  response.sendFile(__dirname + './server/message.json');
 });
 
 //Some cors and socket io things to make requests accepted from outsources
@@ -170,13 +182,6 @@ io.on('connection', (socket) => {
   // });
 });
 
-if(BUILD_MODE === "heroku"){
-  server.listen(port, () => console.log(`Listening on port ${port}`));
-}
-else if(BUILD_MODE === "berry_server"){
-  server.listen(port, "berryhousehold.ddns.net", () => console.log(`Listening on port ${port}`));
-}
 
-app.use(express.static(path.resolve(__dirname, './client/build')));
 
 module.exports = app;
