@@ -24,28 +24,41 @@ function Join() {
     const navigate = useNavigate();
     let { state: { guest } = {} } = useLocation(); //gets the variable we passed from navigate
    //room code is invalid  
+
+    socket.on("create-session-response", session_ID => {
+        console.log("create session worked ?...")
+        console.log(session_ID)
+        setSessionID(session_ID)
+        handleShow();
+    }) 
+
+    socket.on("join-failed", data => {
+        console.log("joining room failed");
+    })
+
+    socket.on('join-session-success', data=>{
+        let path = '/Room';
+        navigate(path, {state:{sessionID, guest}});
+    });
+
+    socket.on('join-session-failed', data=>{
+        console.log("join session failed");
+    });
+
+   
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log(e.target.elements.session.value);
-        let path = '/Room';
-        handleShow();
-        navigate(path, {state:{sessionID, guest}});
+        // handleShow();
+        let data = {sessionID:sessionID, username:guest};
+        socket.emit('join-session', data);
     }
-    socket.on("connect", () => {
-        console.log(socket.id); 
-      });
+
     const createSession = (room) => {
         room.preventDefault();
         handleShow();
-        /*
-        console.log('1');
+
         socket.emit("create-session", guest);
-        console.log('2')
-        socket.on("create-session-response", (session_ID) => {
-            console.log(session_ID)
-            handleShow();
-        })
-        */
     }
 
     return (
