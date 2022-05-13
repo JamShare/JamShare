@@ -4,16 +4,15 @@ const path = require('path');
 const bodyParser = require('body-parser');
 var cors = require('cors');
 const http = require('http');
-const socket = require('socket.io');
+const Socket = require('socket.io');
 const ss = require('socket.io-stream')
 const port = process.env.PORT || 3001;
-
 var chunks = [];
+const Sessions = require('./Sessions.js');
+
+const {register_new_user, validate_creds} = require("./auth/auth.js")
 
 var app = express();
-
-//Active sessions
-const Sessions = require('./Sessions.js');
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -29,14 +28,30 @@ app.post('/chat', function (request, response) {
   response.set('Access-Control-Allow-Origin', '*');
 });
 
+//Auth
+app.post('/auth/signup', async (req, res) => {
+  const [username, password] = ["username", "password"].map(e=> req.body[e])
+  res.send(await register_new_user(username, password));
+})
+
+app.post('/auth/signin', async (req, res) => {
+  const [username, password] = ["username", "password"].map(e=> req.body[e])
+  res.send(await validate_creds(username, password))
+})
+
+
+///// end auth
 
 //Server
 const server = http.createServer(app);
-const io = socket(server, {
+const io = Socket(server, {
   cors: {
     methods: ['GET', 'POST'],
   },
 });
+
+//Active sessions
+var sessions = new Sessions();
 
 //Room sockets and locations
 //Chat history on server
@@ -47,18 +62,16 @@ const socketHistory = {};
 io.on('connection', (socket) => {
   //recieve the data from the user 
   clientObject = undefined;
-  socket.on("create-session", (data) => { Sessions.createSession(socket.id, data)});
+  socket.on("create-session", (data) => {sessions.createSession(data, socket)});
 
   //'join-session' emitted from client when user clicks 'join jam session' in /Join.js modal popup, or when user enters session ID in orange box and presses enter. 
   //apparently, does not require adding the client's socket.id to a list for each session.   
-  socket.on('join-session' , (data) => { Sessions.joinSession(data.SessionID, socket.id)});
+  socket.on('join-session', (data) => {sessions.joinSession(data, socket)});
 
   //broadcast incoming stream to all clients in session
-  socket.on('client-audio-stream', (data)=> { Sessions.streamToSession(data, socket.id)});
+  socket.on('client-audio-stream', (data)=> {sessions.streamToSession(data, socket)});
 
-
-
-
+  //socket.emit('me', socket.id);
   
   // socket.on('chat')
 

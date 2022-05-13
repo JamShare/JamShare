@@ -29,18 +29,13 @@ function Room() {
   // const { state: { guest, sessionID } = {} } = useLocation();
 
   return (
-    <body>
-      <div class="ProjectSectionContent" >
-        <div class="banner">
-          <div class="banner-text">JamShare</div>
-        </div>
-        
-        <Participants></Participants>
-        <Viewer></Viewer>
-        <Recorder></Recorder>
-        <Chat></Chat>
-      </div>
-    </body>
+    <div>
+
+      <Participants></Participants>
+      <Viewer></Viewer>
+      <Recorder></Recorder>
+      <Chat></Chat>
+    </div>
   );
 }
 export default Room;
