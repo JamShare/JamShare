@@ -6,10 +6,10 @@ class Clients {
   }
 
   addClient(socketClientID/*, credentials*/)  {
-    if (maxlength >= this.clients.length) {
+    if (this.maxlength <= this.clients.length) {
       throw "Room is full.";
     }
-    client = new Client(socketClientID, username, priv);
+    var client = new Client(socketClientID/*, username, priv*/);
     // initialize more client information if needed
     // create another map using other information?
     this.clients.push(client);
@@ -17,7 +17,7 @@ class Clients {
   }
 
   removeClient(socketClientID) {
-    client = clientsMap(socketClientID);
+    let client = clientsMap(socketClientID);
     this.clients.indexOf(client);
     this.clients.splice(index, 1);
     this.clientsMap.delete(socketClientID);
@@ -36,21 +36,22 @@ class Clients {
   
   getUsernames() {
     let usernames = [];
-    for (i = 0; i < this.clients.length; i++) {
-      usernames.push(this.clients.getUsername())
+    for (let i = 0; i < this.clients.length; i++) {
+      usernames.push(this.clients[i].getUsername())
     }
+    return usernames;
   }
 
   // returns the socketID of the next player in the game
   getNextPlayer(socketID) {
-    client = clientsMap(socketID);
+    let client = clientsMap(socketID);
     this.clients.indexOf(client);
     return this.clients[index+1].getSocketID;
   }
   
   // basic array swap funct
   swap(index1, index2) {
-    hold = this.clients[index2];
+    let hold = this.clients[index2];
     this.clients[index2] = this.clients[index1];
     this.clients[index1] = hold;
   }

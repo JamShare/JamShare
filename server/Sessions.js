@@ -1,37 +1,38 @@
 //Communicates with Room.js primarily. 
-const socket = require('socket.io');
+const Socket = require('socket.io');
 
 // server components:
 const Clients = require('./Clients.js'); 
 const Streams = require('./Stream.js');
 
 class Sessions {
-  constructor(){
+  constructor() {
     //sessions indexed by sessionID containing clients
     this.sessions = new Map();
   }
 
-  createSession(socketID) {
-    genSessionID = generateSessionID();
-      if(this.sessions[generateSessionID].clients.length > 0) //recurse
-      return createSession(socketID, username) 
-    session = new Session(genSessionID);  
+  createSession(data, socket) {
+    let genSessionID = this.generateSessionID();
+    if (this.sessions.get(genSessionID) != undefined) //recurse
+      return createSession(socket);
+    var session = new Session(genSessionID);  
+    session.createSession(socket);
     this.sessions.set(genSessionID, session);
-    socket.to(socketID).emit('create-session-response', genSessionID); //emit to only that client so they can view the code 
+    socket.emit('create-session-response', genSessionID); //emit to only that client so they can view the code 
   }
 
-  joinSession(sessionID, socketID, username) { //apparently does not need the socket.id
-    session = findSessionByID(sessionID);
+  joinSession(sessionID, socket) { //apparently does not need the socket.id
+    let session = findSessionByID(sessionID);
     if (session) 
-      session.joinSession(sessionID, socketID, username);
+      session.joinSession(socket);
     else {
-      socket.to(socketID).emit('join-session-fail', sessionID);
-      console.log('User %s attempted to join session %s and failed.', username, sessionID);
+      socket.emit('join-session-fail', sessionID);
+      console.log('User %s attempted to join session %s which does not exist.', username, sessionID);
     }
   }
 
-  startGameSession() {
-    session = this.findSessionByID(sessionID)
+  startGameSession(sessionID) {
+    let session = this.findSessionByID(sessionID);
     session.startGameSession();
   }
 
@@ -39,20 +40,20 @@ class Sessions {
     return this.sessions.get(sessionID);
   }
 
-  findSessionIDFromSocketID( socketID ) {
+  findSessionIDFromSocketID(socket) {
       var sessionID = sessions.find((sessionID) => 
         sessions[sessionID].clients.find((client) => 
-          client.id === socketID));
+          client.id === socket.id));
       return sessionID;
   }
 
-  generateSessionID(){
+  generateSessionID() {
     // var crypto = require("crypto");
     // var id = crypto.randomBytes(20).toString('hex');
 
-    length = 20;
-    var genSessionID = "";
-    var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let length = 20;
+    let genSessionID = "";
+    let characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     for (var i = 0; i < length; i++) {
       genSessionID += characters.charAt(Math.floor(Math.random() * characters.length));
     }
@@ -67,33 +68,38 @@ class Session {
     // game session in progress or not? disallow changes to player order during runtime
     this.gameSession = false;
   }
+
+  createSession(socket) {
+    this.joinSession(socket);
+  }
   
-  joinSession(socketID, username){//apparently does not need the socket.id
-    try{
-        this.clients.addClient(socketID/*, username */);
+  joinSession(socket/*, username*/){//apparently does not need the socket.id
+    try {
+        this.clients.addClient(socket.id/*, username */);
         socket.join(this.sessionID);
         //send usernames to client from client object
-        var usernames = this.clients.getUsernames();
-        socket.to(socketID).emit('join-session-success', usernames);//
+        // let usernames = this.clients.getUsernames();
+        socket.emit('join-session-success'/*, usernames*/);//
     }
-    catch{error}{
-      socket.to(socketID.emit('join-session-failed'));
+    catch (error) {
+      socket.emit('join-session-failed');
       console.error(error);
     }
   }
 
   startGameSession() {
-    socket.brodcast.to(sessionID).emit('game-started');
+    this.gameSession = true;
+    // socket.brodcast.to(sessionID).emit('game-started');
   }
 
-  startPlayerStream(socketID) {
+  startPlayerStream(socket) {
     nextSID = this.clients.getNextPlayer();
-    socket.to(nextSID).emit('start-stream');
+    // socket.to(nextSID).emit('start-stream');
   }
 
   sendStreams() {
     usernames = this.clients.getUsernames()
-    socket.brodcast.to(sessionID).emit('stream-names', streams);
+    // socket.brodcast.to(sessionID).emit('stream-names', streams);
   }
 
   sendLatency(start_time) {
