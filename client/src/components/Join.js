@@ -26,26 +26,23 @@ function Join() {
    //room code is invalid  
 
     socket.on("create-session-response", session_ID => {
-        console.log("create session worked ?...")
+        console.log("create session request to server")
         console.log(session_ID)
         setSessionID(session_ID)
         handleShow();
     }) 
 
-    socket.on("join-failed", data => {
-        console.log("joining room failed");
-    })
-
-    socket.on('join-session-success', data=>{
+    socket.on('join-session-success', data =>{
+        console.log("join success");
         let path = '/Room';
         navigate(path, {state:{sessionID, guest}});
+        //add usernames to local global data from data.usernames
     });
 
     socket.on('join-session-failed', data=>{
         console.log("join session failed");
     });
 
-   
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log(e.target.elements.session.value);
