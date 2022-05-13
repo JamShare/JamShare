@@ -19,8 +19,12 @@ class Recorder extends React.Component {
             text: 'Jam!',
 
             mediaConstraints: {
-                video: false,
-                audio: true
+                audio: {
+                    echoCancellation: false,
+                    autoGainControl: false,
+                    noiseSuppression: false,
+                    latency: 0
+                }
             },
             streamName: 'stream1',
             token: '',
