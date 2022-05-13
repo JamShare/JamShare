@@ -66,14 +66,12 @@ io.on('connection', (socket) => {
 
   //'join-session' emitted from client when user clicks 'join jam session' in /Join.js modal popup, or when user enters session ID in orange box and presses enter. 
   //apparently, does not require adding the client's socket.id to a list for each session.   
-  socket.on('join-session' , (data) => {sessions.joinSession(data.SessionID, socket)});
+  socket.on('join-session', (data) => {sessions.joinSession(data, socket)});
 
   //broadcast incoming stream to all clients in session
   socket.on('client-audio-stream', (data)=> {sessions.streamToSession(data, socket)});
 
   //socket.emit('me', socket.id);
-
-
   
   // socket.on('chat')
 

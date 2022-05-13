@@ -16,15 +16,14 @@ class Sessions {
     if (this.sessions.get(genSessionID) != undefined) //recurse
       return createSession(socket);
     var session = new Session(genSessionID);  
-    session.createSession(socket);
     this.sessions.set(genSessionID, session);
     socket.emit('create-session-response', genSessionID); //emit to only that client so they can view the code 
   }
 
-  joinSession(sessionID, socket) { //apparently does not need the socket.id
-    let session = findSessionByID(sessionID);
+  joinSession(data, socket) { //apparently does not need the socket.id
+    let session = findSessionByID(data.sessionID);
     if (session) 
-      session.joinSession(socket);
+      session.joinSession(socket, data.username);
     else {
       socket.emit('join-session-fail', sessionID);
       console.log('User %s attempted to join session %s which does not exist.', username, sessionID);
@@ -68,14 +67,10 @@ class Session {
     // game session in progress or not? disallow changes to player order during runtime
     this.gameSession = false;
   }
-
-  createSession(socket) {
-    this.joinSession(socket);
-  }
   
-  joinSession(socket/*, username*/){//apparently does not need the socket.id
+  joinSession(socket, username){//apparently does not need the socket.id
     try {
-        this.clients.addClient(socket.id/*, username */);
+        this.clients.addClient(socket.id, username);
         socket.join(this.sessionID);
         //send usernames to client from client object
         // let usernames = this.clients.getUsernames();
