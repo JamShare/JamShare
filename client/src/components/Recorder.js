@@ -1,6 +1,6 @@
 import React from 'react';
 import image1 from './assets/images/playing.png'
-import WebRTCAdaptor from '../js/webrtc_adaptor';
+import {WebRTCAdaptor} from '../js/webrtc_adaptor';
 const io = require('socket.io-client');
 
 
