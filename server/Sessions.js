@@ -2,7 +2,7 @@
 const socket = require('socket.io');
 
 // server components:
-const Client = require('./Clients.js'); 
+const Clients = require('./Clients.js'); 
 const Streams = require('./Stream.js');
 
 class Sessions {
@@ -103,6 +103,4 @@ class Session {
   }
 }
 
-module.exports = function() {
-  this.createSession = require('./Sessions.js');
-}
+module.exports = Sessions;

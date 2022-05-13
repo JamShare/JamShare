@@ -75,3 +75,5 @@ class Client {
       this.priv = priv;
     }
 }
+
+module.exports = Clients;
