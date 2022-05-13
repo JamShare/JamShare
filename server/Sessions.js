@@ -73,8 +73,8 @@ class Session {
         this.clients.addClient(socket.id, username);
         socket.join(this.sessionID);
         //send usernames to client from client object
-        // let usernames = this.clients.getUsernames();
-        socket.emit('join-session-success'/*, usernames*/);//
+        let usernames = this.clients.getUsernames();
+        socket.emit('join-session-success', usernames);//
     }
     catch (error) {
       socket.emit('join-session-failed');
