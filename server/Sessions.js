@@ -22,11 +22,22 @@ class Sessions {
       if(this.sessions[generateSessionID].clients.length > 0) //recurse
         return createSession(socketID, username)
 
+<<<<<<< Updated upstream
       //Create a new session accessed by sessionID.
       this.sessions[generatedSessionID] = ({sessionID: generatedSessionID, clients: [new Client(socketID, username)]});
       socket.to(socketID).emit('create-session-response', generatedSessionID);//emit to only that client so they can view the code 
+=======
+  joinSession(sessionID, socketID, username) { 
+    session = findSessionByID(sessionID);
+    if (session) 
+      session.joinSession(sessionID, socketID, username);
+    else {
+      socket.to(socketID).emit('join-session-fail', sessionID);
+      console.log('User %s attempted to join session %s and failed.', username, sessionID);
+>>>>>>> Stashed changes
     }
 
+<<<<<<< Updated upstream
     // joinSession(socketID, sessionID){
     joinSession(sessionID, socketID, username){//apparently does not need the socket.id
       // this.sessions[sessionID].push(socketID);//add the client socket.id to this session's list of clients.
@@ -48,18 +59,74 @@ class Sessions {
         console.error(error);
       }
     }
+=======
+  startGameSession(sessionID) {
+    session = this.findSessionByID(sessionID);
+    session.startGameSession();
+  }
+
+  // swaps two players in the player order
+  swapUsers(sessionID, user1, user2) {
+    session = this.findSessionByID(sessionID);
+    session.swapUsers(user1, user2);
+  }
+
+  findSessionByID(sessionID) {
+    return this.sessions.get(sessionID);
+  }
+>>>>>>> Stashed changes
 
     findSessionIDFromSocketID( socketID ) {
       var sessionID = sessions.find((sessionID) => 
         sessions[sessionID].clients.find((client) => 
           client.id === socketID));
       return sessionID;
+<<<<<<< Updated upstream
+=======
+  }
+
+  generateSessionID() {
+    // var crypto = require("crypto");
+    // var id = crypto.randomBytes(20).toString('hex');
+
+    length = 20;
+    var genSessionID = "";
+    var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    for (var i = 0; i < length; i++) {
+      genSessionID += characters.charAt(Math.floor(Math.random() * characters.length));
+>>>>>>> Stashed changes
     }
 
     streamToSession(streamData, socketID){
       var sessionID = this.findSessionIDFromSocketID(socketID);
       socket.brodcast.to(sessionID).emit('server-audio-stream', streamData);
     }
+<<<<<<< Updated upstream
+=======
+    catch{error}{
+      socket.to(socketID.emit('join-session-failed'));
+      console.error(error);
+    }
+  }
+
+  swapUsers(user1, user2) {
+    this.clients.swapUsers(user1, user2)
+  }
+
+  startGameSession() {
+    socket.brodcast.to(sessionID).emit('game-started');
+  }
+
+  startPlayerStream(socketID) {
+    nextSID = this.clients.getNextPlayer();
+    socket.to(nextSID).emit('start-stream');
+  }
+
+  sendStreams() {
+    usernames = this.clients.getUsernames();
+    socket.brodcast.to(sessionID).emit('stream-names', streams);
+  }
+>>>>>>> Stashed changes
 
     // chat(){
       // const { message, room, name } = data;
