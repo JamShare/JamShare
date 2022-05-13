@@ -27,10 +27,11 @@ class Recorder extends React.Component {
             pc_config: {
                 'iceServers': [{
                     'urls': 'stun:stun.l.google.com:19302'
-                }]
+                }],
+                sdpSemantics: 'unified-plan'
             },
             sdpConstraints: {
-                OfferToReceiveAudio: false,
+                OfferToReceiveAudio: true,
                 OfferToReceiveVideo: false
             },
             websocketURL: "wss://berryhousehold.ddns.net:5443/WebRTCAppEE/websocket",
@@ -154,7 +155,8 @@ class Recorder extends React.Component {
 
     onStartPublishing(name) {
         console.log("playMode", this.webRTCAdaptor.isPlayMode);
-        this.webRTCAdaptor.publish(this.state.streamName, this.state.token);
+        this.webRTCAdaptor.joinRoom("room1", this.state.streamName, "multitrack");
+        this.webRTCAdaptor.publish(this.state.streamName, this.state.token, "", "", "multitrack", "room1");
         console.log("Current streamname:", this.state.streamName);
     }
 
