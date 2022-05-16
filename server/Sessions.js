@@ -21,14 +21,16 @@ class Sessions {
   }
 
   joinSession(data, socket) { //apparently does not need the socket.id
-    let session = findSessionByID(data.sessionID);
+    var sess = new Session();
+    let session = data.sessionID;
     if (session) 
-      session.joinSession(socket, data.username);
+      sess.joinSession(socket, data.guest);
     else {
-      socket.emit('join-session-fail', sessionID);
-      console.log('User %s attempted to join session %s which does not exist.', username, sessionID);
+      socket.emit('join-session-fail', data.sessionID);
+      console.log('User %s attempted to join session %s which does not exist.', data.username, data.sessionID);
     }
   }
+
 
   startGameSession(sessionID) {
     let session = this.findSessionByID(sessionID);
@@ -36,6 +38,7 @@ class Sessions {
   }
 
   findSessionByID(sessionID) {
+    console.log("find session by id fucntion");
     return this.sessions.get(sessionID);
   }
 

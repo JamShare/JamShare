@@ -8,7 +8,6 @@ import handleSubmit from './Join.js';
 import CopyToClipboard from 'react-copy-to-clipboard';
 function JoinModal(props) {
   const [copied, setCopied] = useState(false);
-  const [value, setValue] = useState('');
   const inputArea = useRef(null);
 
   function updateClipboard(newClip) {

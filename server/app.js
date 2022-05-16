@@ -9,6 +9,7 @@ const ss = require('socket.io-stream')
 const port = process.env.PORT || 3001;
 var chunks = [];
 const Sessions = require('./Sessions.js');
+const { userJoin, getCurrentUser } = require('./Users')
 
 const {register_new_user, validate_creds} = require("./auth/auth.js")
 
@@ -70,6 +71,17 @@ io.on('connection', (socket) => {
 
   //broadcast incoming stream to all clients in session
   socket.on('client-audio-stream', (data)=> {sessions.streamToSession(data, socket)});
+  
+  socket.on('room-exists', (data) => {
+    if(io.sockets.adapter.rooms.has(data.sessionID)){
+      console.log(`room ${data.sessionID} exists`)
+      socket.emit('join-session-success')
+    }
+    else{
+      console.log(`session id ${data.sessionID} doesn't exist`)
+      socket.emit('join-session-failed')
+    }
+  })
 
   //socket.emit('me', socket.id);
   
@@ -78,15 +90,21 @@ io.on('connection', (socket) => {
   let socketRoom; //Current room of the socket for chat prototype
 
   //Joining a room and sending them chat history
-  socket.on('joinRoom', ({ username, room }) => {
-    socket.join(room);
-
+  socket.on('joinRoom', (data)  => {
+   // const user = userJoin(socket.id, username, room);
+    socket.join(data.sessionID);
     //sock
-    socketRoom = room;
-    socketMap[socket.id] = username;
+    socketRoom = data.sessionID;
+    socketMap[socket.id] = data.guest;
     //Send chat history to client
+    socket.broadcast.to(data.sessionID).emit('message', console.log(`${data.guest} has joined the room ${data.sessionID}`))
     socket.emit('joinResponse', socketHistory[socketRoom]);
   });
+
+  socket.on("send_message", (data) =>{ 
+    socket.to(data.sessionID).emit("receive_message", data);
+
+  })
 
   //Switch rooms
   socket.on('switchRoom', (data) => {
