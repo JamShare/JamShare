@@ -1,6 +1,7 @@
 import React from 'react';
 import image1 from './assets/images/playing.png'
-import {WebRTCAdaptor} from '../js/webrtc_adaptor';
+import { WebRTCAdaptor } from '../js/webrtc_adaptor';
+import { getUrlParameter } from "../js/fetch.stream.js"
 const io = require('socket.io-client');
 
 
@@ -26,8 +27,8 @@ class Recorder extends React.Component {
                     latency: 0
                 }
             },
-            streamName: 'stream1',
-            token: '',
+            streamName: getUrlParameter("streamName"),
+            token: getUrlParameter("token"),
             pc_config: {
                 'iceServers': [{
                     'urls': 'stun:stun.l.google.com:19302'
@@ -35,14 +36,14 @@ class Recorder extends React.Component {
                 sdpSemantics: 'unified-plan'
             },
             sdpConstraints: {
-                OfferToReceiveAudio: true,
+                OfferToReceiveAudio: false,
                 OfferToReceiveVideo: false
             },
             websocketURL: "wss://berryhousehold.ddns.net:5443/WebRTCAppEE/websocket",
             isShow: false
         };
 
-        this.webRTCAdaptor = null;
+        this.webRTCAdaptor = this.initiateWebrtc();
 
         //this.chunks = [];
         this.recorder = null;
@@ -58,6 +59,12 @@ class Recorder extends React.Component {
         this.startRecording = this.startRecording.bind(this);
         this.stopRecording = this.stopRecording.bind(this);
         this.playRecording = this.playRecording.bind(this);
+        this.playAudio = this.playAudio.bind(this);
+        this.createRemoteAudio = this.createRemoteAudio.bind(this);
+        this.joinRoom = this.joinRoom.bind(this);
+        this.publish = this.publish.bind(this);
+
+        this.streamName = getUrlParameter("streamName");
 
         this.socket = io.connect(SERVER);
 
@@ -136,7 +143,7 @@ class Recorder extends React.Component {
             this.recorder.onstop = this.onStop;
 
 
-            this.webRTCAdaptor = this.initiateWebrtc(false);
+            this.webRTCAdaptor = this.initiateWebrtc();
             /*
             this.setState({
                 isShow: true
@@ -148,13 +155,64 @@ class Recorder extends React.Component {
         return;
     }
 
+    playAudio(obj) {
+        var room = "room1"
+        console.log("new stream available with id: "
+            + obj.streamId + "on the room:" + room);
+
+        var index = obj.trackId.substring("ARDAMSx".length);
+        //var index = 1;
+
+        if (index === room || index === this.state.streamName) {
+            return;
+        }
+
+        var audio = document.getElementById("remote_audio" + index);
+
+        if (audio == null) {
+            this.createRemoteAudio(index);
+            audio = document.getElementById("remote_audio" + index);
+            audio.srcObject = new MediaStream();
+        }
+
+        audio.srcObject.addTrack(obj.track)
+
+        obj.track.onmute = event => {
+            var remove = true;
+            audio.srcObject.getTracks().forEach(function (item) {
+                if (!item.muted) {
+                    remove = false;
+                }
+            });
+            if (remove) {
+                //removeRemoteAudio(index);
+            }
+        };
+    }
+
+    createRemoteAudio(streamId) {
+        var player = document.createElement("div");
+        player.className = "col-sm-3";
+        player.id = "player" + streamId;
+        player.innerHTML = '<video id="remoteVideo' + streamId + '"controls autoplay playsinline></video>' + streamId;
+        document.getElementById("players").appendChild(player);
+    }
+
     getAudioDevicePlayer() {
-        this.webRTCAdaptor = this.initiateWebrtc(true);
+        this.webRTCAdaptor = this.initiateWebrtc();
     }
 
     streamChangeHandler = ({ target: { value } }) => {
         console.log("Current value:", value);
         this.setState({ streamName: value });
+    }
+
+    joinRoom() {
+        this.webRTCAdaptor.joinRoom("room1", this.state.streamName, "multitrack");
+    }
+
+    publish(publishStreamId, token) {
+        this.webRTCAdaptor.publish(publishStreamId, token, "", "", this.streamName, "room1", "{someKey:somveValue}");
     }
 
     onStartPublishing(name) {
@@ -171,146 +229,114 @@ class Recorder extends React.Component {
         this.webRTCAdaptor.play(this.state.streamName, this.state.token);
     }
 
-    initiateWebrtc(playMode) {
-        let thiz = this;
-        if (playMode === false) {
-            return new WebRTCAdaptor({
-                websocket_url: this.state.websocketURL,
-                mediaConstraints: this.state.mediaConstraints,
-                peerconnection_config: this.state.pc_config,
-                sdp_constraints: this.state.sdpConstraints,
-                localVideoId: "local_audio",
-                debug: true,
-                bandwidth: 900,
-                callback: function (info, obj) {
-                    if (info === "initialized") {
-                        console.log("initialized");
+    initiateWebrtc() {
+        var publish = this.publish;
 
-                    } else if (info === "publish_started") {
-                        //stream is being published
-                        console.log("publish started");
-                        alert("publish started");
-                        /*
-                        thiz.setState({
-                            isShow: false
-                        });
-                        */
+        return new WebRTCAdaptor({
+            websocket_url: this.state.websocketURL,
+            mediaConstraints: this.state.mediaConstraints,
+            peerconnection_config: this.state.pc_config,
+            sdp_constraints: this.state.sdpConstraints,
+            localVideoId: "local_audio",
+            isPlayMode: true,
+            debug: true,
+            bandwidth: 900,
+            callback: function (info, obj) {
+                if (info === "initialized") {
+                    console.log("initialized");
 
-                    } else if (info === "publish_finished") {
-                        //stream is being finished
-                        console.log("publish finished");
-                        /*
-                        thiz.setState({
-                            isShow: true
-                        });
-                        */
+                } else if (info === "publish_started") {
+                    //stream is being published
+                    console.log("publish started");
+                    alert("publish started");
+                    /*
+                    thiz.setState({
+                        isShow: false
+                    });
+                    */
 
-                    } else if (info === "closed") {
-                        //console.log("Connection closed");
-                        if (typeof obj != "undefined") {
-                            console.log("Connecton closed: "
-                                + JSON.stringify(obj));
-                        }
-                    } else if (info === "streamInformation") {
+                } else if (info === "publish_finished") {
+                    //stream is being finished
+                    console.log("publish finished");
+                    /*
+                    thiz.setState({
+                        isShow: true
+                    });
+                    */
 
+                } else if (info === "joinedTheRoom") {
+                    var room = obj.ATTR_ROOM_NAME;
+                    //roomOfStream[obj.streamId] = room;
+                    //console.log("joined the room: "
+                    //    + roomOfStream[obj.streamId]);
+                    console.log("Object", obj)
 
-                    } else if (info === "ice_connection_state_changed") {
-                        console.log("iceConnectionState Changed: ", JSON.stringify(obj));
-                    } else if (info === "updated_stats") {
-                        //obj is the PeerStats which has fields
-                        //averageIncomingBitrate - kbits/sec
-                        //currentIncomingBitrate - kbits/sec
-                        //packetsLost - total number of packet lost
-                        //fractionLost - fraction of packet lost
-                        console.log("Average incoming kbits/sec: " + obj.averageIncomingBitrate
-                            + " Current incoming kbits/sec: " + obj.currentIncomingBitrate
-                            + " packetLost: " + obj.packetsLost
-                            + " fractionLost: " + obj.fractionLost
-                            + " audio level: " + obj.audioLevel);
+                    //publishStreamId = obj.streamId;
 
-                    } else if (info === "data_received") {
-                        console.log("Data received: " + obj.event.data + " type: " + obj.event.type + " for stream: " + obj.streamId);
-                    } else if (info === "bitrateMeasurement") {
-                        console.log(info + " notification received");
+                    //streamsList = obj.streams;
+                    //console.log(streamsList);
 
-                        console.log(obj);
-                    } else {
-                        console.log(info + " notification received");
+                    /*
+                    if (playOnly) {
+                        join_publish_button.disabled = true;
+                        stop_publish_button.disabled = false;
+                        isCameraOff = true;
+                        handleCameraButtons();
+                        webRTCAdaptor.play(roomNameBox.value, token, roomNameBox.value, streamsList);
                     }
-                },
-                callbackError: function (error) {
-                    //some of the possible errors, NotFoundError, SecurityError,PermissionDeniedError
-
-                    console.log("error callback: " + JSON.stringify(error));
-                    alert(JSON.stringify(error));
-                }
-            });
-        }
-        else {
-            return new WebRTCAdaptor({
-                websocket_url: this.state.websocketURL,
-                mediaConstraints: this.state.mediaConstraints,
-                peerconnection_config: this.state.pc_config,
-                sdp_constraints: this.state.sdpConstraints,
-                remoteVideoId: "remote_audio",
-                isPlayMode: true,
-                debug: true,
-                candidateTypes: ["tcp", "udp"],
-                callback: function (info, obj) {
-                    if (info === "initialized") {
-                        console.log("initialized");
-
-                    } else if (info === "play_started") {
-                        //joined the stream
-                        console.log("play started");
-
-
-                    } else if (info === "play_finished") {
-                        //leaved the stream
-                        console.log("play finished");
-
-                    } else if (info === "closed") {
-                        //console.log("Connection closed");
-                        if (typeof obj != "undefined") {
-                            console.log("Connecton closed: "
-                                + JSON.stringify(obj));
-                        }
-                    } else if (info === "streamInformation") {
-
-
-                    } else if (info === "ice_connection_state_changed") {
-                        console.log("iceConnectionState Changed: ", JSON.stringify(obj));
-                    } else if (info === "updated_stats") {
-                        //obj is the PeerStats which has fields
-                        //averageIncomingBitrate - kbits/sec
-                        //currentIncomingBitrate - kbits/sec
-                        //packetsLost - total number of packet lost
-                        //fractionLost - fraction of packet lost
-                        console.log("Average incoming kbits/sec: " + obj.averageIncomingBitrate
-                            + " Current incoming kbits/sec: " + obj.currentIncomingBitrate
-                            + " packetLost: " + obj.packetsLost
-                            + " fractionLost: " + obj.fractionLost
-                            + " audio level: " + obj.audioLevel);
-
-                    } else if (info === "data_received") {
-                        console.log("Data received: " + obj.event.data + " type: " + obj.event.type + " for stream: " + obj.streamId);
-                    } else if (info === "bitrateMeasurement") {
-                        console.log(info + " notification received");
-
-                        console.log(obj);
-                    } else {
-                        console.log(info + " notification received");
+                    
+                    else {
+                        publish(obj.streamId, token);
                     }
-                },
-                callbackError: function (error) {
-                    //some of the possible errors, NotFoundError, SecurityError,PermissionDeniedError
+                    */
+                    publish(obj.streamId, this.token);
+                    /*
+                    roomTimerId = setInterval(() => {
+                        webRTCAdaptor.getRoomInfo(roomNameBox.value, publishStreamId);
+                    }, 5000);
+                    */
+                } else if (info === "closed") {
+                    //console.log("Connection closed");
+                    if (typeof obj != "undefined") {
+                        console.log("Connecton closed: "
+                            + JSON.stringify(obj));
+                    }
+                } else if (info === "streamInformation") {
 
-                    console.log("error callback: " + JSON.stringify(error));
-                    alert(JSON.stringify(error));
+
+                } else if (info === "newStreamAvailable") {
+                    this.playAudio(obj);
+                } else if (info === "ice_connection_state_changed") {
+                    console.log("iceConnectionState Changed: ", JSON.stringify(obj));
+                } else if (info === "updated_stats") {
+                    //obj is the PeerStats which has fields
+                    //averageIncomingBitrate - kbits/sec
+                    //currentIncomingBitrate - kbits/sec
+                    //packetsLost - total number of packet lost
+                    //fractionLost - fraction of packet lost
+                    console.log("Average incoming kbits/sec: " + obj.averageIncomingBitrate
+                        + " Current incoming kbits/sec: " + obj.currentIncomingBitrate
+                        + " packetLost: " + obj.packetsLost
+                        + " fractionLost: " + obj.fractionLost
+                        + " audio level: " + obj.audioLevel);
+
+                } else if (info === "data_received") {
+                    console.log("Data received: " + obj.event.data + " type: " + obj.event.type + " for stream: " + obj.streamId);
+                } else if (info === "bitrateMeasurement") {
+                    console.log(info + " notification received");
+
+                    console.log(obj);
+                } else {
+                    console.log(info + " notification received");
                 }
-            });
-        }
+            },
+            callbackError: function (error) {
+                //some of the possible errors, NotFoundError, SecurityError,PermissionDeniedError
 
+                console.log("error callback: " + JSON.stringify(error));
+                alert(JSON.stringify(error));
+            }
+        });
     }
 
     startRecording() {
@@ -388,8 +414,8 @@ class Recorder extends React.Component {
                     Choose audio device
                 </button>
 
-                <button onClick={this.getAudioDevicePlayer}>
-                    Choose audio device player
+                <button onClick={this.joinRoom}>
+                    Join Room
                 </button>
 
                 <button onClick={this.startRecording}>
