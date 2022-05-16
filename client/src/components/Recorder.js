@@ -63,8 +63,14 @@ class Recorder extends React.Component {
         this.createRemoteAudio = this.createRemoteAudio.bind(this);
         this.joinRoom = this.joinRoom.bind(this);
         this.publish = this.publish.bind(this);
+        this.getTracks = this.getTracks.bind(this);
+        this.addTrackList = this.addTrackList.bind(this);
+        this.addVideoTrack = this.addVideoTrack.bind(this);
+        this.enableTrack = this.enableTrack.bind(this);
 
         this.streamName = getUrlParameter("streamName");
+        this.streamId = null;
+        this.tracks = [];
 
         this.socket = io.connect(SERVER);
 
@@ -190,6 +196,43 @@ class Recorder extends React.Component {
         };
     }
 
+    getTracks() {
+        this.streamId = "room1";
+        this.webRTCAdaptor.getTracks("room1", this.token);
+    }
+
+    addTrackList(streamId, trackList) {
+        var addVideoTrack = this.addVideoTrack;
+        addVideoTrack(streamId);
+        trackList.forEach(function (trackId) {
+            addVideoTrack(trackId);
+        });
+    }
+
+    addVideoTrack(trackId) {
+        this.tracks.push(trackId);
+
+        var trackUl = document.getElementById("trackList");
+        var li = document.createElement("li");
+        var checkbox = document.createElement("input");
+        var label = document.createElement("label");
+        var description = document.createTextNode(trackId);
+        checkbox.type = "checkbox";
+        checkbox.name = trackId;
+        checkbox.id = "cbx" + trackId;
+        checkbox.checked = false;
+        checkbox.onclick = function () { this.enableTrack(trackId); };
+        label.appendChild(checkbox);
+        label.appendChild(description);
+        li.appendChild(label);
+        trackUl.appendChild(li);
+    }
+
+    enableTrack(trackId) {
+        var checkBox = document.getElementById("cbx" + trackId);
+        this.webRTCAdaptor.enableTrack("room1", trackId, checkBox.checked);
+    }
+
     createRemoteAudio(streamId) {
         var player = document.createElement("div");
         player.className = "col-sm-3";
@@ -232,6 +275,7 @@ class Recorder extends React.Component {
 
     initiateWebrtc() {
         var publish = this.publish;
+        var addTrackList = this.addTrackList;
 
         return new WebRTCAdaptor({
             websocket_url: this.state.websocketURL,
@@ -265,6 +309,9 @@ class Recorder extends React.Component {
                     });
                     */
 
+                } else if (info == "trackList") {
+                    console.log("trackList", obj.streamId);
+                    addTrackList(obj.streamId, obj.trackList);
                 } else if (info === "joinedTheRoom") {
                     var room = obj.ATTR_ROOM_NAME;
                     //roomOfStream[obj.streamId] = room;
@@ -341,6 +388,8 @@ class Recorder extends React.Component {
     }
 
     startRecording() {
+        this.getTracks();
+        /*
         if (!this.recorder) {
             return;
         }
@@ -352,6 +401,7 @@ class Recorder extends React.Component {
         console.log("Recording started successfully.");
         this.socket.emit("audio-stream-start");
         return;
+        */
     }
 
     stopRecording() {
@@ -463,6 +513,11 @@ class Recorder extends React.Component {
 
 
                 </div>
+                <div class="container">
+                    <ul id="trackList" name="trackList">
+                    </ul>
+                </div>
+                
 
             </div>
         );
