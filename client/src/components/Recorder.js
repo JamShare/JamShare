@@ -67,6 +67,7 @@ class Recorder extends React.Component {
         this.addTrackList = this.addTrackList.bind(this);
         this.addVideoTrack = this.addVideoTrack.bind(this);
         this.enableTrack = this.enableTrack.bind(this);
+        this.startPlaying = this.startPlaying.bind(this);
 
         this.streamName = getUrlParameter("streamName");
         this.streamId = null;
@@ -166,34 +167,36 @@ class Recorder extends React.Component {
         console.log("new stream available with id: "
             + obj.streamId + "on the room:" + room);
 
-        var index = obj.trackId.substring("ARDAMSx".length);
-        //var index = 1;
+        var index;
+        if (obj.track.kind == "video") {
+            index = obj.track.id.replace("ARDAMSv", "");
+        }
+        else if (obj.track.kind == "audio") {
+            index = obj.track.id.replace("ARDAMSa", "");
+        }
 
-        if (index === room || index === this.state.streamName) {
+        if (index == room) {
             return;
         }
 
-        var audio = document.getElementById("remote_audio" + index);
+        var video = document.getElementById("remoteVideo" + index);
 
-        if (audio == null) {
+        if (video == null) {
             this.createRemoteAudio(index);
-            audio = document.getElementById("remote_audio" + index);
-            audio.srcObject = new MediaStream();
+            video = document.getElementById("remoteVideo" + index);
+            video.srcObject = new MediaStream();
         }
 
-        audio.srcObject.addTrack(obj.track)
+        video.srcObject.addTrack(obj.track)
 
-        obj.track.onmute = event => {
-            var remove = true;
-            audio.srcObject.getTracks().forEach(function (item) {
-                if (!item.muted) {
-                    remove = false;
-                }
-            });
-            if (remove) {
-                //removeRemoteAudio(index);
+        /*
+        obj.track.onended = event => {
+            video.srcObject.removeTrack(event.currentTarget);
+            if (video.srcObject.getTracks().length == 0) {
+                removeRemoteVideo(index);
             }
         };
+        */
     }
 
     getTracks() {
@@ -209,7 +212,19 @@ class Recorder extends React.Component {
         });
     }
 
+    startPlaying() {
+        var enabledTracks = [];
+        this.tracks.forEach(function (trackId) {
+            var checkBox = document.getElementById("cbx" + trackId);
+            enabledTracks.push((checkBox.checked ? "" : "!") + trackId);
+        });
+
+        this.streamId = "room1";
+        this.webRTCAdaptor.play("room1", this.token, "", enabledTracks);
+    }
+
     addVideoTrack(trackId) {
+        var enableTrack = this.enableTrack;
         this.tracks.push(trackId);
 
         var trackUl = document.getElementById("trackList");
@@ -221,7 +236,7 @@ class Recorder extends React.Component {
         checkbox.name = trackId;
         checkbox.id = "cbx" + trackId;
         checkbox.checked = false;
-        checkbox.onclick = function () { this.enableTrack(trackId); };
+        checkbox.onclick = function () { enableTrack(trackId); };
         label.appendChild(checkbox);
         label.appendChild(description);
         li.appendChild(label);
@@ -269,13 +284,15 @@ class Recorder extends React.Component {
     onStartPlaying(name) {
         //this.webRTCAdaptor = this.initiateWebrtc(true);
         //this.webRTCAdaptor.isPlayMode = true;
-        console.log("playMode", this.webRTCAdaptor.isPlayMode);
-        this.webRTCAdaptor.play(this.state.streamName, this.state.token);
+        //console.log("playMode", this.webRTCAdaptor.isPlayMode);
+        //this.webRTCAdaptor.play(this.state.streamName, this.state.token);
+        this.startPlaying();
     }
 
     initiateWebrtc() {
         var publish = this.publish;
         var addTrackList = this.addTrackList;
+        var playAudio = this.playAudio;
 
         return new WebRTCAdaptor({
             websocket_url: this.state.websocketURL,
@@ -353,7 +370,7 @@ class Recorder extends React.Component {
 
 
                 } else if (info === "newStreamAvailable") {
-                    this.playAudio(obj);
+                    playAudio(obj);
                 } else if (info === "ice_connection_state_changed") {
                     console.log("iceConnectionState Changed: ", JSON.stringify(obj));
                 } else if (info === "updated_stats") {
@@ -517,7 +534,9 @@ class Recorder extends React.Component {
                     <ul id="trackList" name="trackList">
                     </ul>
                 </div>
-                
+                <div id="players">
+                </div>
+
 
             </div>
         );
