@@ -52,19 +52,19 @@ const socketHistory = {};
 io.on('connection', (socket) => {
   //recieve the data from the user 
   clientObject = undefined;
-  socket.on("create-session", (data) => { createSession(socket.id, data)});
+  socket.on("create-session", (data) => { createSession(socket.id, data) });
 
   //'join-session' emitted from client when user clicks 'join jam session' in /Join.js modal popup, or when user enters session ID in orange box and presses enter. 
   //apparently, does not require adding the client's socket.id to a list for each session.   
-  socket.on('join-session' , (data) => { Sessions.joinSession(data.SessionID, socket.id)});
+  socket.on('join-session', (data) => { Sessions.joinSession(data.SessionID, socket.id) });
 
   //broadcast incoming stream to all clients in session
-  socket.on('client-audio-stream', (data)=> { Sessions.streamToSession(data, socket.id)});
+  socket.on('client-audio-stream', (data) => { Sessions.streamToSession(data, socket.id) });
 
 
 
 
-  
+
   // socket.on('chat')
 
   let socketRoom; //Current room of the socket for chat prototype
@@ -142,22 +142,22 @@ io.on('connection', (socket) => {
     io.emit('RECEIVE_MESSAGE', data);
   });
 
-  
+
   socket.on("audio-stream", (data) => {
-      //console.log("Audio streaming.");
-      chunks.push(data);
+    //console.log("Audio streaming.");
+    chunks.push(data);
   });
 
   socket.on("audio-stream-start", () => {
     console.log("Audio streaming started.");
   });
-  
+
   socket.on("audio-stream-end", () => {
-      console.log("Audio streaming ended.");
-      // emits to all connected clients
-      // TODO change this when we establish multiple rooms
-      io.emit("audio-blob", chunks);
-      chunks = [];
+    console.log("Audio streaming ended.");
+    // emits to all connected clients
+    // TODO change this when we establish multiple rooms
+    io.emit("audio-blob", chunks);
+    chunks = [];
   });
 
 

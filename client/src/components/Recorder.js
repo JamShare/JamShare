@@ -43,7 +43,7 @@ class Recorder extends React.Component {
             isShow: false
         };
 
-        this.webRTCAdaptor = this.initiateWebrtc();
+        //this.webRTCAdaptor = this.initiateWebrtc();
 
         //this.chunks = [];
         this.recorder = null;
@@ -143,7 +143,7 @@ class Recorder extends React.Component {
             this.recorder.onstop = this.onStop;
 
 
-            this.webRTCAdaptor = this.initiateWebrtc();
+            //this.webRTCAdaptor = this.initiateWebrtc();
             /*
             this.setState({
                 isShow: true
@@ -212,6 +212,7 @@ class Recorder extends React.Component {
     }
 
     publish(publishStreamId, token) {
+        console.log("Publishing");
         this.webRTCAdaptor.publish(publishStreamId, token, "", "", this.streamName, "room1", "{someKey:somveValue}");
     }
 
@@ -410,7 +411,7 @@ class Recorder extends React.Component {
                     */
                 }
 
-                <button onClick={this.getAudioDevice}>
+                <button onClick={this.getAudioDevicePlayer}>
                     Choose audio device
                 </button>
 
