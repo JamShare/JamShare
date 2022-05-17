@@ -186,8 +186,21 @@ class Recorder extends React.Component {
             video = document.getElementById("remoteVideo" + index);
             video.srcObject = new MediaStream();
         }
+        //video.srcObject.addTrack(obj.track)
+        //console.log(obj.track);
+        
+        var audioCtx = new AudioContext();
+        const delay = new DelayNode(audioCtx, {
+            delayTime: 0.5,
+        });
 
-        video.srcObject.addTrack(obj.track)
+        var source = audioCtx.createMediaStreamTrackSource(obj.track);
+        source.connect(delay);
+        var dest = audioCtx.createMediaStreamDestination();
+        delay.connect(dest);
+        video.srcObject.addTrack(dest.stream.getAudioTracks()[0]);
+        
+
 
         /*
         obj.track.onended = event => {
@@ -202,6 +215,7 @@ class Recorder extends React.Component {
     getTracks() {
         this.streamId = "room1";
         this.webRTCAdaptor.getTracks("room1", this.token);
+        
     }
 
     addTrackList(streamId, trackList) {
@@ -275,6 +289,13 @@ class Recorder extends React.Component {
     }
 
     onStartPublishing(name) {
+        var source = this.webRTCAdaptor.audioContext.createMediaStreamSource();
+
+        var delay = this.webRTCAdaptor.audioContext.createDelay(1000);
+        this.delay.delayTime = 1;
+
+        source.connect(delay);
+
         console.log("playMode", this.webRTCAdaptor.isPlayMode);
         this.webRTCAdaptor.joinRoom("room1", this.state.streamName, "multitrack");
         this.webRTCAdaptor.publish(this.state.streamName, this.state.token, "", "", "multitrack", "room1");
