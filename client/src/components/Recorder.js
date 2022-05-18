@@ -75,6 +75,12 @@ class Recorder extends React.Component {
 
         this.socket = io.connect(SERVER);
 
+        this.socket.on("player-connected-server", (order) => {
+
+            this.playerOrder = order;
+            console.log("Player order", this.playerOrder);
+        });
+
         this.socket.on("audio-blob", (chunks) => {
             console.log("Audio blob recieved.");
             let blob = new Blob(chunks, { 'type': 'audio/ogg; codecs=opus' })
@@ -120,6 +126,8 @@ class Recorder extends React.Component {
     // asks for permission to use audio device from user
     // if declined or error, returns a null stream
     async getAudioDevice() {
+
+        
 
         let audiox = document.querySelector("#local_audio");
 
@@ -271,6 +279,8 @@ class Recorder extends React.Component {
     }
 
     getAudioDevicePlayer() {
+        this.socket.emit("player-connected", this.socket.id);
+        console.log("id", this.socket.id);
         this.webRTCAdaptor = this.initiateWebrtc();
     }
 
