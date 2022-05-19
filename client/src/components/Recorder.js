@@ -73,6 +73,7 @@ class Recorder extends React.Component {
         this.streamName = getUrlParameter("streamName");
         this.streamId = null;
         this.tracks = [];
+        this.disabledTracks = [];
 
         this.socket = io.connect(SERVER);
 
@@ -327,7 +328,8 @@ class Recorder extends React.Component {
     }
 
     joinRoom() {
-        this.webRTCAdaptor.joinRoom("room1", this.state.streamName, "multitrack");
+        this.webRTCAdaptor.joinRoom("room1", this.state.streamName, "multitrack", "amcu");
+        
     }
 
     publish(publishStreamId, token) {
@@ -440,6 +442,11 @@ class Recorder extends React.Component {
                 } else if (info === "newStreamAvailable") {
                     //console.log("streamId: ", obj.streamId);
                     playAudio(obj);
+                    this.tracks.forEach(function (trackId) {
+                        if (parseInt(trackId, 10) > parseInt(this.playerOrder, 10)) {
+                            this.enableTrack(trackId, false);
+                        }
+                    });
                 } else if (info === "ice_connection_state_changed") {
                     console.log("iceConnectionState Changed: ", JSON.stringify(obj));
                 } else if (info === "updated_stats") {
