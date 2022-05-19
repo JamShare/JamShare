@@ -131,7 +131,7 @@ class Recorder extends React.Component {
     // if declined or error, returns a null stream
     async getAudioDevice() {
 
-        
+
 
         let audiox = document.querySelector("#local_audio");
 
@@ -200,7 +200,7 @@ class Recorder extends React.Component {
         }
         //video.srcObject.addTrack(obj.track)
         //console.log(obj.track);
-        
+
         var audioCtx = new AudioContext();
         const delay = new DelayNode(audioCtx, {
             delayTime: 0.5,
@@ -211,7 +211,7 @@ class Recorder extends React.Component {
         var dest = audioCtx.createMediaStreamDestination();
         delay.connect(dest);
         video.srcObject.addTrack(dest.stream.getAudioTracks()[0]);
-        
+
 
 
         /*
@@ -227,7 +227,7 @@ class Recorder extends React.Component {
     getTracks() {
         this.streamId = "room1";
         this.webRTCAdaptor.getTracks("room1", this.token);
-        
+
     }
 
     addTrackList(streamId, trackList) {
@@ -240,10 +240,43 @@ class Recorder extends React.Component {
 
     startPlaying() {
         var enabledTracks = [];
+        /*
         this.tracks.forEach(function (trackId) {
+            console.log("Track Id:", trackId);
             var checkBox = document.getElementById("cbx" + trackId);
             enabledTracks.push((checkBox.checked ? "" : "!") + trackId);
         });
+        */
+
+        if (this.playerOrder === 2) {
+            console.log("Player Order: ", this.playerOrder);
+            this.tracks.forEach(function (trackId) {
+                if (trackId === "1") {
+                    enabledTracks.push("1");
+                }
+                else {
+                    enabledTracks.push(("!") + trackId);
+                }
+            });
+        } else if (this.playerOrder === 3) {
+            console.log("Player Order: ", this.playerOrder);
+            this.tracks.forEach(function (trackId) {
+                if (trackId === "1") {
+                    enabledTracks.push("1");
+                }
+                else if (trackId === "2") {
+                    enabledTracks.push("2");
+                }
+                else {
+                    enabledTracks.push(("!") + trackId);
+                }
+            });
+        }
+        else {
+            this.tracks.forEach(function (trackId) {
+                enabledTracks.push(("!") + trackId);
+            });
+        }
 
         this.streamId = "room1";
         this.webRTCAdaptor.play("room1", this.token, "", enabledTracks);
@@ -405,6 +438,7 @@ class Recorder extends React.Component {
 
 
                 } else if (info === "newStreamAvailable") {
+                    //console.log("streamId: ", obj.streamId);
                     playAudio(obj);
                 } else if (info === "ice_connection_state_changed") {
                     console.log("iceConnectionState Changed: ", JSON.stringify(obj));
