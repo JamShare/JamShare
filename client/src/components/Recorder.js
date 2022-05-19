@@ -69,6 +69,7 @@ class Recorder extends React.Component {
         this.enableTrack = this.enableTrack.bind(this);
         this.startPlaying = this.startPlaying.bind(this);
 
+
         this.streamName = getUrlParameter("streamName");
         this.streamId = null;
         this.tracks = [];
@@ -78,6 +79,9 @@ class Recorder extends React.Component {
         this.socket.on("player-connected-server", (order) => {
 
             this.playerOrder = order;
+            this.setState({
+                streamName: '' + this.playerOrder,
+            });
             console.log("Player order", this.playerOrder);
         });
 
