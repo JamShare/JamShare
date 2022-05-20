@@ -4,10 +4,8 @@ import { WebRTCAdaptor } from '../js/webrtc_adaptor';
 import { getUrlParameter } from "../js/fetch.stream.js"
 const io = require('socket.io-client');
 
-
 //const SERVER = "http://localhost:3001";
 const SERVER = "https://berryhousehold.ddns.net:3001";
-
 
 class Recorder extends React.Component {
     constructor(props) {
@@ -19,6 +17,7 @@ class Recorder extends React.Component {
             icon: '',
             text: 'Jam!',
 
+            //Following constraints allow the best for music
             mediaConstraints: {
                 audio: {
                     echoCancellation: false,
@@ -39,11 +38,10 @@ class Recorder extends React.Component {
                 OfferToReceiveAudio: false,
                 OfferToReceiveVideo: false
             },
+            //URL to Antmedia Server
             websocketURL: "wss://berryhousehold.ddns.net:5443/WebRTCAppEE/websocket",
             isShow: false
         };
-
-        //this.webRTCAdaptor = this.initiateWebrtc();
 
         //this.chunks = [];
         this.recorder = null;
@@ -54,11 +52,7 @@ class Recorder extends React.Component {
         // bind functions to instance
         this.onDataAvailable = this.onDataAvailable.bind(this);
         this.onStop = this.onStop.bind(this);
-        this.getAudioDevice = this.getAudioDevice.bind(this);
         this.getAudioDevicePlayer = this.getAudioDevicePlayer.bind(this);
-        this.startRecording = this.startRecording.bind(this);
-        this.stopRecording = this.stopRecording.bind(this);
-        this.playRecording = this.playRecording.bind(this);
         this.playAudio = this.playAudio.bind(this);
         this.createRemoteAudio = this.createRemoteAudio.bind(this);
         this.joinRoom = this.joinRoom.bind(this);
@@ -68,15 +62,18 @@ class Recorder extends React.Component {
         this.addVideoTrack = this.addVideoTrack.bind(this);
         this.enableTrack = this.enableTrack.bind(this);
         this.startPlaying = this.startPlaying.bind(this);
+        this.getTracks = this.getTracks.bind(this);
 
-
+        //Antmedia variables
         this.streamName = getUrlParameter("streamName");
         this.streamId = null;
+        //Audio tracks
         this.tracks = [];
+        //Tracks to disable
         this.disabledTracks = [];
 
+        //Socketio
         this.socket = io.connect(SERVER);
-
         this.socket.on("player-connected-server", (order) => {
 
             this.playerOrder = order;
@@ -85,96 +82,9 @@ class Recorder extends React.Component {
             });
             console.log("Player order", this.playerOrder);
         });
-
-        this.socket.on("audio-blob", (chunks) => {
-            console.log("Audio blob recieved.");
-            let blob = new Blob(chunks, { 'type': 'audio/ogg; codecs=opus' })
-            let audioURL = URL.createObjectURL(blob);
-            this.audio = new Audio(audioURL);
-        });
     }
 
-    // useEffect(unknownParameter = () => {
-    //     const interval = setInterval(() => {
-
-    //         console.log('This will run every second!');
-
-    //         // ss(socket).emit('client-stream', stream, {name: filename});
-    //         // ss(socket).on('stream', function(this.stream) {};
-    //         // this.filestream.pipe(this.chunks);
-
-    //         ss(socket).emit('client-stream', this.stream);
-    //         this.stream.pipe(fs.createWriteStream(this.filename));
-
-    //     }, 1000);
-    //     return () => clearInterval(interval);
-    // },[]);
-
-    // event handlers for recorder
-    onDataAvailable(e) {
-        //this.chunks.push(e.data);
-        this.socket.emit("audio-stream", e.data);
-    }
-
-    onStop(e) {
-        console.log("Recording stopped successfully.");
-        this.socket.emit("audio-stream-end");
-    }
-
-    componentDidMount() {
-        //this.webRTCAdaptor = this.initiateWebrtc(false);
-        this.setState({
-            isShow: true
-        });
-    }
-
-    // asks for permission to use audio device from user
-    // if declined or error, returns a null stream
-    async getAudioDevice() {
-
-
-
-        let audiox = document.querySelector("#local_audio");
-
-        var stream = null;
-        try {
-            stream = await navigator.mediaDevices
-                .getUserMedia({
-                    audio: {
-                        echoCancellation: false,
-                        autoGainControl: false,
-                        noiseSuppression: false,
-                        latency: 0
-                    }
-                });
-        } catch (err) {
-            console.error(err)
-            stream = null;
-        }
-
-        this.recorder = null;
-        if (stream) {
-            audiox.srcObject = stream;
-
-            this.recorder = new MediaRecorder(stream)
-
-            // initialize event handlers for recorder
-            this.recorder.ondataavailable = this.onDataAvailable;
-            this.recorder.onstop = this.onStop;
-
-
-            //this.webRTCAdaptor = this.initiateWebrtc();
-            /*
-            this.setState({
-                isShow: true
-            });
-            */
-
-            console.log("Recording device acquired successfully.");
-        }
-        return;
-    }
-
+    //
     playAudio(obj) {
         var room = "room1"
         console.log("new stream available with id: "
@@ -199,8 +109,6 @@ class Recorder extends React.Component {
             video = document.getElementById("remoteVideo" + index);
             video.srcObject = new MediaStream();
         }
-        //video.srcObject.addTrack(obj.track)
-        //console.log(obj.track);
 
         var audioCtx = new AudioContext();
         const delay = new DelayNode(audioCtx, {
@@ -212,23 +120,11 @@ class Recorder extends React.Component {
         var dest = audioCtx.createMediaStreamDestination();
         delay.connect(dest);
         video.srcObject.addTrack(dest.stream.getAudioTracks()[0]);
-
-
-
-        /*
-        obj.track.onended = event => {
-            video.srcObject.removeTrack(event.currentTarget);
-            if (video.srcObject.getTracks().length == 0) {
-                removeRemoteVideo(index);
-            }
-        };
-        */
     }
 
     getTracks() {
         this.streamId = "room1";
         this.webRTCAdaptor.getTracks("room1", this.token);
-
     }
 
     addTrackList(streamId, trackList) {
@@ -241,13 +137,6 @@ class Recorder extends React.Component {
 
     startPlaying() {
         var enabledTracks = [];
-        /*
-        this.tracks.forEach(function (trackId) {
-            console.log("Track Id:", trackId);
-            var checkBox = document.getElementById("cbx" + trackId);
-            enabledTracks.push((checkBox.checked ? "" : "!") + trackId);
-        });
-        */
 
         if (this.playerOrder === 2) {
             console.log("Player Order: ", this.playerOrder);
@@ -286,7 +175,6 @@ class Recorder extends React.Component {
     addVideoTrack(trackId) {
         var enableTrack = this.enableTrack;
         this.tracks.push(trackId);
-
         var trackUl = document.getElementById("trackList");
         var li = document.createElement("li");
         var checkbox = document.createElement("input");
@@ -329,7 +217,6 @@ class Recorder extends React.Component {
 
     joinRoom() {
         this.webRTCAdaptor.joinRoom("room1", this.state.streamName, "multitrack", "amcu");
-        
     }
 
     publish(publishStreamId, token) {
@@ -351,11 +238,7 @@ class Recorder extends React.Component {
         console.log("Current streamname:", this.state.streamName);
     }
 
-    onStartPlaying(name) {
-        //this.webRTCAdaptor = this.initiateWebrtc(true);
-        //this.webRTCAdaptor.isPlayMode = true;
-        //console.log("playMode", this.webRTCAdaptor.isPlayMode);
-        //this.webRTCAdaptor.play(this.state.streamName, this.state.token);
+    onStartPlaying() {
         this.startPlaying();
     }
 
@@ -381,66 +264,24 @@ class Recorder extends React.Component {
                     //stream is being published
                     console.log("publish started");
                     alert("publish started");
-                    /*
-                    thiz.setState({
-                        isShow: false
-                    });
-                    */
-
                 } else if (info === "publish_finished") {
                     //stream is being finished
                     console.log("publish finished");
-                    /*
-                    thiz.setState({
-                        isShow: true
-                    });
-                    */
-
                 } else if (info == "trackList") {
                     console.log("trackList", obj.streamId);
                     addTrackList(obj.streamId, obj.trackList);
                 } else if (info === "joinedTheRoom") {
                     var room = obj.ATTR_ROOM_NAME;
-                    //roomOfStream[obj.streamId] = room;
-                    //console.log("joined the room: "
-                    //    + roomOfStream[obj.streamId]);
                     console.log("Object", obj)
-
-                    //publishStreamId = obj.streamId;
-
-                    //streamsList = obj.streams;
-                    //console.log(streamsList);
-
-                    /*
-                    if (playOnly) {
-                        join_publish_button.disabled = true;
-                        stop_publish_button.disabled = false;
-                        isCameraOff = true;
-                        handleCameraButtons();
-                        webRTCAdaptor.play(roomNameBox.value, token, roomNameBox.value, streamsList);
-                    }
-                    
-                    else {
-                        publish(obj.streamId, token);
-                    }
-                    */
                     publish(obj.streamId, this.token);
-                    /*
-                    roomTimerId = setInterval(() => {
-                        webRTCAdaptor.getRoomInfo(roomNameBox.value, publishStreamId);
-                    }, 5000);
-                    */
                 } else if (info === "closed") {
-                    //console.log("Connection closed");
                     if (typeof obj != "undefined") {
                         console.log("Connecton closed: "
                             + JSON.stringify(obj));
                     }
                 } else if (info === "streamInformation") {
 
-
                 } else if (info === "newStreamAvailable") {
-                    //console.log("streamId: ", obj.streamId);
                     playAudio(obj);
                     this.tracks.forEach(function (trackId) {
                         if (parseInt(trackId, 10) > parseInt(this.playerOrder, 10)) {
@@ -465,7 +306,6 @@ class Recorder extends React.Component {
                     console.log("Data received: " + obj.event.data + " type: " + obj.event.type + " for stream: " + obj.streamId);
                 } else if (info === "bitrateMeasurement") {
                     console.log(info + " notification received");
-
                     console.log(obj);
                 } else {
                     console.log(info + " notification received");
@@ -473,66 +313,10 @@ class Recorder extends React.Component {
             },
             callbackError: function (error) {
                 //some of the possible errors, NotFoundError, SecurityError,PermissionDeniedError
-
                 console.log("error callback: " + JSON.stringify(error));
                 alert(JSON.stringify(error));
             }
         });
-    }
-
-    startRecording() {
-        this.getTracks();
-        /*
-        if (!this.recorder) {
-            return;
-        }
-        if (this.state.isRecording) {
-            return;
-        }
-        this.recorder.start();
-        this.setState({ isRecording: true });
-        console.log("Recording started successfully.");
-        this.socket.emit("audio-stream-start");
-        return;
-        */
-    }
-
-    stopRecording() {
-        if (!this.recorder) {
-            return;
-        }
-        if (!this.state.isRecording) {
-            return;
-        }
-        this.recorder.stop();
-        this.setState({ isRecording: false });
-        return;
-    }
-
-    playRecording() {
-        if (!this.audio) {
-            return;
-        }
-        this.audio.play();
-        return;
-    }
-
-    featureRun() {
-        if (!this.recorder) {
-            this.getAudioDevice();
-        }
-
-        if (this.state.isRecording) {
-            this.stopRecording();
-            this.setState({ icon: this.playingIcon });
-            this.setState({ text: 'Recording' });
-        }
-
-        if (!this.state.isRecording) {
-            this.startRecording();
-            this.setState({ icon: this.recordIcon });
-            this.setState({ text: 'stopped' });
-        }
     }
 
     render() {
@@ -555,23 +339,15 @@ class Recorder extends React.Component {
                 }
 
                 <button onClick={this.getAudioDevicePlayer}>
-                    Choose audio device
+                    1. Connect websocket
                 </button>
 
                 <button onClick={this.joinRoom}>
-                    Join Room
+                    2. Join Room
                 </button>
 
-                <button onClick={this.startRecording}>
-                    Start recording
-                </button>
-
-                <button onClick={this.stopRecording}>
-                    Stop recording
-                </button>
-
-                <button onClick={this.playRecording}>
-                    Play/pause recording
+                <button onClick={this.getTracks}>
+                    3. Get Tracks
                 </button>
 
                 <div>
@@ -603,8 +379,6 @@ class Recorder extends React.Component {
                             </button>
                         ) : null
                     }
-
-
                 </div>
                 <div class="container">
                     <ul id="trackList" name="trackList">
@@ -612,8 +386,6 @@ class Recorder extends React.Component {
                 </div>
                 <div id="players">
                 </div>
-
-
             </div>
         );
     }
