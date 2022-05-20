@@ -17,7 +17,7 @@ class Recorder extends React.Component {
             icon: '',
             text: 'Jam!',
 
-            //Following constraints allow the best for music
+            //the following constraints allow the best for music
             mediaConstraints: {
                 audio: {
                     echoCancellation: false,
@@ -38,20 +38,17 @@ class Recorder extends React.Component {
                 OfferToReceiveAudio: false,
                 OfferToReceiveVideo: false
             },
-            //URL to Antmedia Server
+            //URL to antmedia server
             websocketURL: "wss://berryhousehold.ddns.net:5443/WebRTCAppEE/websocket",
             isShow: false
         };
 
-        //this.chunks = [];
         this.recorder = null;
         this.audio = null;
         this.recordIcon = require('./assets/images/record.png')
         this.playingIcon = require('./assets/images/playing.png')
 
-        // bind functions to instance
-        this.onDataAvailable = this.onDataAvailable.bind(this);
-        this.onStop = this.onStop.bind(this);
+        //bind functions to instance
         this.getAudioDevicePlayer = this.getAudioDevicePlayer.bind(this);
         this.playAudio = this.playAudio.bind(this);
         this.createRemoteAudio = this.createRemoteAudio.bind(this);
@@ -64,15 +61,15 @@ class Recorder extends React.Component {
         this.startPlaying = this.startPlaying.bind(this);
         this.getTracks = this.getTracks.bind(this);
 
-        //Antmedia variables
+        //antmedia variables
         this.streamName = getUrlParameter("streamName");
         this.streamId = null;
-        //Audio tracks
+        //audio tracks
         this.tracks = [];
-        //Tracks to disable
+        //tracks to disable
         this.disabledTracks = [];
 
-        //Socketio
+        //socketio
         this.socket = io.connect(SERVER);
         this.socket.on("player-connected-server", (order) => {
 
@@ -84,7 +81,7 @@ class Recorder extends React.Component {
         });
     }
 
-    //
+    //remotely play each audio stream
     playAudio(obj) {
         var room = "room1"
         console.log("new stream available with id: "
@@ -102,6 +99,7 @@ class Recorder extends React.Component {
             return;
         }
 
+        //create the audio element
         var video = document.getElementById("remoteVideo" + index);
 
         if (video == null) {
@@ -110,6 +108,7 @@ class Recorder extends React.Component {
             video.srcObject = new MediaStream();
         }
 
+        //audio context delay code
         var audioCtx = new AudioContext();
         const delay = new DelayNode(audioCtx, {
             delayTime: 0.5,
@@ -122,11 +121,13 @@ class Recorder extends React.Component {
         video.srcObject.addTrack(dest.stream.getAudioTracks()[0]);
     }
 
+    //get the tracks in the antmedia room
     getTracks() {
         this.streamId = "room1";
         this.webRTCAdaptor.getTracks("room1", this.token);
     }
 
+    //add tracks to the antmedia room
     addTrackList(streamId, trackList) {
         var addVideoTrack = this.addVideoTrack;
         addVideoTrack(streamId);
@@ -135,9 +136,11 @@ class Recorder extends React.Component {
         });
     }
 
+    //play the enabled antmedia room tracks
     startPlaying() {
         var enabledTracks = [];
 
+        //tracks to play if we are player 2
         if (this.playerOrder === 2) {
             console.log("Player Order: ", this.playerOrder);
             this.tracks.forEach(function (trackId) {
@@ -148,7 +151,9 @@ class Recorder extends React.Component {
                     enabledTracks.push(("!") + trackId);
                 }
             });
-        } else if (this.playerOrder === 3) {
+        }
+        //tracks to play if we are player 3 
+        else if (this.playerOrder === 3) {
             console.log("Player Order: ", this.playerOrder);
             this.tracks.forEach(function (trackId) {
                 if (trackId === "1") {
@@ -162,16 +167,19 @@ class Recorder extends React.Component {
                 }
             });
         }
+        //if not player 2 or 3 mute all tracks
         else {
             this.tracks.forEach(function (trackId) {
                 enabledTracks.push(("!") + trackId);
             });
         }
 
+        //play the room tracks
         this.streamId = "room1";
         this.webRTCAdaptor.play("room1", this.token, "", enabledTracks);
     }
 
+    //add antmedia stream to track list
     addVideoTrack(trackId) {
         var enableTrack = this.enableTrack;
         this.tracks.push(trackId);
@@ -191,11 +199,13 @@ class Recorder extends React.Component {
         trackUl.appendChild(li);
     }
 
+    //enable checked track
     enableTrack(trackId) {
         var checkBox = document.getElementById("cbx" + trackId);
         this.webRTCAdaptor.enableTrack("room1", trackId, checkBox.checked);
     }
 
+    //create antmedia remote audio player
     createRemoteAudio(streamId) {
         var player = document.createElement("div");
         player.className = "col-sm-3";
@@ -204,15 +214,12 @@ class Recorder extends React.Component {
         document.getElementById("players").appendChild(player);
     }
 
+    //connect webrtc adaptor
     getAudioDevicePlayer() {
+        //get player order from node server
         this.socket.emit("player-connected", this.socket.id);
         console.log("id", this.socket.id);
         this.webRTCAdaptor = this.initiateWebrtc();
-    }
-
-    streamChangeHandler = ({ target: { value } }) => {
-        console.log("Current value:", value);
-        this.setState({ streamName: value });
     }
 
     joinRoom() {
@@ -353,7 +360,6 @@ class Recorder extends React.Component {
                 <div>
                     Local Audio
                     <audio id="local_audio" autoPlay muted playsInline controls={true} />
-                    <input type="text" onChange={this.streamChangeHandler} />
                     {
 
                         isShow ? (
@@ -368,7 +374,6 @@ class Recorder extends React.Component {
                     }
                     Remote Audio
                     <audio id="remote_audio" autoPlay playsInline controls={true} />
-                    <input type="text" onChange={this.streamChangeHandler} />
                     {
                         isShow ? (
                             <button
