@@ -1,5 +1,4 @@
 import React from 'react';
-import image1 from './assets/images/playing.png'
 import { WebRTCAdaptor } from '../js/webrtc_adaptor';
 import { getUrlParameter } from "../js/fetch.stream.js"
 const io = require('socket.io-client');
@@ -151,24 +150,21 @@ class Recorder extends React.Component {
             + obj.streamId + "on the room:" + room);
 
         var index;
-        if (obj.track.kind == "video") {
-            index = obj.track.id.replace("ARDAMSv", "");
-        }
-        else if (obj.track.kind == "audio") {
+        if (obj.track.kind === "audio") {
             index = obj.track.id.replace("ARDAMSa", "");
         }
 
-        if (index == room) {
+        if (index === room) {
             return;
         }
 
         //create the audio element
-        var video = document.getElementById("remoteVideo" + index);
+        var audioElement = document.getElementById("remoteVideo" + index);
 
-        if (video == null) {
+        if (audioElement == null) {
             this.createRemoteAudio(index);
-            video = document.getElementById("remoteVideo" + index);
-            video.srcObject = new MediaStream();
+            audioElement = document.getElementById("remoteVideo" + index);
+            audioElement.srcObject = new MediaStream();
         }
 
         let timeToDelay = 0;
@@ -193,20 +189,26 @@ class Recorder extends React.Component {
         source.connect(delay);
         var dest = audioCtx.createMediaStreamDestination();
         delay.connect(dest);
-        video.srcObject.addTrack(dest.stream.getAudioTracks()[0]);
+        audioElement.srcObject.addTrack(dest.stream.getAudioTracks()[0]);
 
+
+        //if we are the last player, record the audio streams
         console.log("New stream player order: ", playerOrder);
         if (playerOrder === 3) {
+            //Push ac sources
             const source = ac.createMediaStreamTrackSource(dest.stream.getAudioTracks()[0]);
             acSources.push(source);
             console.log("Acsource length", acSources.length);
+            //if we have three streams.
             if (acSources.length === 4) {
 
+                //connect all of the sources
                 for (let i = 0; i < acSources.length; i++) {
                     console.log("i acDest: ", acSources[i]);
                     acSources[i].connect(acDest);
                 }
 
+                //create the media recorder for the last player
                 console.log("acDest: ", acDest);
                 this.recorder = new MediaRecorder(acDest.stream)
 
@@ -365,11 +367,10 @@ class Recorder extends React.Component {
                 } else if (info === "publish_finished") {
                     //stream is being finished
                     console.log("publish finished");
-                } else if (info == "trackList") {
+                } else if (info === "trackList") {
                     console.log("trackList", obj.streamId);
                     addTrackList(obj.streamId, obj.trackList);
                 } else if (info === "joinedTheRoom") {
-                    var room = obj.ATTR_ROOM_NAME;
                     console.log("Object ID", obj.streamId);
                     publish(obj.streamId, this.token);
                 } else if (info === "closed") {
