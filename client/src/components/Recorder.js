@@ -234,21 +234,6 @@ class Recorder extends React.Component {
         this.webRTCAdaptor.publish(publishStreamId, token, "", "", this.streamName, "room1", "{someKey:somveValue}");
     }
 
-
-    onStartPublishing(name) {
-        var source = this.webRTCAdaptor.audioContext.createMediaStreamSource();
-
-        var delay = this.webRTCAdaptor.audioContext.createDelay(1000);
-        this.delay.delayTime = 1;
-
-        source.connect(delay);
-
-        console.log("playMode", this.webRTCAdaptor.isPlayMode);
-        this.webRTCAdaptor.joinRoom("room1", this.state.streamName, "multitrack");
-        this.webRTCAdaptor.publish(this.state.streamName, this.state.token, "", "", "multitrack", "room1");
-        console.log("Current streamname:", this.state.streamName);
-    }
-
     onStartPlaying() {
         this.startPlaying();
     }
@@ -368,18 +353,7 @@ class Recorder extends React.Component {
                 <div>
                     Local Audio
                     <audio id="local_audio" autoPlay muted playsInline controls={true} />
-                    {
 
-                        isShow ? (
-                            <button
-                                onClick={this.onStartPublishing.bind(this, streamName)}
-                                className="btn btn-primary"
-                                id="start_play_button"> Start
-                                Publish
-                            </button>
-                        ) : null
-
-                    }
                     Remote Audio
                     <audio id="remote_audio" autoPlay playsInline controls={true} />
                     {
