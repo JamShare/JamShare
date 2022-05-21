@@ -12,7 +12,6 @@ var ac = new AudioContext();
 var acDest = ac.createMediaStreamDestination();
 //audio context sources
 var acSources = [];
-var chunks = [];
 
 class Recorder extends React.Component {
     constructor(props) {
@@ -50,6 +49,8 @@ class Recorder extends React.Component {
             isShow: false
         };
 
+        this.chunks = [];
+
         this.recorder = null;
         this.audio = null;
         this.recordIcon = require('./assets/images/record.png')
@@ -72,6 +73,8 @@ class Recorder extends React.Component {
         this.startRecording = this.startRecording.bind(this);
         this.stopRecording = this.stopRecording.bind(this);
         this.playRecording = this.playRecording.bind(this);
+        this.onDataAvailable = this.onDataAvailable.bind(this);
+        this.onStop = this.onStop.bind(this);
 
         //this.playerOrder = 0;
 
@@ -96,6 +99,18 @@ class Recorder extends React.Component {
         });
     }
 
+    // event handlers for recorder
+    onDataAvailable(e) {
+        this.chunks.push(e.data);
+    }
+
+    onStop(e) {
+        console.log("Recording stopped successfully.");
+        let blob = new Blob(this.chunks, { 'type': 'audio/ogg; codecs=opus' })
+        let audioURL = URL.createObjectURL(blob);
+        this.audio = new Audio(audioURL);
+    }
+
     startRecording() {
         if (!this.recorder) {
             return;
@@ -106,7 +121,6 @@ class Recorder extends React.Component {
         this.recorder.start();
         this.setState({ isRecording: true });
         console.log("Recording started successfully.");
-        this.socket.emit("audio-stream-start");
         return;
     }
 
@@ -194,10 +208,12 @@ class Recorder extends React.Component {
                 }
 
                 console.log("acDest: ", acDest);
-                var mediaRecorder = new MediaRecorder(acDest.stream);
-             
-                
-                
+                this.recorder = new MediaRecorder(acDest.stream)
+
+                // initialize event handlers for recorder
+                this.recorder.ondataavailable = this.onDataAvailable;
+                this.recorder.onstop = this.onStop;
+            
             }
         }
     }
@@ -440,6 +456,17 @@ class Recorder extends React.Component {
 
                 <button onClick={this.resetPlayerCount}>
                     4. Reset Player Count
+                </button>
+
+                <button onClick={this.startRecording}>
+                    Start recording
+                </button>
+
+                <button onClick={this.stopRecording}>
+                    Stop recording
+                </button>
+                <button onClick={this.playRecording}>
+                    Play/pause recording
                 </button>
 
                 
