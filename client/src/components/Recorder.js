@@ -83,7 +83,7 @@ class Recorder extends React.Component {
     }
 
     //remotely play each audio stream
-    playAudio(obj) {
+    playAudio(obj, trackPlayerId) {
         var room = "room1"
         console.log("new stream available with id: "
             + obj.streamId + "on the room:" + room);
@@ -109,10 +109,22 @@ class Recorder extends React.Component {
             video.srcObject = new MediaStream();
         }
 
+        let timeToDelay = 0;
+
+        console.log("Track ID: ", obj.trackId);
+        if (this.playerOrder === 2 && obj.trackId === "ARDAMSa1") {
+            timeToDelay = 0.5;
+        } else if (this.playerOrder === 3 && obj.trackId === "ARDAMSa1") {
+            timeToDelay = 1;
+        }
+        else if (this.playerOrder === 3 && obj.trackId === "ARDAMSa2") {
+            timeToDelay = 0.5;
+        }
+
         //audio context delay code
-        var audioCtx = new AudioContext();
+        let audioCtx = new AudioContext();
         const delay = new DelayNode(audioCtx, {
-            delayTime: 1,
+            delayTime: timeToDelay,
         });
 
         var source = audioCtx.createMediaStreamTrackSource(obj.track);
@@ -124,7 +136,7 @@ class Recorder extends React.Component {
 
     //get the tracks in the antmedia room
     getTracks() {
-        this.streamId = "room1";
+        //this.streamId = "room1";
         this.webRTCAdaptor.getTracks("room1", this.token);
     }
 
@@ -176,7 +188,7 @@ class Recorder extends React.Component {
         }
 
         //play the room tracks
-        this.streamId = "room1";
+        //this.streamId = "room1";
         this.webRTCAdaptor.play("room1", this.token, "", enabledTracks);
     }
 
@@ -232,7 +244,7 @@ class Recorder extends React.Component {
     //publish the local stream
     publish(publishStreamId, token) {
         console.log("Publishing");
-        this.webRTCAdaptor.publish(publishStreamId, token, "", "", this.streamName, "room1", "{someKey:somveValue}");
+        this.webRTCAdaptor.publish(publishStreamId, token, "", "", this.streamName, "room1", "{someKey:somveValue}", this.playerOrder);
     }
 
     onStartPlaying() {
@@ -273,7 +285,7 @@ class Recorder extends React.Component {
                     addTrackList(obj.streamId, obj.trackList);
                 } else if (info === "joinedTheRoom") {
                     var room = obj.ATTR_ROOM_NAME;
-                    console.log("Object", obj)
+                    console.log("Object ID", obj.streamId);
                     publish(obj.streamId, this.token);
                 } else if (info === "closed") {
                     if (typeof obj != "undefined") {
@@ -284,11 +296,13 @@ class Recorder extends React.Component {
 
                 } else if (info === "newStreamAvailable") {
                     playAudio(obj);
-                    this.tracks.forEach(function (trackId) {
-                        if (parseInt(trackId, 10) > parseInt(this.playerOrder, 10)) {
-                            this.enableTrack(trackId, false);
-                        }
-                    });
+                    if (this.tracks != null) {
+                        this.tracks.forEach(function (trackId) {
+                            if (parseInt(trackId, 10) > parseInt(this.playerOrder, 10)) {
+                                this.enableTrack(trackId, false);
+                            }
+                        });
+                    }
                 } else if (info === "ice_connection_state_changed") {
                     console.log("iceConnectionState Changed: ", JSON.stringify(obj));
                 } else if (info === "updated_stats") {
