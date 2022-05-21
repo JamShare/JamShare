@@ -18,6 +18,7 @@
     "babel-loader": "^8.2.3",
     "crypto-browserify": "^3.12.0",
     "express": "^4.17.3",
+    "file-saver": "^2.0.5",
     "peerjs": "^1.3.2",
     "process": "^0.11.10",
     "react": "^17.0.2",

@@ -1,7 +1,9 @@
 import React from 'react';
 import { WebRTCAdaptor } from '../js/webrtc_adaptor';
-import { getUrlParameter } from "../js/fetch.stream.js"
+import { getUrlParameter } from "../js/fetch.stream.js";
+import { saveAs } from 'file-saver';
 const io = require('socket.io-client');
+
 
 //const SERVER = "http://localhost:3001";
 const SERVER = "https://berryhousehold.ddns.net:3001";
@@ -105,9 +107,10 @@ class Recorder extends React.Component {
 
     onStop(e) {
         console.log("Recording stopped successfully.");
-        let blob = new Blob(this.chunks, { 'type': 'audio/ogg; codecs=opus' })
+        let blob = new Blob(this.chunks, { 'type': 'audio/wav; codecs=opus' })
         let audioURL = URL.createObjectURL(blob);
         this.audio = new Audio(audioURL);
+        saveAs(blob, "audioTest.wav")
     }
 
     startRecording() {
