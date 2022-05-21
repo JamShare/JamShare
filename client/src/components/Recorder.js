@@ -111,7 +111,7 @@ class Recorder extends React.Component {
         //audio context delay code
         var audioCtx = new AudioContext();
         const delay = new DelayNode(audioCtx, {
-            delayTime: 0.5,
+            delayTime: 1,
         });
 
         var source = audioCtx.createMediaStreamTrackSource(obj.track);
@@ -219,17 +219,21 @@ class Recorder extends React.Component {
         //get player order from node server
         this.socket.emit("player-connected", this.socket.id);
         console.log("id", this.socket.id);
+        //initiate adaptor
         this.webRTCAdaptor = this.initiateWebrtc();
     }
 
+    //join the antmedia room with audio only amcu
     joinRoom() {
         this.webRTCAdaptor.joinRoom("room1", this.state.streamName, "multitrack", "amcu");
     }
 
+    //publish the local stream
     publish(publishStreamId, token) {
         console.log("Publishing");
         this.webRTCAdaptor.publish(publishStreamId, token, "", "", this.streamName, "room1", "{someKey:somveValue}");
     }
+
 
     onStartPublishing(name) {
         var source = this.webRTCAdaptor.audioContext.createMediaStreamSource();
@@ -355,6 +359,10 @@ class Recorder extends React.Component {
 
                 <button onClick={this.getTracks}>
                     3. Get Tracks
+                </button>
+
+                <button onClick={this.startPlaying}>
+                    4. Start Playing
                 </button>
 
                 <div>
