@@ -7,6 +7,13 @@ const io = require('socket.io-client');
 //const SERVER = "http://localhost:3001";
 const SERVER = "https://berryhousehold.ddns.net:3001";
 
+var playerOrder = 0;
+var ac = new AudioContext();
+var acDest = ac.createMediaStreamDestination();
+//audio context sources
+var acSources = [];
+var chunks = [];
+
 class Recorder extends React.Component {
     constructor(props) {
         super(props);
@@ -62,11 +69,18 @@ class Recorder extends React.Component {
         this.getTracks = this.getTracks.bind(this);
         this.resetPlayerCount = this.resetPlayerCount.bind(this);
 
+        this.startRecording = this.startRecording.bind(this);
+        this.stopRecording = this.stopRecording.bind(this);
+        this.playRecording = this.playRecording.bind(this);
+
+        //this.playerOrder = 0;
+
         //antmedia variables
         this.streamName = getUrlParameter("streamName");
         this.streamId = null;
         //audio tracks
         this.tracks = [];
+        
         //tracks to disable
         this.disabledTracks = [];
 
@@ -74,12 +88,46 @@ class Recorder extends React.Component {
         this.socket = io.connect(SERVER);
         this.socket.on("player-connected-server", (order) => {
 
-            this.playerOrder = order;
+            playerOrder = order;
             this.setState({
-                streamName: '' + this.playerOrder,
+                streamName: '' + playerOrder,
             });
-            console.log("Player order", this.playerOrder);
+            console.log("Player order", playerOrder);
         });
+    }
+
+    startRecording() {
+        if (!this.recorder) {
+            return;
+        }
+        if (this.state.isRecording) {
+            return;
+        }
+        this.recorder.start();
+        this.setState({ isRecording: true });
+        console.log("Recording started successfully.");
+        this.socket.emit("audio-stream-start");
+        return;
+    }
+
+    stopRecording() {
+        if (!this.recorder) {
+            return;
+        }
+        if (!this.state.isRecording) {
+            return;
+        }
+        this.recorder.stop();
+        this.setState({ isRecording: false });
+        return;
+    }
+
+    playRecording() {
+        if (!this.audio) {
+            return;
+        }
+        this.audio.play();
+        return;
     }
 
     //remotely play each audio stream
@@ -112,12 +160,12 @@ class Recorder extends React.Component {
         let timeToDelay = 0;
 
         console.log("Track ID: ", obj.trackId);
-        if (this.playerOrder === 2 && obj.trackId === "ARDAMSa1") {
+        if (playerOrder === 2 && obj.trackId === "ARDAMSa1") {
             timeToDelay = 0.5;
-        } else if (this.playerOrder === 3 && obj.trackId === "ARDAMSa1") {
+        } else if (playerOrder === 3 && obj.trackId === "ARDAMSa1") {
             timeToDelay = 1;
         }
-        else if (this.playerOrder === 3 && obj.trackId === "ARDAMSa2") {
+        else if (playerOrder === 3 && obj.trackId === "ARDAMSa2") {
             timeToDelay = 0.5;
         }
 
@@ -132,6 +180,26 @@ class Recorder extends React.Component {
         var dest = audioCtx.createMediaStreamDestination();
         delay.connect(dest);
         video.srcObject.addTrack(dest.stream.getAudioTracks()[0]);
+
+        console.log("New stream player order: ", playerOrder);
+        if (playerOrder === 3) {
+            const source = ac.createMediaStreamTrackSource(dest.stream.getAudioTracks()[0]);
+            acSources.push(source);
+            console.log("Acsource length", acSources.length);
+            if (acSources.length === 4) {
+
+                for (let i = 0; i < acSources.length; i++) {
+                    console.log("i acDest: ", acSources[i]);
+                    acSources[i].connect(acDest);
+                }
+
+                console.log("acDest: ", acDest);
+                var mediaRecorder = new MediaRecorder(acDest.stream);
+             
+                
+                
+            }
+        }
     }
 
     //get the tracks in the antmedia room
@@ -154,8 +222,8 @@ class Recorder extends React.Component {
         var enabledTracks = [];
 
         //tracks to play if we are player 2
-        if (this.playerOrder === 2) {
-            console.log("Player Order: ", this.playerOrder);
+        if (playerOrder === 2) {
+            console.log("Player Order: ", playerOrder);
             this.tracks.forEach(function (trackId) {
                 if (trackId === "1") {
                     enabledTracks.push("1");
@@ -166,8 +234,8 @@ class Recorder extends React.Component {
             });
         }
         //tracks to play if we are player 3 
-        else if (this.playerOrder === 3) {
-            console.log("Player Order: ", this.playerOrder);
+        else if (playerOrder === 3) {
+            console.log("Player Order: ", playerOrder);
             this.tracks.forEach(function (trackId) {
                 if (trackId === "1") {
                     enabledTracks.push("1");
@@ -191,6 +259,7 @@ class Recorder extends React.Component {
         //this.streamId = "room1";
         this.webRTCAdaptor.play("room1", this.token, "", enabledTracks);
     }
+
 
     //add antmedia stream to track list
     addVideoTrack(trackId) {
@@ -244,7 +313,7 @@ class Recorder extends React.Component {
     //publish the local stream
     publish(publishStreamId, token) {
         console.log("Publishing");
-        this.webRTCAdaptor.publish(publishStreamId, token, "", "", this.streamName, "room1", "{someKey:somveValue}", this.playerOrder);
+        this.webRTCAdaptor.publish(publishStreamId, token, "", "", this.streamName, "room1", "{someKey:somveValue}", playerOrder);
     }
 
     onStartPlaying() {
@@ -298,7 +367,7 @@ class Recorder extends React.Component {
                     playAudio(obj);
                     if (this.tracks != null) {
                         this.tracks.forEach(function (trackId) {
-                            if (parseInt(trackId, 10) > parseInt(this.playerOrder, 10)) {
+                            if (parseInt(trackId, 10) > parseInt(playerOrder, 10)) {
                                 this.enableTrack(trackId, false);
                             }
                         });
@@ -372,6 +441,8 @@ class Recorder extends React.Component {
                 <button onClick={this.resetPlayerCount}>
                     4. Reset Player Count
                 </button>
+
+                
 
                 <div>
                     Local Audio
