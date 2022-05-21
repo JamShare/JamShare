@@ -60,6 +60,7 @@ class Recorder extends React.Component {
         this.enableTrack = this.enableTrack.bind(this);
         this.startPlaying = this.startPlaying.bind(this);
         this.getTracks = this.getTracks.bind(this);
+        this.resetPlayerCount = this.resetPlayerCount.bind(this);
 
         //antmedia variables
         this.streamName = getUrlParameter("streamName");
@@ -238,6 +239,10 @@ class Recorder extends React.Component {
         this.startPlaying();
     }
 
+    resetPlayerCount() {
+        this.socket.emit("reset-player-count");
+    }
+
     initiateWebrtc() {
         var publish = this.publish;
         var addTrackList = this.addTrackList;
@@ -348,6 +353,10 @@ class Recorder extends React.Component {
 
                 <button onClick={this.startPlaying}>
                     4. Start Playing
+                </button>
+
+                <button onClick={this.resetPlayerCount}>
+                    4. Reset Player Count
                 </button>
 
                 <div>

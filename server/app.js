@@ -62,12 +62,6 @@ io.on('connection', (socket) => {
   //broadcast incoming stream to all clients in session
   socket.on('client-audio-stream', (data) => { Sessions.streamToSession(data, socket.id) });
 
-
-
-
-
-  // socket.on('chat')
-
   let socketRoom; //Current room of the socket for chat prototype
 
   //Joining a room and sending them chat history
@@ -126,39 +120,9 @@ io.on('connection', (socket) => {
     //console.log(`Disconnected just msg: ${socket.id}`);
     //socket.broadcast.emit('callEnded');
   });
-  /*
-  socket.on('callUser', (data) => {
-    io.to(data.userToCall).emit('callUser', {
-      signal: data.signalData,
-      from: data.from,
-      name: data.name,
-    });
-  });
 
-  socket.on('answerCall', (data) => {
-    io.to(data.to).emit('callAccepted', data.signal);
-  });
-  */
   socket.on('SEND_MESSAGE', function (data) {
     io.emit('RECEIVE_MESSAGE', data);
-  });
-
-
-  socket.on("audio-stream", (data) => {
-    //console.log("Audio streaming.");
-    chunks.push(data);
-  });
-
-  socket.on("audio-stream-start", () => {
-    console.log("Audio streaming started.");
-  });
-
-  socket.on("audio-stream-end", () => {
-    console.log("Audio streaming ended.");
-    // emits to all connected clients
-    // TODO change this when we establish multiple rooms
-    io.emit("audio-blob", chunks);
-    chunks = [];
   });
 
   socket.on("player-connected", (id) => {
@@ -167,12 +131,11 @@ io.on('connection', (socket) => {
     console.log("Players", players);
   });
 
-
-  // socket.on('create-audio-file', function(data)  {
-  //   let blob = new Blob(this.chunks, {'type': 'audio/ogg; codecs=opus'})
-  //   let audioURL = URL.createObjectURL(blob);
-  //   this.audio = new Audio(audioURL);
-  // });
+  socket.on('reset-player-count', () => {
+    players = [];
+    console.log("Resetting player order");
+    console.log(players);
+  });
 });
 
 function assignPlayer(id) {
@@ -184,7 +147,6 @@ function assignPlayer(id) {
     return players.length;
   }
 }
-
 
 server.listen(port, "berryhousehold.ddns.net", () => console.log(`Listening on port ${port}`));
 
