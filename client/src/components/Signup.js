@@ -47,7 +47,7 @@ function Signup () {
   // render() {
     return (
       <>
-            <Modal show={showModal} onHide={handleClose} enforceFocus={true} >
+        <Modal show={showModal} onHide={handleClose} enforceFocus={true} >
           <Modal.Header closeButton>
             <Modal.Title>Alert</Modal.Title>
           </Modal.Header>
@@ -61,11 +61,11 @@ function Signup () {
             </Button>
           </Modal.Footer>
         </Modal>
-
-      <div class='Signup' className={"bgcolor"}>
-      <div class='banner'>
-          <img class='jamshare-logo' src={JamShareLogo} alt='logo'/>
+        <div class='banner'>
+            <img class='jamshare-logo' src={JamShareLogo} alt='logo'/>
         </div>
+      <div class='Signup' className={"bgcolor"}>
+        
         <div class="childbox">
           <br></br>
           <h1 className={"gentext orange"}>Let's get Jammin'</h1>
@@ -120,7 +120,6 @@ function Signup () {
             </Form>
           </div>
         </div>
-
       </div>
       </>
     );

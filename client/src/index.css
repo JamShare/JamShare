@@ -15,6 +15,7 @@
 .bgcolor{
     height: 120vh;
     background-color: rgb(46, 46, 46);
+    padding-top: 130px;
 }
 
 .banner {
