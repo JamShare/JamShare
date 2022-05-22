@@ -14,7 +14,11 @@ import JamShareLogo from './assets/images/JamShareLogo.jpg'
 // export class Signup extends React.Component {
 //   constructor(props) {
 //     super(props);
-  
+
+import Morg_Signin from "./morg_signin";
+import Morg_Signup from "./morg_signup";
+
+
 function Signup () {
   const [guest, setGuest] = useState("");
   const [showModal, setModal] = useState(false);
@@ -69,7 +73,7 @@ function Signup () {
           <div class="signupbox">
             <div class="childbox-signups">
               <h2>Sign In</h2>
-              <form>
+              {/* <form>
                 <br></br>
                 <FormLabel className={"purple"}>Username </FormLabel>
                 <Form.Control type="username" placeholder="Enter Username" />
@@ -79,11 +83,12 @@ function Signup () {
                 <Link to="/join" className="a-button">
                   Sign In and Jam!
                 </Link>
-              </form>
+              </form> */}
+              <Morg_Signin></Morg_Signin>
             </div>
             <div class="childbox-signups">
               <h2>Sign Up</h2>
-              <form>
+              {/* <form>
                 <FormLabel className={"purple"}>Username </FormLabel>
                 <Form.Control type="username" placeholder="Enter Username" />
                 <FormLabel className={"purple"}>Email </FormLabel>
@@ -94,7 +99,8 @@ function Signup () {
                 <Link to="/join" className="a-button">
                   Sign Up and Jam!
                 </Link>
-              </form>
+              </form> */}
+              <Morg_Signup></Morg_Signup>
             </div>
           </div> 
           <div class="childbox-guest">
