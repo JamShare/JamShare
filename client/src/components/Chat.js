@@ -19,7 +19,7 @@ import {
 } from './Socket';
 
 
-class Chat extends React.Component {
+// class Chat extends React.Component {
 //   constructor(props) {
 //     super(props);
 
@@ -47,12 +47,12 @@ class Chat extends React.Component {
 //       });
 //       this.setState({ message: '' });
 //     };
-  render() {
-    return (
-      <div class="chatblock"></div>
-    );
-  }
-}
+//   render() {
+//     return (
+//       <div class="chatblock"></div>
+//     );
+//   }
+// }
 
 //   render() {
 //     return (
@@ -103,23 +103,23 @@ class Chat extends React.Component {
 // export default Chat;
 
 
-//function Room() {
-//  const rooms = ['Room 1', 'Room 2', 'Room 3'];
-//  const [room, setRoom] = useState(rooms[0]); // rooms[0] is default value which is "Room 1"
-//  const [message, setMessage] = useState('');
-//  const [username, setUsername] = useState('tempName'); //tempName is default value
-//  const [chat, setChat] = useState([]);
-//  const prevRoomRef = useRef();
-//  const messageBoxRef = useRef();
+function Chat() {
+ const rooms = ['Room 1', 'Room 2', 'Room 3'];
+ const [room, setRoom] = useState(rooms[0]); // rooms[0] is default value which is "Room 1"
+ const [message, setMessage] = useState('');
+ const [username, setUsername] = useState('tempName'); //tempName is default value
+ const [chat, setChat] = useState([]);
+ const prevRoomRef = useRef();
+ const messageBoxRef = useRef();
 
 //  useEffect(() => {
 //    prevRoomRef.current = room;
 //  });
 //  const prevRoom = prevRoomRef.current;
 
-  //Hook on "room" state change
-  //Clear chat then create room if it doesnt exist or move to new room if it does
-  //Load chat history on room switches
+  // Hook on "room" state change
+  // Clear chat then create room if it doesnt exist or move to new room if it does
+  // Load chat history on room switches
 //  useEffect(() => {
 //    setChat([]);
 //    if (prevRoom && room) {
@@ -144,7 +144,7 @@ class Chat extends React.Component {
 //    }
 //  }, [room]);
 
-  //Load once, on load mostly
+  // Load once, on load mostly
 //  useEffect(() => {
 //    joinChatRoom((err, data) => {
 //      if (err) {
@@ -169,52 +169,52 @@ class Chat extends React.Component {
 //    }
 //  };
 
-//  return (
-//    <div className='ProjectSectionContent'>
-//     <h1 className='a1'>Room: {room}</h1>
-//     {rooms.map((r, i) => (
-//        <div className='a3'>
-//         <button className='a2' onClick={() => setRoom(r)} key={i}>
-//            {r}
-//          </button>
-//        </div>
-//      ))}
-//      <h1 className='a1'>Online Chat:</h1>
-//      <div className='a3'>
-//       <input
-//         type='text'
-//         name='username'
-//         value={username}
-//        onChange={(e) => {
-//           setUsername(e.target.value);
-//         }}
-//       />
-//       <button className='a2'
-//          onClick={() => {
-//           setUsername(username);
-//           setSocketName(username);
-//         }}>
-//         Set
-//       </button>
-//       <br></br>
-//        <input
-//          type='text'
-//         name='message'
-//         value={message}
-//        onChange={(e) => setMessage(e.target.value)}
-//       />
-//       <button className='a2'
-//         onClick={() => {
-//           let newMsg = `${username}: ${message}`;
-//           setChat((oldChats) => [newMsg, ...oldChats]);
-//           sendMessage(room, message, username);
-//         }}>
-//         Send
-//        </button>
-//      {chat && chat.map((m, i) => <p key={i}>{m}</p>)}
-//      </div>
-//    </div>
-//  );
-//}
+ return (
+   <div className='ProjectSectionContent'>
+    <h1 className='a1'>Room: {room}</h1>
+    {/* {rooms.map((r, i) => (
+       <div className='a3'>
+        <button className='a2' onClick={() => setRoom(r)} key={i}>
+           {r}
+         </button>
+       </div>
+     ))} */}
+     <h1 className='a1'>Online Chat:</h1>
+     <div className='a3'>
+      <input
+        type='text'
+        name='username'
+        value={username}
+      //  onChange={(e) => {
+      //     setUsername(e.target.value);
+      //   }}
+      />
+      {/* <button className='a2'
+         onClick={() => {
+          setUsername(username);
+          setSocketName(username);
+        }}>
+        Set
+      </button> */}
+      <br></br>
+       <input
+         type='text'
+        name='message'
+        value={message}
+       onChange={(e) => setMessage(e.target.value)}
+      />
+      <button className='a2'
+        onClick={() => {
+          let newMsg = `${username}: ${message}`;
+          setChat((oldChats) => [newMsg, ...oldChats]);
+          sendMessage(room, message, username);
+        }}>
+        Send
+       </button>
+     {chat && chat.map((m, i) => <p key={i}>{m}</p>)}
+     </div>
+   </div>
+ );
+}
 
 export default Chat;

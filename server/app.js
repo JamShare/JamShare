@@ -69,6 +69,9 @@ io.on('connection', (socket) => {
   //apparently, does not require adding the client's socket.id to a list for each session.   
   socket.on('join-session', (data) => {sessions.joinSession(data, socket)});
 
+  socket.on('participants-order', (data) => {sessions.participantsOrder(data, socket)});
+
+
   //broadcast incoming stream to all clients in session
   socket.on('client-audio-stream', (data)=> {sessions.streamToSession(data, socket)});
   
@@ -106,24 +109,26 @@ io.on('connection', (socket) => {
 
   })
 
+
+
   //Switch rooms
-  socket.on('switchRoom', (data) => {
-    const { prevRoom, nextRoom } = data;
-    const userId = socketMap[socket.id];
+  // socket.on('switchRoom', (data) => {
+  //   const { prevRoom, nextRoom } = data;
+  //   const userId = socketMap[socket.id];
 
-    if (prevRoom) {
-      socket.leave(prevRoom);
-    }
-    if (nextRoom) {
-      socket.join(nextRoom);
-      //socketMap[socket.id] = userId;
+  //   if (prevRoom) {
+  //     socket.leave(prevRoom);
+  //   }
+  //   if (nextRoom) {
+  //     socket.join(nextRoom);
+  //     //socketMap[socket.id] = userId;
 
-      //send Chat history on room swap
-      socket.emit('joinResponse', socketHistory[nextRoom]);
-    }
+  //     //send Chat history on room swap
+  //     socket.emit('joinResponse', socketHistory[nextRoom]);
+  //   }
 
-    socketRoom = nextRoom;
-  });
+  //   socketRoom = nextRoom;
+  // });
 
   //Send a msg to the current chat
   socket.on('sendChatMessage', (data) => {
@@ -164,9 +169,9 @@ io.on('connection', (socket) => {
     io.to(data.to).emit('callAccepted', data.signal);
   });
   */
-  socket.on('SEND_MESSAGE', function (data) {
-    io.emit('RECEIVE_MESSAGE', data);
-  });
+  // socket.on('SEND_MESSAGE', function (data) {
+  //   io.emit('RECEIVE_MESSAGE', data);
+  // });
 
   
   socket.on("audio-stream", (data) => {

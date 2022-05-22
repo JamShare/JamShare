@@ -1,8 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import image1 from './assets/images/playing.png'
 const io = require('socket.io-client');
 
 const SERVER = "http://localhost:3001";
+
+var audiocontext = new AudioContext();
+// var audioworkletnode = new AudioWorkletNode(audiocontext, "workletnode");
+var sources = [];
 
 class Recorder extends React.Component {
     constructor(props) {
@@ -11,16 +15,20 @@ class Recorder extends React.Component {
         this.state = {
             isRecording: false,
             isPlaying: false,
-            icon: '',
+            icon: require('./assets/images/record.png'),
             text: 'Jam!',
         };
+        // const [image, setImage] = useState();
 
-        //this.chunks = [];
+        // this.chunks = [];
+        this.streamOut = null;
+        this.stream = null;
         this.recorder = null;
         this.audio = null;
-        this.recordIcon = require('./assets/images/record.png')
-        this.playingIcon = require('./assets/images/playing.png')
-
+        this.recordIcon = require('./assets/images/record.png');
+        this.playingIcon = require('./assets/images/playing.png');
+        
+        
         // bind functions to instance
         this.onDataAvailable = this.onDataAvailable.bind(this);
         this.onStop = this.onStop.bind(this);
@@ -28,6 +36,9 @@ class Recorder extends React.Component {
         this.startRecording = this.startRecording.bind(this);
         this.stopRecording = this.stopRecording.bind(this);
         this.playRecording = this.playRecording.bind(this);
+        this.createAudioSource = this.createAudioSource.bind(this);
+        this.connectMediaStream = this.connectMediaStream.bind(this);
+        this.connectAudioBuffer = this.connectAudioBuffer.bind(this);
 
         this.socket = io.connect(SERVER);
 
@@ -57,22 +68,26 @@ class Recorder extends React.Component {
 
     // event handlers for recorder
     onDataAvailable(e) {
-        //this.chunks.push(e.data);
-        this.socket.emit("audio-stream", e.data);
+        console.log(e.data);
+        
+        e.data.arrayBuffer().then((arraybuffer) => {
+            console.log(arraybuffer);
+            this.createAudioSource(arraybuffer); 
+        });
+        // this.socket.emit("audio-stream", e.data);
     }
 
     onStop(e) {
         console.log("Recording stopped successfully.");
-        this.socket.emit("audio-stream-end");
+        // this.socket.emit("audio-stream-end");
     }
 
     // asks for permission to use audio device from user
     // if declined or error, returns a null stream
     async getAudioDevice() {
-        
-        var stream = null;
+        this.stream = null;
         try {
-            stream = await navigator.mediaDevices
+            this.stream = await navigator.mediaDevices
                 .getUserMedia({
                     audio: {
                         echoCancellation: false,
@@ -83,12 +98,12 @@ class Recorder extends React.Component {
                 });
         } catch (err) {
             console.error(err)
-            stream = null;
+            this.stream = null;
         }
         
         this.recorder = null;
-        if (stream) {
-            this.recorder = new MediaRecorder(stream)
+        if (this.stream) {
+            this.recorder = new MediaRecorder(this.stream);
         
             // initialize event handlers for recorder
             this.recorder.ondataavailable = this.onDataAvailable;
@@ -106,7 +121,8 @@ class Recorder extends React.Component {
         if (this.state.isRecording) {
             return;
         }
-        this.recorder.start();
+        this.recorder.start(5000);
+        this.setState({icon: this.playingIcon});
         this.setState({ isRecording: true});
         console.log("Recording started successfully.");
         this.socket.emit("audio-stream-start");
@@ -120,18 +136,64 @@ class Recorder extends React.Component {
         if (!this.state.isRecording) {
             return;
         }
+        this.setState({icon: this.recordIcon});
         this.recorder.stop();
         this.setState({ isRecording: false});
         return;
     }
 
     playRecording() {
+        audiocontext.resume();
+        this.connectMediaStream();
+        setInterval(this.connectAudioBuffer, 5000);
+        /*
         if (!this.audio) {
             return;
         }
         this.audio.play();
         return;
+        */ 
     }
+
+    // settimeout to start the function
+    // setinterval to repeat
+
+    // takes recorded audio data and creates an audio source from it
+    createAudioSource(audioData) {
+        console.log("Creation Started");
+        audiocontext.decodeAudioData(audioData)
+        .then((buffer) => {
+            let bufferIn = audiocontext.createBufferSource();//creates audio input into audio graph that utilizes audio buffers. 
+            bufferIn.buffer = buffer;
+            bufferIn.onended = (bufferIn) => {bufferIn.disconnect()};
+            sources.push(bufferIn);
+            console.log("Creation Completed");
+        })
+        .catch((err) => {
+            console.log("Error: Failed to create audio buffer.");
+            console.error(err);
+        });
+    }
+
+    connectAudioBuffer() {
+        let audioBuffer = sources.splice(0, 1);
+        audioBuffer.connect(audiocontext.destination);
+        audioBuffer.connect(this.streamOut);
+        audioBuffer.start(1000);
+    }
+
+    connectMediaStream() {
+        var streamIn = audiocontext.createMediaStreamSource(this.stream); // local stream
+        this.streamOut = audiocontext.createMediaStreamDestination(); // output new combined stream
+
+        // bufferIn.connect(streamOut); // connect to new combined stream
+        streamIn.connect(this.streamOut); // connect to new combined stream
+        // bufferIn.connect(audiocontext.destination); // connect to hardware 
+        // streamIn.connect(audiocontext.destination);
+        // bufferIn.start(); // start buffer input 
+        // audiocontext.resume(); // start audio context
+    }
+
 
     featureRun() {
         if (!this.recorder) {
@@ -151,12 +213,18 @@ class Recorder extends React.Component {
         }
     }
 
+    // buttonclicked(){
+    //     // console.log("buttonclicked");
+    //     setImage(this.recordIcon);
+    // }
+
     render() {
         return (
             <div class="jamblock">
                 <h1>JAM</h1>
-                <img class="rounded" src={image1} width="250" height="250"alt=" recording "></img>
-
+                {/* <button onClick={buttonclicked()}> */}
+                    <img class="rounded" src={this.state.icon} width="250" height="250"alt=" recording "></img>
+                {/* </button> */}
                 <button onClick={this.featureRun}>
                     <image src={this.icon} alt=""></image>
                     {this.text}

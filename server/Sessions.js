@@ -1,5 +1,6 @@
 //Communicates with Room.js primarily. 
 const Socket = require('socket.io');
+const { default: Participants } = require('../client/src/components/Participants.js');
 
 // server components:
 const Clients = require('./Clients.js'); 
@@ -31,7 +32,6 @@ class Sessions {
     }
   }
 
-
   startGameSession(sessionID) {
     let session = this.findSessionByID(sessionID);
     session.startGameSession();
@@ -44,8 +44,8 @@ class Sessions {
 
   findSessionIDFromSocketID(socket) {
       var sessionID = sessions.find((sessionID) => 
-        sessions[sessionID].clients.find((client) => 
-          client.id === socket.id));
+        sessions[sessionID].clients.clients.find((client) => 
+          client.socketID === socket.id));
       return sessionID;
   }
 
@@ -61,6 +61,11 @@ class Sessions {
     }
       return genSessionID;
   }
+
+  participantsOrder(data, socketID){
+    let session = this.findSessionIDFromSocketID(socketID);
+    session.updateParticipants(data);
+  }
 }
 
 class Session {
@@ -70,14 +75,19 @@ class Session {
     // game session in progress or not? disallow changes to player order during runtime
     this.gameSession = false;
   }
-  
-  joinSession(socket, username){//apparently does not need the socket.id
+  updateParticipants(data){
+    console.log("updating paricipants order");
+    socket.brodcast.to(sessionID).emit('participants-order', data);
+  }
+
+  joinSession(socket, username){
     try {
         this.clients.addClient(socket.id, username);
         socket.join(this.sessionID);
         //send usernames to client from client object
         let usernames = this.clients.getUsernames();
-        socket.emit('join-session-success', usernames);//
+        socket.emit('join-session-success', usernames);
+        socket.emit('participants', {usernames});
     }
     catch (error) {
       socket.emit('join-session-failed');

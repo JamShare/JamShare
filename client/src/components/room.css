@@ -44,7 +44,7 @@ body{
   width: auto;
   font-family: "IndieFlower";
   font-size: 18pt;
-  overflow: hidden; 
+  /* overflow: hidden;  */
 }
 
 .userblock{
@@ -122,7 +122,7 @@ body{
   }
   .userblock{
     padding: 0px;
-    width: 160px;
+    width: 250px;
     margin: 5px;
     top: 100px;
   }
@@ -147,7 +147,7 @@ body{
   }
   .userblock{
     padding: 50px;
-    width: 300px;
+    width: 400px;
     margin: 10px;
     top: 160px;
   }
