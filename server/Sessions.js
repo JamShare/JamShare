@@ -1,6 +1,6 @@
 //Communicates with Room.js primarily. 
 const Socket = require('socket.io');
-const { default: Participants } = require('../client/src/components/Participants.js');
+// const { default: Participants } = require('../client/src/components/Participants.js');
 
 // server components:
 const Clients = require('./Clients.js'); 
