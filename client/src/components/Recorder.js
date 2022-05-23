@@ -223,26 +223,26 @@ class Recorder extends React.Component {
             <div class="jamblock">
                 <h1>JAM</h1>
                 {/* <button onClick={buttonclicked()}> */}
-                    <img class="rounded" src={this.state.icon} width="250" height="250"alt=" recording "></img>
+                    <img class="round" src={this.state.icon} width="200" height="200"alt=" recording "></img>
                 {/* </button> */}
                 <button onClick={this.featureRun}>
                     <image src={this.icon} alt=""></image>
                     {this.text}
                 </button>
 
-                <button onClick={this.getAudioDevice}>
+                <button className='rec' onClick={this.getAudioDevice}>
                     Choose audio device
                 </button>
 
-                <button onClick={this.startRecording}>
+                <button className='rec' onClick={this.startRecording}>
                     Start recording
                 </button>
 
-                <button onClick={this.stopRecording}>
+                <button className='rec' onClick={this.stopRecording}>
                     Stop recording
                 </button>
 
-                <button onClick={this.playRecording}>
+                <button className='rec' onClick={this.playRecording}>
                     Play/pause recording
                 </button>
             </div>

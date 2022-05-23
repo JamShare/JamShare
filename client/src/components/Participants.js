@@ -84,41 +84,22 @@ function Participants() {
   }
 
   // render() {
-  return (
-    <div className='userblock'>
-      {users.map((r, i) => (
-        <div className='ProjectSectionBlock'>
-          <div className='RoomComponentList' key={i}>
-            <img
-              className='round'
-              src={image2}
-              width='50'
-              height='50'
-              alt=' UserImage '></img>
-            {/* {{host} ? <p>host</p> :<></>} */}
-            {r}
-            {{ host } ? (
-              <>
-                <Button
-                  onClick={() => {
-                    up(i);
-                  }}>
-                  U
-                </Button>
-                <Button
-                  onClick={() => {
-                    down(i);
-                  }}>
-                  D
-                </Button>
-              </>
-            ) : (
-              <></>
-            )}
-          </div>
-        </div>
-      ))}
-    </div>
+    return (
+      <div className="userblock">
+          {users.map((r, i) => (
+              <div className="ProjectSectionBlock">
+                  <div className="UserComponentList RoomComponentList"  key={i}>
+                      <img className="round" src={image2} width="50" height="50"alt=" UserImage "></img>
+                      {/* {{host} ? <p>host</p> :<></>} */}
+                      {r}
+                      {{host} ? <>
+                          <Button className="up" onClick={()=>{up(i)}}>UP</Button>
+                          <Button className="down" onClick={()=>{down(i)}}>DN</Button>
+                      </>:<></>}
+                  </div>
+              </div>
+          ))}
+      </div>
   );
   // }
 }
