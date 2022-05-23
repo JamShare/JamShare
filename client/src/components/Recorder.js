@@ -5,7 +5,17 @@ const io = require('socket.io-client');
 const SERVER = "http://localhost:3001";
 
 var audiocontext = new AudioContext();
-// var audioworkletnode = new AudioWorkletNode(audiocontext, "workletnode");
+
+// class streamProcessor extends AudioWorkletProcessor { 
+//     process ( inputs, outputs, parameters){
+        
+//     }
+// }
+
+
+// registerProcessor("procstream", streamProcessor);
+
+// var audioworkletnode = new AudioWorkletNode(audiocontext, );
 var sources = [];
 
 class Recorder extends React.Component {
@@ -47,6 +57,9 @@ class Recorder extends React.Component {
             let blob = new Blob(chunks, { 'type': 'audio/ogg; codecs=opus' })
             let audioURL = URL.createObjectURL(blob);
             this.audio = new Audio(audioURL);
+        });
+        this.socket.on('join-session-success', usernames =>{
+            console.log(usernames);
         });
     }
 
@@ -146,13 +159,12 @@ class Recorder extends React.Component {
         audiocontext.resume();
         this.connectMediaStream();
         setInterval(this.connectAudioBuffer, 5000);
-        /*
-        if (!this.audio) {
-            return;
-        }
-        this.audio.play();
-        return;
-        */ 
+        
+        // if (!this.audio) {
+        //     return;
+        // }
+        // this.audio.play();
+        // return;
     }
 
     // settimeout to start the function
@@ -212,11 +224,6 @@ class Recorder extends React.Component {
             this.setState({text: 'stopped'});
         }
     }
-
-    // buttonclicked(){
-    //     // console.log("buttonclicked");
-    //     setImage(this.recordIcon);
-    // }
 
     render() {
         return (

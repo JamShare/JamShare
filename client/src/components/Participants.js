@@ -70,7 +70,7 @@ function Participants() {
             temparray.splice(i,1,tempuser);
             console.log(temparray);
 
-            setUsers({temparray});
+            // setUsers({temparray});
 
             // this.setState({users: temparray});
 

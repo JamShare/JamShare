@@ -19,13 +19,16 @@ class Sessions {
     var session = new Session(genSessionID);  
     this.sessions.set(genSessionID, session);
     socket.emit('create-session-response', genSessionID); //emit to only that client so they can view the code 
+    this.findSessionIDFromSocketID(socket.id);
   }
 
-  joinSession(data, socket) { //apparently does not need the socket.id
-    var sess = new Session();
-    let session = data.sessionID;
-    if (session) 
-      sess.joinSession(socket, data.guest);
+  joinSession(data, socket) { 
+    // var sess = new Session();
+    let sessionID = data.sessionID;
+    if (sessionID){
+      var currentSession = this.sessions.get(sessionID);
+      currentSession.joinSession(socket, data.guest);
+    }
     else {
       socket.emit('join-session-fail', data.sessionID);
       console.log('User %s attempted to join session %s which does not exist.', data.username, data.sessionID);
@@ -42,11 +45,20 @@ class Sessions {
     return this.sessions.get(sessionID);
   }
 
-  findSessionIDFromSocketID(socket) {
-      var sessionID = sessions.find((sessionID) => 
-        sessions[sessionID].clients.clients.find((client) => 
-          client.socketID === socket.id));
-      return sessionID;
+  findSessionIDFromSocketID(socketI) {
+    var seshID = '';
+    this.sessions.forEach(function(valuesess,keysess){
+      console.log(valuesess);
+      console.log(keysess);
+      valuesess.clients.clients.forEach(function(valueclient,keyclient){
+        console.log(keyclient);
+      })
+      if(valuesess.clients.clients.socketID == socketI)
+        seshID = keysess;
+    });
+    console.log('findsesh:');
+    console.log(seshID);
+    return seshID;
   }
 
   generateSessionID() {
@@ -75,6 +87,11 @@ class Session {
     // game session in progress or not? disallow changes to player order during runtime
     this.gameSession = false;
   }
+
+  // retSessionIDandClients(){
+  //   return [this.sessionID, this.clients.retclients()];
+  // }
+
   updateParticipants(data){
     console.log("updating paricipants order");
     socket.brodcast.to(sessionID).emit('participants-order', data);
