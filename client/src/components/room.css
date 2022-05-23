@@ -148,11 +148,12 @@ button.rec{
   }
   .userblock{
     padding: 0px;
-    width: 130px;
+    padding-right: 5px;
+    width: 125px;
     border: 0px solid #ffffff;
     top: 100px;
     left:-10px;
-    
+    box-sizing: content-box;
   }
   .recordblock{
     border: 0px solid #ffffff;

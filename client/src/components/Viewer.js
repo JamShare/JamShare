@@ -4,14 +4,7 @@ import image1 from './assets/images/playing.png'
 import image2 from './assets/images/record.png'
 
 const records = ['record1', 'record2', 'record3', 'record4', 'record5', 'record6',
- 'record7', 'record8', 'record9', 'record10', 'record11', 'record12', 
- 'record13', 'record14', 'record15', 'record16', 'record17', 'record18', 
- 'record19', 'record20', 'record21', 'record22', 'record23', 'record24', 
- 'record25', 'record2', 'record3', 'record4', 'record5', 'record6',
- 'record7', 'record8', 'record9', 'record10', 'record11', 'record12', 
- 'record13', 'record14', 'record15', 'record16', 'record17', 'record18', 
- 'record19', 'record20', 'record21', 'record22', 'record23', 'record24', 
- 'record25'];
+ 'record7', 'record8', 'record9', 'record10'];
 class Viewer extends React.Component {
         constructor(props) {
             super(props);
@@ -44,7 +37,7 @@ class Viewer extends React.Component {
                 {records.map((r, i) => (
                     <div class="ProjectSectionBlock">
                         <div class="RoomComponentList"  key={i}>
-                            <img class="rounded" src={image1} width="50" height="50"alt=" UserImage "></img>
+                            <img class="round" src={image1} width="50" height="50"alt=" UserImage "></img>
                             {r}
                         </div>
                     </div>

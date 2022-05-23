@@ -17,7 +17,8 @@ function Participants() {
   let {
     state: { sessionID, guest },
   } = ({} = useLocation()); //gets the variable we passed from navigate
-  const [users, setUsers] = useState([guest, 'test0', 'test1']);
+  const [users, setUsers] = useState([guest, 'test0', 'test1', 'test2', 'test3', 'test4', 'test5', 'test6', 'test7'
+  ]);
   const [host, setHost] = useState(true);
   // const[index, setIndex] = useState(0);
   // this.state={
