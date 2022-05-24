@@ -9,6 +9,9 @@ import { Link, Navigate, useNavigate, useLocation } from "react-router-dom";
 import { Socket } from 'socket.io-client';
 import Modal from 'react-bootstrap/Modal';
 
+import {Morg_Signup} from "./component_export"
+
+
 import JoinModal from './JoinModal';
 const io = require('socket.io-client');
 const SERVER = "http://localhost:3001";
