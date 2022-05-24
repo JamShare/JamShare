@@ -2,11 +2,15 @@ import React from 'react';
 import { WebRTCAdaptor } from '../js/webrtc_adaptor';
 import { getUrlParameter } from "../js/fetch.stream.js";
 import { saveAs } from 'file-saver';
+import {useLocation} from "react-router-dom";
 const io = require('socket.io-client');
 
 
 //const SERVER = "http://localhost:3001";
 const SERVER = "https://berryhousehold.ddns.net:3001";
+
+
+
 
 var playerOrder = 0;
 var ac = new AudioContext();
@@ -82,6 +86,8 @@ class Recorder extends React.Component {
         this.startTheJam = this.startTheJam.bind(this);
 
         //this.playerOrder = 0;
+
+        
 
         //antmedia variables
         this.streamName = getUrlParameter("streamName");
