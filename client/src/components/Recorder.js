@@ -11,6 +11,9 @@ const SERVER = "https://berryhousehold.ddns.net:3001";
 var playerOrder = 0;
 var ac = new AudioContext();
 var acDest = ac.createMediaStreamDestination();
+var currentRoom = "room1";
+
+
 //audio context sources
 var acSources = [];
 
@@ -148,7 +151,7 @@ class Recorder extends React.Component {
 
     //remotely play each audio stream
     playAudio(obj, trackPlayerId) {
-        var room = "room1"
+        var room = currentRoom;
         console.log("new stream available with id: "
             + obj.streamId + "on the room:" + room);
 
@@ -226,7 +229,7 @@ class Recorder extends React.Component {
     //get the tracks in the antmedia room
     getTracks() {
         //this.streamId = "room1";
-        this.webRTCAdaptor.getTracks("room1", this.token);
+        this.webRTCAdaptor.getTracks(currentRoom, this.token);
     }
 
     //add tracks to the antmedia room
@@ -278,7 +281,7 @@ class Recorder extends React.Component {
 
         //play the room tracks
         //this.streamId = "room1";
-        this.webRTCAdaptor.play("room1", this.token, "", enabledTracks);
+        this.webRTCAdaptor.play(currentRoom, this.token, "", enabledTracks);
     }
 
 
@@ -305,7 +308,7 @@ class Recorder extends React.Component {
     //enable checked track
     enableTrack(trackId) {
         var checkBox = document.getElementById("cbx" + trackId);
-        this.webRTCAdaptor.enableTrack("room1", trackId, checkBox.checked);
+        this.webRTCAdaptor.enableTrack(currentRoom, trackId, checkBox.checked);
     }
 
     //create antmedia remote audio player
@@ -328,13 +331,13 @@ class Recorder extends React.Component {
 
     //join the antmedia room with audio only amcu
     joinRoom() {
-        this.webRTCAdaptor.joinRoom("room1", this.state.streamName, "multitrack", "amcu");
+        this.webRTCAdaptor.joinRoom(currentRoom, this.state.streamName, "multitrack", "amcu");
     }
 
     //publish the local stream
     publish(publishStreamId, token) {
         console.log("Publishing");
-        this.webRTCAdaptor.publish(publishStreamId, token, "", "", this.streamName, "room1", "{someKey:somveValue}", playerOrder);
+        this.webRTCAdaptor.publish(publishStreamId, token, "", "", this.streamName, currentRoom, "{someKey:somveValue}", playerOrder);
     }
 
     onStartPlaying() {
