@@ -79,6 +79,7 @@ class Recorder extends React.Component {
         this.playRecording = this.playRecording.bind(this);
         this.onDataAvailable = this.onDataAvailable.bind(this);
         this.onStop = this.onStop.bind(this);
+        this.startTheJam = this.startTheJam.bind(this);
 
         //this.playerOrder = 0;
 
@@ -101,6 +102,22 @@ class Recorder extends React.Component {
             });
             console.log("Player order", playerOrder);
         });
+    }
+
+    startTheJam() {
+        this.getAudioDevicePlayer();
+        var joinRoom = this.joinRoom;
+        var getTracks = this.getTracks;
+        var startPlaying = this.startPlaying;
+        setTimeout(function () {
+            joinRoom();
+        }, 1000);
+        setTimeout(function () {
+            getTracks();
+        }, 1000);
+        setTimeout(function () {
+            startPlaying();
+        }, 1000);
     }
 
     // event handlers for recorder
@@ -445,20 +462,8 @@ class Recorder extends React.Component {
                     */
                 }
 
-                <button onClick={this.getAudioDevicePlayer}>
-                    1. Connect websocket
-                </button>
-
-                <button onClick={this.joinRoom}>
-                    2. Join Room
-                </button>
-
-                <button onClick={this.getTracks}>
-                    3. Get Tracks
-                </button>
-
-                <button onClick={this.startPlaying}>
-                    4. Start Playing
+                <button onClick={this.startTheJam}>
+                    Start The Jam!
                 </button>
 
                 <button onClick={this.resetPlayerCount}>
@@ -473,10 +478,8 @@ class Recorder extends React.Component {
                     Stop recording
                 </button>
                 <button onClick={this.playRecording}>
-                    Play/pause recording
+                    Play recording
                 </button>
-
-
 
                 <div>
                     Local Audio
