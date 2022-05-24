@@ -6,7 +6,7 @@ import Button from 'react-bootstrap/Button';
 import image2 from './assets/images/record.png';
 import { Link, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import './styles.css';
+
 // let { state: {sessionID, guest}} = {}  = useLocation(); //gets the variable we passed from navigate
 
 const io = require('socket.io-client');
@@ -16,16 +16,13 @@ const socket = io.connect(SERVER);
 // class Participants extends React.Component {
 function Participants() {
   let {
-    state: { sessionID, guest, usernames },
+    state: { sessionID, guest },
   } = ({} = useLocation()); //gets the variable we passed from navigate
-  if (!usernames) {
-    usernames = ['badeed', 'Zach', 'JC', 'Morg', 'not badeed'];
-  }
-  const [users, setUsers] = useState(usernames);
-  const [sessionID2, setSessionID2] = useState(sessionID);
+  const [users, setUsers] = useState([guest, 'test0', 'test1']);
   const [host, setHost] = useState(true);
 
-  const defaultList = ['badeed', 'Zach', 'JC', 'Morg', 'not badeed'];
+  const defaultList = ['A', 'B', 'C', 'D', 'E'];
+
   // React state to track order of items
   const [itemList, setItemList] = useState(defaultList);
 
@@ -33,20 +30,13 @@ function Participants() {
   const handleDrop = (droppedItem) => {
     // Ignore drop outside droppable container
     if (!droppedItem.destination) return;
-    //var updatedList = [...itemList];
-    var updatedList = [...users];
+    var updatedList = [...itemList];
     // Remove dragged item
     const [reorderedItem] = updatedList.splice(droppedItem.source.index, 1);
     // Add dropped item
     updatedList.splice(droppedItem.destination.index, 0, reorderedItem);
     // Update State
-    //setItemList(updatedList);
-    setUsers(updatedList);
-
-    //emit new list to server
-    console.log('Sending updated order to server');
-    console.log(updatedList);
-    socket.emit('server-update-userlist', updatedList, sessionID2);
+    setItemList(updatedList);
   };
   // const[index, setIndex] = useState(0);
   // this.state={
@@ -96,7 +86,7 @@ function Participants() {
     temparray.splice(i, 1, tempuser);
     console.log(temparray);
 
-    // setUsers({ temparray });
+    setUsers({ temparray });
 
     // this.setState({users: temparray});
 
@@ -111,44 +101,50 @@ function Participants() {
     // this.state.participants.splice(i+1, 1, this.state.participants[i]);
     // this.state.participants.splice(i,1,temp);
   }
-  socket.on('client-update-userlist', (usernames) => {
-    console.log('user order update');
-    setUsers(usernames); //this is where it actually gets updated
-  });
 
+  // render() {
   return (
     <div className='userblock'>
       <DragDropContext onDragEnd={handleDrop}>
-        <Droppable droppableId='RoomComponentList'>
-          {(provided) => (
-            <div {...provided.droppableProps} ref={provided.innerRef}>
-              {users.map((item, index) => (
-                <Draggable key={item} draggableId={item} index={index}>
-                  {(provided) => (
-                    <div
-                      className='RoomComponentList'
-                      ref={provided.innerRef}
-                      {...provided.dragHandleProps}
-                      {...provided.draggableProps}>
-                      <img
-                        className='round'
-                        src={image2}
-                        width='50'
-                        height='50'
-                        alt=' UserImage '></img>
-                      {item}
-                    </div>
+        <Droppable droppableId='list-container'>
+          {React.Children.toArray(
+            users.map((r, i) => (
+              <div className='ProjectSectionBlock'>
+                <div className='RoomComponentList' key={i}>
+                  <img
+                    className='round'
+                    src={image2}
+                    width='50'
+                    height='50'
+                    alt=' UserImage '></img>
+                  {/* {{host} ? <p>host</p> :<></>} */}
+                  {r}
+                  {{ host } ? (
+                    <>
+                      <Button
+                        onClick={() => {
+                          up(i);
+                        }}>
+                        U
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          down(i);
+                        }}>
+                        D
+                      </Button>
+                    </>
+                  ) : (
+                    <></>
                   )}
-                </Draggable>
-              ))}
-              {provided.placeholder}
-            </div>
+                </div>
+              </div>
+            ))
           )}
         </Droppable>
       </DragDropContext>
     </div>
   );
-
   // }
 }
 

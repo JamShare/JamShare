@@ -50,53 +50,66 @@ function Join(props) {
       });
     }, [socket])
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log(e.target.elements.session.value);
-        console.log(sessionID)
-        // handleShow();
-        let data = {sessionID:sessionID, username:guest};
-        socket.emit('join-session', data);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(e.target.elements.session.value);
+    console.log(sessionID)
+    // handleShow();
+    let data = {sessionID:sessionID, username:guest};
+    socket.emit('join-session', data);
+  }
+  
+  const joinSession = (join) => {
+    socket.emit('join-session', {guest, sessionID}) 
+    // let path = '/Room';
+    // navigate(path, {state:{sessionID, guest}});
+  }
+  // const joinSession = (join) => {
+  //   socket.emit('join-session', { guest, sessionID });
+  //   // let path = '/Room';
+  //   // navigate(path, {state:{sessionID, guest}});
+  // };
+
+  const joinExistingSession = (j) => {
+    j.preventDefault();
+    console.log(sessionID);
+    console.log(guest);
+    socket.emit('room-exists', { guest, sessionID });
+    console.log('fininishe joining');
+  };
+
+    // const joinExistingSession = (j) => {
+    //   j.preventDefault();
+    //   console.log(sessionID);
+    //   socket.emit("room-exists", {guest, sessionID});
+    // }
+
+  const createSession = (room) => {
+    room.preventDefault();
+    handleShow();
+    socket.emit("create-session", guest);
+  }
+
+  function updateClipboard(newClip) {
+    navigator.clipboard.writeText(newClip).then(
+      () => {
+        setCopied("Copied!");
+      },
+      () => {
+        setCopied("Copy failed!");
+      }
+      );
     }
     
-    const joinSession = (join) => {
-        socket.emit('join-session', {guest, sessionID}) 
-        // let path = '/Room';
-        // navigate(path, {state:{sessionID, guest}});
+  function copyLink() {
+    navigator.permissions
+      .query({ name: "clipboard-write" })
+      .then((result) => {
+        if (result.state === "granted" || result.state === "prompt") {
+          updateClipboard(inputArea.current?.innerText);
+        }
+      });
     }
-
-    const joinExistingSession = (j) => {
-      j.preventDefault();
-      console.log(sessionID);
-      socket.emit("room-exists", {guest, sessionID});
-    }
-
-    const createSession = (room) => {
-        room.preventDefault();
-        handleShow();
-        socket.emit("create-session", guest);
-    }
-
-    function updateClipboard(newClip) {
-        navigator.clipboard.writeText(newClip).then(
-          () => {
-            setCopied("Copied!");
-          },
-          () => {
-            setCopied("Copy failed!");
-          }
-        );
-      }
-      
-      function copyLink() {
-        navigator.permissions
-          .query({ name: "clipboard-write" })
-          .then((result) => {
-            if (result.state === "granted" || result.state === "prompt") {
-              updateClipboard(inputArea.current?.innerText);
-            }
-          });
-      }
     return (
         <>
         <Modal {...props} aria-labelledby="contained-modal-title-vcenter" 
