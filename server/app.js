@@ -91,6 +91,8 @@ io.on('connection', (socket) => {
     console.log('userlist updated sending to client');
     console.log(sessionID);
 
+    socket.emit("remote-client-update-userlist", userlist);
+
     //socket.emit('client-update-userlist', userlist);
     //socket.to(sessionID).emit('client-update-userlist', userlist);
     io.in(sessionID).emit('client-update-userlist', userlist);

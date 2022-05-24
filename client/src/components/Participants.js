@@ -10,7 +10,7 @@ import './styles.css';
 // let { state: {sessionID, guest}} = {}  = useLocation(); //gets the variable we passed from navigate
 
 const io = require('socket.io-client');
-//const SERVER = 'http://localhost:3001';
+//const SERVER = "http://localhost:3001";
 const SERVER = "https://berryhousehold.ddns.net:3001";
 const socket = io.connect(SERVER);
 
@@ -79,10 +79,10 @@ function Participants() {
     else setHost({ host: false });
   });
 
-  socket.on('client-update-userlist', (usernames) => {
-    console.log('user order update');
-    setUsers(usernames); //this is where it actually gets updated
-  });
+  // socket.on('client-update-userlist', (usernames) => {
+  //   console.log('user order update');
+  //   setUsers(usernames); //this is where it actually gets updated
+  // });
 
   return (
     <div className='userblock'>

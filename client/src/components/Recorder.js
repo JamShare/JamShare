@@ -2,7 +2,7 @@ import React from 'react';
 import { WebRTCAdaptor } from '../js/webrtc_adaptor';
 import { getUrlParameter } from "../js/fetch.stream.js";
 import { saveAs } from 'file-saver';
-import {useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 const io = require('socket.io-client');
 
 //const SERVER = "http://localhost:3001";
@@ -16,6 +16,17 @@ function Recorder() {
     //room info
     let currentRoom = sessionID;
     let username = guest;
+    let usernames = null;
+
+    function getPlayerOrder() {
+        for (let i = 0; i < usernames.length; i++) {
+            if (username === usernames[i]) {
+                playerOrder = i;
+            }
+        }
+    }
+
+
 
     //audio context sources
     let acSources = [];
@@ -85,6 +96,11 @@ function Recorder() {
 
         console.log("Player order", playerOrder);
     });
+
+    socket.on('remote-client-update-userlist', (usernames) => {
+        console.log('user order update', usernames);
+    });
+
 
 
     function startTheJam() {
@@ -462,14 +478,14 @@ function Recorder() {
                 Remote Audio
                 <audio id="remote_audio" autoPlay playsInline controls={true} />
                 {
-                    
+
                     <button
                         onClick={onStartPlaying.bind(this, streamName)}
                         className="btn btn-primary"
                         id="start_play_button"> Start
                         Playing
                     </button>
-                
+
                 }
             </div>
             <div class="container">
