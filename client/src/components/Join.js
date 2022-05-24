@@ -26,20 +26,6 @@ function Join(props) {
   const navigate = useNavigate();
   let { state: { guest } = {} } = useLocation(); //gets the variable we passed from navigate
 
-  // useEffect(() => {
-  //   socket.on('create-session-response', (session_ID) => {
-  //     console.log('create session request to server');
-  //     console.log(session_ID);
-  //     setSessionID(session_ID);
-  //     handleShow();
-  //   });
-  //   socket.on('join-session-success', () => {
-  //     //add usernames to local global data from data.usernames
-  //     socket.emit('joinRoom', { guest, sessionID });
-  //     let path = '/Room';
-  //     navigate(path, { state: { sessionID, guest } });
-  //   });
-
     useEffect( () => {
       socket.on("create-session-response", session_ID => {
         console.log("create session response from server")
@@ -70,11 +56,6 @@ function Join(props) {
     socket.emit('join-session', data);
   };
 
-  const joinSession = (join) => {
-    socket.emit('joinRoom', { guest, sessionID });
-    let path = '/Room';
-    navigate(path, { state: { sessionID, guest } });
-  };
 
   const joinExistingSession = (j) => {
     j.preventDefault();
