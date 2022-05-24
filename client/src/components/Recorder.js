@@ -8,16 +8,20 @@ const io = require('socket.io-client');
 //const SERVER = "http://localhost:3001";
 const SERVER = "https://berryhousehold.ddns.net:3001";
 
-var playerOrder = 0;
-var ac = new AudioContext();
-var acDest = ac.createMediaStreamDestination();
-var currentRoom = "room1";
-
-
-//audio context sources
-var acSources = [];
-
 function Recorder() {
+
+    let { state: { sessionID, guest } } = useLocation(); //gets the variable we passed from navigate
+    console.log(sessionID, guest)
+
+    //room info
+    let currentRoom = sessionID;
+    let username = guest;
+
+    //audio context sources
+    let acSources = [];
+    let playerOrder = 0;
+    let ac = new AudioContext();
+    let acDest = ac.createMediaStreamDestination();
 
     let state = {
         isRecording: false,
@@ -77,7 +81,7 @@ function Recorder() {
 
         playerOrder = order;
 
-        state.streamName = '' + playerOrder;
+        state.streamName = '' + playerOrder + '-' + currentRoom;
 
         console.log("Player order", playerOrder);
     });
