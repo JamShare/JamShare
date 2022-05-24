@@ -17,7 +17,8 @@ import Participants from './Participants';
 import { Link, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import './App.css';
 import './room.css';
-const SERVER = 'http://localhost:3001';
+//const SERVER = 'http://localhost:3001';
+const SERVER = "https://berryhousehold.ddns.net:3001";
 const socket = io.connect(SERVER);
 
 function Room() {

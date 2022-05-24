@@ -10,7 +10,8 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 // let { state: {sessionID, guest}} = {}  = useLocation(); //gets the variable we passed from navigate
 
 const io = require('socket.io-client');
-const SERVER = 'http://localhost:3001';
+//const SERVER = 'http://localhost:3001';
+const SERVER = "https://berryhousehold.ddns.net:3001";
 const socket = io.connect(SERVER);
 
 // class Participants extends React.Component {
