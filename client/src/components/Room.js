@@ -9,26 +9,27 @@ import {
   setSocketName,
 } from './Socket';
 
-import io, { Socket } from "socket.io-client";
+import io, { Socket } from 'socket.io-client';
 import Chat from './Chat';
 import Recorder from './Recorder';
 import Viewer from './Viewer';
 import Participants from './Participants';
-import { Link, Navigate, useNavigate, useLocation } from "react-router-dom";
-import './App.css'
-import './room.css'
-//const SERVER = "http://localhost:3001";
-const SERVER = "https://berryhousehold.ddns.net:3001";
+import { Link, Navigate, useNavigate, useLocation } from 'react-router-dom';
+import './App.css';
+import './room.css';
+const SERVER = 'http://localhost:3001';
 const socket = io.connect(SERVER);
 
 function Room() {
   // const [message, setMessage] = useState("");
   // const [messageReceived, setMessageReceived] = useState("");
-  let { state: {sessionID, guest}} = {}  = useLocation(); //gets the variable we passed from navigate
-  console.log(sessionID, guest)
+  let {
+    state: { sessionID, guest },
+  } = ({} = useLocation()); //gets the variable we passed from navigate
+  console.log(sessionID, guest);
   //const navigate = useNavigate();
   //navigate('/Chat', {state:{sessionID, guest}});
-  
+
   // const location = useLocation();
   // const { state: { guest, sessionID } = {} } = useLocation();
   // socket.on('message', (message) => {
@@ -65,4 +66,3 @@ function Room() {
   );
 }
 export default Room;
-
