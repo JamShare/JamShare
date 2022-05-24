@@ -28,16 +28,18 @@ function Join(props) {
 
   useEffect(() => {
     socket.on('create-session-response', (session_ID) => {
-      console.log('create session request to server');
+      console.log('create session response from server');
       console.log(session_ID);
       setSessionID(session_ID);
       handleShow();
     });
-    socket.on('join-session-success', () => {
+    socket.on('join-session-success', (usernames) => {
       //add usernames to local global data from data.usernames
-      socket.emit('joinRoom', { guest, sessionID });
+      // socket.emit('joinRoom', {guest, sessionID})
+      console.log(usernames);
+      // let { state: { users } = {usernames} } = useLocation();
       let path = '/Room';
-      navigate(path, { state: { sessionID, guest } });
+      navigate(path, { state: { sessionID, guest, usernames } });
     });
 
     socket.on('join-session-failed', () => {
@@ -55,15 +57,17 @@ function Join(props) {
   };
 
   const joinSession = (join) => {
-    socket.emit('joinRoom', { guest, sessionID });
-    let path = '/Room';
-    navigate(path, { state: { sessionID, guest } });
+    socket.emit('join-session', { guest, sessionID });
+    // let path = '/Room';
+    // navigate(path, {state:{sessionID, guest}});
   };
 
   const joinExistingSession = (j) => {
     j.preventDefault();
     console.log(sessionID);
+    console.log(guest);
     socket.emit('room-exists', { guest, sessionID });
+    console.log('fininishe joining');
   };
 
   const createSession = (room) => {
