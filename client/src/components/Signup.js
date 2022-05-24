@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 // import Container from 'react-bootstrap/Container';
 // import Row from 'react-bootstrap/Row';
 // import Col from 'react-bootstrap/Col';
@@ -13,12 +13,6 @@ import JamShareLogo from "./assets/images/JamShareLogo.jpg";
 import axios from "axios";
 import Cookies from "js-cookie";
 
-import { Morg_Signup, Morg_Signin } from "./component_export";
-
-// import { Transition, Dialog } from "@headlessui/react";
-// export class Signup extends React.Component {
-//   constructor(props) {
-//     super(props);
 
 function Signup() {
   const [guest, setGuest] = useState("");
@@ -40,6 +34,20 @@ function Signup() {
   const checkPassword = (p) => {
     if (!regex.test(p) && p.length <= 30) handleShow();
   };
+
+  //Redirect if cookie exists
+  useEffect(() => {
+    const [username, guest_username] = ["username", "guest_username"]
+      .map(e=> Cookies.get("username"))
+
+    console.log(username, guest_username)
+
+    if (username) 
+      navToJoin(username)
+    else if(guest_username)
+      navToJoin(guest_username)  }, []);
+
+
   const handleGuest = (e) => {
     e.preventDefault();
     
@@ -52,7 +60,6 @@ function Signup() {
     });    
     
     navToJoin(guest);
-
   };
 
   const navToJoin = (usn) => 
@@ -193,7 +200,7 @@ function Signup() {
             <h2>Continue as Guest</h2>
             <Form onSubmit={handleGuest}>
               <Form.Group className="mb-3" controlID="formBasicUsername">
-                <FormLabel className={"purple"}>Username </FormLabel>
+                <FormLabel className={"purple"}> Username </FormLabel>
                 <Form.Control
                   type="username"
                   name="guest"
