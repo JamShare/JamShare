@@ -2,7 +2,7 @@ import React from 'react';
 import { WebRTCAdaptor } from '../js/webrtc_adaptor';
 import { getUrlParameter } from "../js/fetch.stream.js";
 import { saveAs } from 'file-saver';
-import {useLocation} from "react-router-dom";
+import { useLocation } from "react-router-dom";
 const io = require('socket.io-client');
 
 
@@ -21,96 +21,94 @@ var currentRoom = "room1";
 //audio context sources
 var acSources = [];
 
-class Recorder extends React.Component {
-    constructor(props) {
-        super(props);
+function Recorder  {
 
-        this.state = {
-            isRecording: false,
-            isPlaying: false,
-            icon: '',
-            text: 'Jam!',
+    let state = {
+        isRecording: false,
+        isPlaying: false,
+        icon: '',
+        text: 'Jam!',
 
-            //the following constraints allow the best for music
-            mediaConstraints: {
-                audio: {
-                    echoCancellation: false,
-                    autoGainControl: false,
-                    noiseSuppression: false,
-                    latency: 0
-                }
-            },
-            streamName: getUrlParameter("streamName"),
-            token: getUrlParameter("token"),
-            pc_config: {
-                'iceServers': [{
-                    'urls': 'stun:stun.l.google.com:19302'
-                }],
-                sdpSemantics: 'unified-plan'
-            },
-            sdpConstraints: {
-                OfferToReceiveAudio: false,
-                OfferToReceiveVideo: false
-            },
-            //URL to antmedia server
-            websocketURL: "wss://berryhousehold.ddns.net:5443/WebRTCAppEE/websocket",
-            isShow: false
-        };
+        //the following constraints allow the best for music
+        mediaConstraints: {
+            audio: {
+                echoCancellation: false,
+                autoGainControl: false,
+                noiseSuppression: false,
+                latency: 0
+            }
+        },
+        streamName: getUrlParameter("streamName"),
+        token: getUrlParameter("token"),
+        pc_config: {
+            'iceServers': [{
+                'urls': 'stun:stun.l.google.com:19302'
+            }],
+            sdpSemantics: 'unified-plan'
+        },
+        sdpConstraints: {
+            OfferToReceiveAudio: false,
+            OfferToReceiveVideo: false
+        },
+        //URL to antmedia server
+        websocketURL: "wss://berryhousehold.ddns.net:5443/WebRTCAppEE/websocket",
+        isShow: false
+    };
 
-        this.chunks = [];
+    this.chunks = [];
 
-        this.recorder = null;
-        this.audio = null;
-        this.recordIcon = require('./assets/images/record.png')
-        this.playingIcon = require('./assets/images/playing.png')
+    this.recorder = null;
+    this.audio = null;
+    this.recordIcon = require('./assets/images/record.png')
+    this.playingIcon = require('./assets/images/playing.png')
 
-        //bind functions to instance
-        this.getAudioDevicePlayer = this.getAudioDevicePlayer.bind(this);
-        this.playAudio = this.playAudio.bind(this);
-        this.createRemoteAudio = this.createRemoteAudio.bind(this);
-        this.joinRoom = this.joinRoom.bind(this);
-        this.publish = this.publish.bind(this);
-        this.getTracks = this.getTracks.bind(this);
-        this.addTrackList = this.addTrackList.bind(this);
-        this.addVideoTrack = this.addVideoTrack.bind(this);
-        this.enableTrack = this.enableTrack.bind(this);
-        this.startPlaying = this.startPlaying.bind(this);
-        this.getTracks = this.getTracks.bind(this);
-        this.resetPlayerCount = this.resetPlayerCount.bind(this);
+    //bind functions to instance
+    this.getAudioDevicePlayer = this.getAudioDevicePlayer.bind(this);
+    this.playAudio = this.playAudio.bind(this);
+    this.createRemoteAudio = this.createRemoteAudio.bind(this);
+    this.joinRoom = this.joinRoom.bind(this);
+    this.publish = this.publish.bind(this);
+    this.getTracks = this.getTracks.bind(this);
+    this.addTrackList = this.addTrackList.bind(this);
+    this.addVideoTrack = this.addVideoTrack.bind(this);
+    this.enableTrack = this.enableTrack.bind(this);
+    this.startPlaying = this.startPlaying.bind(this);
+    this.getTracks = this.getTracks.bind(this);
+    this.resetPlayerCount = this.resetPlayerCount.bind(this);
 
-        this.startRecording = this.startRecording.bind(this);
-        this.stopRecording = this.stopRecording.bind(this);
-        this.playRecording = this.playRecording.bind(this);
-        this.onDataAvailable = this.onDataAvailable.bind(this);
-        this.onStop = this.onStop.bind(this);
-        this.startTheJam = this.startTheJam.bind(this);
+    this.startRecording = this.startRecording.bind(this);
+    this.stopRecording = this.stopRecording.bind(this);
+    this.playRecording = this.playRecording.bind(this);
+    this.onDataAvailable = this.onDataAvailable.bind(this);
+    this.onStop = this.onStop.bind(this);
+    this.startTheJam = this.startTheJam.bind(this);
 
-        //this.playerOrder = 0;
+    //this.playerOrder = 0;
 
-        
 
-        //antmedia variables
-        this.streamName = getUrlParameter("streamName");
-        this.streamId = null;
-        //audio tracks
-        this.tracks = [];
 
-        //tracks to disable
-        this.disabledTracks = [];
+    //antmedia variables
+    this.streamName = getUrlParameter("streamName");
+    this.streamId = null;
+    //audio tracks
+    this.tracks = [];
 
-        //socketio
-        this.socket = io.connect(SERVER);
-        this.socket.on("player-connected-server", (order) => {
+    //tracks to disable
+    this.disabledTracks = [];
 
-            playerOrder = order;
-            this.setState({
-                streamName: '' + playerOrder,
-            });
-            console.log("Player order", playerOrder);
+    //socketio
+    this.socket = io.connect(SERVER);
+    this.socket.on("player-connected-server", (order) => {
+
+        playerOrder = order;
+        this.setState({
+            streamName: '' + playerOrder,
         });
-    }
+        console.log("Player order", playerOrder);
+    });
 
-    startTheJam() {
+
+    function startTheJam() {
         this.getAudioDevicePlayer();
         var joinRoom = this.joinRoom;
         var getTracks = this.getTracks;
@@ -127,11 +125,11 @@ class Recorder extends React.Component {
     }
 
     // event handlers for recorder
-    onDataAvailable(e) {
+    function onDataAvailable(e) {
         this.chunks.push(e.data);
     }
 
-    onStop(e) {
+    function onStop(e) {
         console.log("Recording stopped successfully.");
         let blob = new Blob(this.chunks, { 'type': 'audio/wav; codecs=opus' })
         let audioURL = URL.createObjectURL(blob);
@@ -139,7 +137,7 @@ class Recorder extends React.Component {
         saveAs(blob, "audioTest.wav")
     }
 
-    startRecording() {
+    function startRecording() {
         if (!this.recorder) {
             return;
         }
@@ -152,7 +150,7 @@ class Recorder extends React.Component {
         return;
     }
 
-    stopRecording() {
+    function stopRecording() {
         if (!this.recorder) {
             return;
         }
@@ -164,7 +162,7 @@ class Recorder extends React.Component {
         return;
     }
 
-    playRecording() {
+    function playRecording() {
         if (!this.audio) {
             return;
         }
@@ -173,7 +171,7 @@ class Recorder extends React.Component {
     }
 
     //remotely play each audio stream
-    playAudio(obj, trackPlayerId) {
+    function playAudio(obj, trackPlayerId) {
         var room = currentRoom;
         console.log("new stream available with id: "
             + obj.streamId + "on the room:" + room);
@@ -250,13 +248,13 @@ class Recorder extends React.Component {
     }
 
     //get the tracks in the antmedia room
-    getTracks() {
+    function getTracks() {
         //this.streamId = "room1";
         this.webRTCAdaptor.getTracks(currentRoom, this.token);
     }
 
     //add tracks to the antmedia room
-    addTrackList(streamId, trackList) {
+    function addTrackList(streamId, trackList) {
         var addVideoTrack = this.addVideoTrack;
         addVideoTrack(streamId);
         trackList.forEach(function (trackId) {
@@ -265,7 +263,7 @@ class Recorder extends React.Component {
     }
 
     //play the enabled antmedia room tracks
-    startPlaying() {
+    function startPlaying() {
         var enabledTracks = [];
 
         //tracks to play if we are player 2
@@ -309,7 +307,7 @@ class Recorder extends React.Component {
 
 
     //add antmedia stream to track list
-    addVideoTrack(trackId) {
+    function addVideoTrack(trackId) {
         var enableTrack = this.enableTrack;
         this.tracks.push(trackId);
         var trackUl = document.getElementById("trackList");
@@ -329,13 +327,13 @@ class Recorder extends React.Component {
     }
 
     //enable checked track
-    enableTrack(trackId) {
+    function enableTrack(trackId) {
         var checkBox = document.getElementById("cbx" + trackId);
         this.webRTCAdaptor.enableTrack(currentRoom, trackId, checkBox.checked);
     }
 
     //create antmedia remote audio player
-    createRemoteAudio(streamId) {
+    function createRemoteAudio(streamId) {
         var player = document.createElement("div");
         player.className = "col-sm-3";
         player.id = "player" + streamId;
@@ -344,7 +342,7 @@ class Recorder extends React.Component {
     }
 
     //connect webrtc adaptor
-    getAudioDevicePlayer() {
+    function getAudioDevicePlayer() {
         //get player order from node server
         this.socket.emit("player-connected", this.socket.id);
         console.log("id", this.socket.id);
@@ -353,25 +351,25 @@ class Recorder extends React.Component {
     }
 
     //join the antmedia room with audio only amcu
-    joinRoom() {
+    function joinRoom() {
         this.webRTCAdaptor.joinRoom(currentRoom, this.state.streamName, "multitrack", "amcu");
     }
 
     //publish the local stream
-    publish(publishStreamId, token) {
+    function publish(publishStreamId, token) {
         console.log("Publishing");
         this.webRTCAdaptor.publish(publishStreamId, token, "", "", this.streamName, currentRoom, "{someKey:somveValue}", playerOrder);
     }
 
-    onStartPlaying() {
+    function onStartPlaying() {
         this.startPlaying();
     }
 
-    resetPlayerCount() {
+    function resetPlayerCount() {
         this.socket.emit("reset-player-count");
     }
 
-    initiateWebrtc() {
+    function initiateWebrtc() {
         var publish = this.publish;
         var addTrackList = this.addTrackList;
         var playAudio = this.playAudio;
@@ -448,71 +446,68 @@ class Recorder extends React.Component {
             }
         });
     }
+    //const { streamName, isShow } = this.state;
 
-    render() {
-        const { streamName, isShow } = this.state;
+    return (
 
-        return (
+        <div class="jamblock">
 
-            <div class="jamblock">
+            {
+                /*
+                <h1>JAM</h1>
+                <img class="rounded" src={image1} width="250" height="250"alt=" recording "></img>
 
+                <button onClick={this.featureRun}>
+                    <image src={this.icon} alt=""></image>
+                    {this.text}
+                </button>
+                */
+            }
+
+            <button onClick={this.startTheJam}>
+                Start The Jam!
+            </button>
+
+            <button onClick={this.resetPlayerCount}>
+                4. Reset Player Count
+            </button>
+
+            <button onClick={this.startRecording}>
+                Start recording
+            </button>
+
+            <button onClick={this.stopRecording}>
+                Stop recording
+            </button>
+            <button onClick={this.playRecording}>
+                Play recording
+            </button>
+
+            <div>
+                Local Audio
+                <audio id="local_audio" autoPlay muted playsInline controls={true} />
+
+                Remote Audio
+                <audio id="remote_audio" autoPlay playsInline controls={true} />
                 {
-                    /*
-                    <h1>JAM</h1>
-                    <img class="rounded" src={image1} width="250" height="250"alt=" recording "></img>
-    
-                    <button onClick={this.featureRun}>
-                        <image src={this.icon} alt=""></image>
-                        {this.text}
-                    </button>
-                    */
+                    isShow ? (
+                        <button
+                            onClick={this.onStartPlaying.bind(this, streamName)}
+                            className="btn btn-primary"
+                            id="start_play_button"> Start
+                            Playing
+                        </button>
+                    ) : null
                 }
-
-                <button onClick={this.startTheJam}>
-                    Start The Jam!
-                </button>
-
-                <button onClick={this.resetPlayerCount}>
-                    4. Reset Player Count
-                </button>
-
-                <button onClick={this.startRecording}>
-                    Start recording
-                </button>
-
-                <button onClick={this.stopRecording}>
-                    Stop recording
-                </button>
-                <button onClick={this.playRecording}>
-                    Play recording
-                </button>
-
-                <div>
-                    Local Audio
-                    <audio id="local_audio" autoPlay muted playsInline controls={true} />
-
-                    Remote Audio
-                    <audio id="remote_audio" autoPlay playsInline controls={true} />
-                    {
-                        isShow ? (
-                            <button
-                                onClick={this.onStartPlaying.bind(this, streamName)}
-                                className="btn btn-primary"
-                                id="start_play_button"> Start
-                                Playing
-                            </button>
-                        ) : null
-                    }
-                </div>
-                <div class="container">
-                    <ul id="trackList" name="trackList">
-                    </ul>
-                </div>
-                <div id="players">
-                </div>
             </div>
-        );
-    }
+            <div class="container">
+                <ul id="trackList" name="trackList">
+                </ul>
+            </div>
+            <div id="players">
+            </div>
+        </div>
+    );
 }
 
 export default Recorder;
