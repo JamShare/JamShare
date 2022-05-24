@@ -14,10 +14,15 @@ import Chat from './Chat';
 import Recorder from './Recorder';
 import Viewer from './Viewer';
 import Participants from './Participants';
-import { Link, Navigate, useNavigate, useLocation } from 'react-router-dom';
-import './App.css';
-import './room.css';
-const SERVER = 'http://localhost:3001';
+import { Link, Navigate, useNavigate, useLocation } from "react-router-dom";
+import './App.css'
+import './room.css'
+import JamShareLogo from './assets/images/JamShareLogo.jpg'
+import headlong from './assets/musics/headlong.mp3'
+
+
+
+const SERVER = "http://localhost:3001";
 const socket = io.connect(SERVER);
 
 function Room() {
@@ -50,13 +55,18 @@ function Room() {
   // }, [socket])
 
   return (
-    <div>
+    <div class="ProjectSectionContent" >
+      
+      <audio src={headlong} autoPlay></audio>
+      
       {/* <input placeholder='message' onChange={(e) =>{setMessage(e.target.value)}} /> */}
       {/* <button onClick={sendMessage}>send message</button> */}
-      <h1>Welcome {guest}</h1>
+      {/*<h1>Welcome {guest}</h1>
       <h2>Session ID: {sessionID}</h2>
       {/* {messageReceived} */}
-
+      <div class="jybanner">
+        <img class='jam-logo' src={JamShareLogo} alt='logo'/>
+      </div>
       {/* <Chat></Chat> */}
 
       <Participants></Participants>
