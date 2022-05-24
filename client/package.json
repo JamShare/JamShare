@@ -47,7 +47,7 @@
     "yarn": "^1.22.18"
   },
   "scripts": {
-    "start": "craco start",
+    "start": "BROWSER=none craco start",
     "build": "craco build",
     "test": "craco test",
     "eject": "react-scripts eject"
