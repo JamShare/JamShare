@@ -5,7 +5,15 @@ class Clients {
     this.maxlength = 4;
   }
 
-  addClient(socketClientID, username) {
+  // retclientsmap(){
+  //   return this.clientsMap;
+  // }
+
+  // retclients(){
+  //   return this.clients;
+  // }
+
+  addClient(socketClientID, username)  {
     if (this.maxlength <= this.clients.length) {
       throw 'Room is full.';
     }
@@ -16,6 +24,7 @@ class Clients {
       priv = false;
     }
     var client = new Client(socketClientID, username, priv);
+    console.log(client);
     // initialize more client information if needed
     // create another map using other information?
     this.clients.push(client);

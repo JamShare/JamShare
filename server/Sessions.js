@@ -19,20 +19,18 @@ class Sessions {
       return createSession(socket);
     var session = new Session(genSessionID);
     this.sessions.set(genSessionID, session);
-    socket.emit('create-session-response', genSessionID); //emit to only that client so they can view the code
+    socket.emit('create-session-response', genSessionID); //emit to only that client so they can view the code 
     this.findSessionIDFromSocketID(socket.id);
   }
 
-  joinSession(data, socket) {
+  joinSession(data, socket) { 
     // var sess = new Session();
     let sessionID = data.sessionID;
-    console.log('Using joinSession with S');
-    if (sessionID) {
+    if (sessionID){
       var currentSession = this.sessions.get(sessionID);
-      //console.log('currentSession');
-      //console.log(currentSession);
       currentSession.joinSession(socket, data.guest);
-    } else {
+    }
+    else {
       socket.emit('join-session-fail', data.sessionID);
       console.log(
         'User %s attempted to join session %s which does not exist.',
@@ -54,13 +52,14 @@ class Sessions {
 
   findSessionIDFromSocketID(socketI) {
     var seshID = '';
-    this.sessions.forEach(function (valuesess, keysess) {
+    this.sessions.forEach(function(valuesess,keysess){
       console.log(valuesess);
       console.log(keysess);
-      valuesess.clients.clients.forEach(function (valueclient, keyclient) {
+      valuesess.clients.clients.forEach(function(valueclient,keyclient){
         console.log(keyclient);
-      });
-      if (valuesess.clients.clients.socketID == socketI) seshID = keysess;
+      })
+      if(valuesess.clients.clients.socketID == socketI)
+        seshID = keysess;
     });
     console.log('findsesh:');
     console.log(seshID);
@@ -115,8 +114,8 @@ class Session {
   //   return [this.sessionID, this.clients.retclients()];
   // }
 
-  updateParticipants(data) {
-    console.log('updating paricipants order');
+  updateParticipants(data){
+    console.log("updating paricipants order");
     socket.brodcast.to(sessionID).emit('participants-order', data);
   }
 

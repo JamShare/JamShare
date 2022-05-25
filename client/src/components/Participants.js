@@ -84,6 +84,39 @@ function Participants() {
   //   setUsers(usernames); //this is where it actually gets updated
   // });
 
+  const up = (i) => {
+    console.log(i);
+    var temparray = users;
+
+    if (i > 0) var tempuser = temparray[i - 1];
+    else return;
+
+    console.log(tempuser);
+    console.log(temparray);
+
+    temparray.splice(i - 1, 1, temparray[i]);
+    console.log(temparray);
+
+    temparray.splice(i, 1, tempuser);
+    console.log(temparray);
+
+    // setUsers({ temparray });
+
+    // this.setState({users: temparray});
+
+    console.log(users);
+
+    // this.socket.emit('participants-order', {temparray, sessionID});
+  };
+
+  function down(i) {
+    console.log(i);
+    // var temp = this.state.participants[i+1];
+    // this.state.participants.splice(i+1, 1, this.state.participants[i]);
+    // this.state.participants.splice(i,1,temp);
+  }
+
+  // render() {
   return (
     <div className='userblock'>
       <DragDropContext onDragEnd={handleDrop}>
