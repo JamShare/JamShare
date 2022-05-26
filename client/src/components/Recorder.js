@@ -25,9 +25,9 @@ class Recorder extends React.Component {
         this.stream = null;
         this.recorder = null;
         this.audio = null;
-        this.recordIcon = require('./assets/images/record.png');
-        this.playingIcon = require('./assets/images/playing.png');
-        
+        this.recordIcon = require('./assets/images/stop.jpg');
+        this.playingIcon = require('./assets/images/play.jpg');
+        this.pauseIcon = require('./assets/images/paus.jpg');
         
         // bind functions to instance
         this.onDataAvailable = this.onDataAvailable.bind(this);
@@ -143,6 +143,12 @@ class Recorder extends React.Component {
     }
 
     playRecording() {
+        if (this.state.isRecording) {
+            this.setState({icon: this.pauseIcon});
+        }
+        if (!this.state.isRecording) {
+            this.setState({icon: this.playingIcon});
+        }
         audiocontext.resume();
         this.connectMediaStream();
         setInterval(this.connectAudioBuffer, 5000);

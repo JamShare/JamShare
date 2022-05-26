@@ -1,4 +1,16 @@
-
+.list-container {
+  display: block;
+  font-size: 18px;
+  background-color: #eee;
+  flex-direction: column;
+}
+.item-container {
+  border-radius: 25px;
+  background-color: #fff;
+  border: 1px solid black;
+  padding: 25px 70px;
+  margin: 15px 50px;
+}
 .jybanner {
   background-color:black;
   width: 100%;
@@ -22,30 +34,6 @@
   overflow: hidden;
 }
 
-button.up{
-  height: 25px;
-  text-align: center;
-  width: 40px;
-  color: orange;
-  background-color:  purple;
-  font-weight: bold;
-  font-size: 10pt;
-  top: -1px;
-  right: 2px;
-  position:absolute;
-}
-button.down{
-  height: 25px;
-  text-align: center;
-  width: 40px;
-  color: orange;
-  background-color:  purple;
-  font-weight: bold;
-  font-size: 10pt;
-  bottom: -1px;
-  right: 2px;
-  position:absolute;
-}
 button.rec{
   height: 50px;
   width: 240px;
@@ -65,9 +53,6 @@ button.rec{
   height: 100vh;
   background-color:  rgb(46, 46, 46);
 }
-.ProjectSectionBlock {
-  display:grid;
-}
 
 .RoomComponentList{
   padding: 0px;
@@ -84,6 +69,7 @@ button.rec{
   font-size: 18pt;
   font-weight: bold;
   position: relative;
+  overflow: hidden;
 }
 
 .userblock{
@@ -131,6 +117,7 @@ button.rec{
   width: 300px;
   height: auto;
   font-family: "IndieFlower";
+  
   font-size: 18pt;
   bottom: 60px;
   position: fixed;
@@ -138,11 +125,11 @@ button.rec{
     overflow-x:hidden;
     overflow-y:auto;
 }
+.jamblock h1{
+  font-weight: bold;
+}
 
 @media (0px<=width<=820px) {
-  .UserComponentList{
-    font-size: 0px;
-  }
   .RoomComponentList{
     margin-right: 8px;
   }

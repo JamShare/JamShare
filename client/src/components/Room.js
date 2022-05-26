@@ -18,7 +18,7 @@ import { Link, Navigate, useNavigate, useLocation } from "react-router-dom";
 import './App.css'
 import './room.css'
 import JamShareLogo from './assets/images/JamShareLogo.jpg'
-import headlong from './assets/musics/headlong.mp3'
+//import headlong from './assets/musics/headlong70.mp3'
 
 
 
@@ -54,14 +54,7 @@ function Room() {
 
   return (
     <div class="ProjectSectionContent" >
-      
-      <audio src={headlong} autoPlay></audio>
-      
-      {/* <input placeholder='message' onChange={(e) =>{setMessage(e.target.value)}} /> */}
-      {/* <button onClick={sendMessage}>send message</button> */}
-      {/*<h1>Welcome {guest}</h1>
-      <h2>Session ID: {sessionID}</h2>
-      {/* {messageReceived} */}
+      {/*<audio src={headlong} autoPlay></audio>*/}
       <div class="jybanner">
         <img class='jam-logo' src={JamShareLogo} alt='logo'/>
       </div>

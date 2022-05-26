@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
-import image1 from './assets/images/playing.png'
-import image2 from './assets/images/record.png'
+import image1 from './assets/images/record.jpg'
 
 const records = ['record1', 'record2', 'record3', 'record4', 'record5', 'record6',
  'record7', 'record8', 'record9', 'record10'];
