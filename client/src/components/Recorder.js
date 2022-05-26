@@ -24,27 +24,6 @@ class Recorder extends React.Component {
     };
     console.log("recorder userlist: ", this.state.userlist);
     // const [image, setImage] = useState();
-
-        // this.chunks = [];
-        // this.streamOut = null;
-        // this.stream = null;
-        // this.recorder = null;
-        // this.audio = null;
-        this.recordIcon = require('./assets/images/stop.jpg');
-        this.playingIcon = require('./assets/images/play.jpg');
-        this.pauseIcon = require('./assets/images/paus.jpg');
-        
-        // bind functions to instance
-        // this.onDataAvailable = this.onDataAvailable.bind(this);
-        // this.onStop = this.onStop.bind(this);
-        // this.getAudioDevice = this.getAudioDevice.bind(this);
-        // this.startRecording = this.startRecording.bind(this);
-        // this.stopRecording = this.stopRecording.bind(this);
-        // this.playRecording = this.playRecording.bind(this);
-        // this.createAudioSource = this.createAudioSource.bind(this);
-        // this.connectMediaStream = this.connectMediaStream.bind(this);
-        // this.connectAudioBuffer = this.connectAudioBuffer.bind(this);
- 
     // this.incomingStream = "";
     // this.outgoingStream = this.session + guestname;
 
@@ -52,10 +31,11 @@ class Recorder extends React.Component {
     this.stream = null;
     this.recorder = null;
     this.audio = null;
-    this.recordIcon = require('./assets/images/record.png');
-    this.playingIcon = require('./assets/images/playing.png');
+    this.recordIcon = require('./assets/images/stop.jpg');
+    this.playingIcon = require('./assets/images/play.jpg');
+    this.pauseIcon = require('./assets/images/paus.jpg');
 
-    // bind functions to instance
+    //bind functions to instance
     this.onDataAvailable = this.onDataAvailable.bind(this);
     this.onStop = this.onStop.bind(this);
     this.getAudioDevice = this.getAudioDevice.bind(this);

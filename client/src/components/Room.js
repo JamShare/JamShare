@@ -65,14 +65,12 @@ function Room() {
 
   return (
     <div class="ProjectSectionContent" >
-      
       {/* <audio src={headlong} autoPlay></audio> */}
-      
-      {/* <input placeholder='message' onChange={(e) =>{setMessage(e.target.value)}} /> */}
-      {/* <button onClick={sendMessage}>send message</button> */}
-      {/*<h1>Welcome {guest}</h1>
+      {/* <input placeholder='message' onChange={(e) =>{setMessage(e.target.value)}} /> 
+       <button onClick={sendMessage}>send message</button> 
+      <h1>Welcome {guest}</h1>
       <h2>Session ID: {sessionID}</h2>
-      {/* {messageReceived} */}
+       {messageReceived} */}
       <div class="jybanner">
         <img class='jam-logo' src={JamShareLogo} alt='logo'/>
       </div>

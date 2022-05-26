@@ -19,8 +19,7 @@ const socket = io.connect(SERVER);
 function Participants(props) {
 
   // React state to track order of items
-    // const [users, setUsers] = useState([]);
-
+    const [users, setUsers] = useState([]);
     const [sessionID, setSessionID] = useState(props.sessionID);
     console.log("participants sessionID", sessionID);
     console.log("participants userlist:", props.userlist);
@@ -82,8 +81,6 @@ function Participants(props) {
 
   // this.participants = ['jammer1', 'jammer2', 'jammer3', 'jammer4', 'jammer5'];
   //     this.socket = io.connect(SERVER);
-
-
   socket.on('client-update-userlist', (usernames) => {
     console.log('user order update');
     setUsers(usernames); //this is where it actually gets updated
@@ -103,24 +100,9 @@ function Participants(props) {
                       ref={provided.innerRef}
                       {...provided.dragHandleProps}
                       {...provided.draggableProps}>
-                      <img className='dragUp'
-                        src={image4}
-                        width='20'
-                        height='5'
-                        alt=' UserImage '>
-                      </img>
-                      <img className='dragDn'
-                        src={image5}
-                        width='20'
-                        height='5'
-                        alt=' UserImage '>
-                      </img>
-                      <img
-                        className='round'
-                        src={image2}
-                        width='50'
-                        height='50'
-                        alt=' UserImage '></img>
+                      <img className='dragUp' src={image4} width='20' height='5' alt=' dragImage '></img>                                           
+                      <img className='dragDn' src={image5} width='20' height='5' alt=' dragImage '></img>                                        
+                      <img className='round' src={image2} width='50' height='50' alt=' UserImage '></img>
                       {item}
                     </div>
                   )}
@@ -132,12 +114,7 @@ function Participants(props) {
         </Droppable>
       </DragDropContext>
       <div className='RoomComponentList RoomComponentListAddImg'>
-        <img
-          src={image3}
-          width='50'
-          height='50'
-          alt=' add icon '>
-        </img>
+        <img src={image3} width='50' height='50' alt=' add icon '></img>
       </div>      
     </div>
   );
