@@ -36,7 +36,7 @@ function Room() {
 
   socket.on('client-update-userlist', (usernames) => {
     console.log('user order update');
-    
+
   });
   //const navigate = useNavigate();
   //navigate('/Chat', {state:{sessionID, guest}});
@@ -77,7 +77,7 @@ function Room() {
 
       <Participants></Participants>
       <Viewer></Viewer>
-      <Recorder></Recorder>
+      <Recorder userlist={usernames}></Recorder>
     </div>
   );
 }

@@ -17,7 +17,9 @@ class Recorder extends React.Component {
       isPlaying: false,
       icon: require('./assets/images/record.png'),
       text: 'Jam!',
+      userlist: props.userlist,
     };
+    console.log("recorder userlist: ", this.state.userlist);
     // const [image, setImage] = useState();
 
     // this.chunks = [];
