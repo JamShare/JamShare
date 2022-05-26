@@ -63,6 +63,9 @@ function Room() {
       <Participants></Participants>
       <Viewer></Viewer>
       <Recorder></Recorder>
+      <div class="jybannerb">
+        Portland State University - JamShare - 2022
+      </div>
     </div>
   );
 }
