@@ -8,7 +8,7 @@ const io = require('socket.io-client');
 //const SERVER = "http://localhost:3001";
 const SERVER = "https://berryhousehold.ddns.net:3001";
 
-function Recorder() {
+function Recorder(props) {
 
     let { state: { sessionID, guest } } = useLocation(); //gets the variable we passed from navigate
     console.log(sessionID, guest)
@@ -39,6 +39,7 @@ function Recorder() {
         isPlaying: false,
         icon: '',
         text: 'Jam!',
+        userlist: props.userlist,
 
         //the following constraints allow the best for music
         mediaConstraints: {
@@ -73,7 +74,7 @@ function Recorder() {
     let playingIcon = require('./assets/images/playing.png')
 
     //playerOrder = 0;
-
+    
 
 
     //antmedia variables
@@ -104,6 +105,7 @@ function Recorder() {
 
 
     function startTheJam() {
+        console.log("recorder userlist: ", state.userlist);
         getAudioDevicePlayer();
 
         setTimeout(function () {
