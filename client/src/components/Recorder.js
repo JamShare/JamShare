@@ -202,6 +202,15 @@ function Recorder(props) {
         else if (playerOrder === 3 && trackOrder === '2') {
             timeToDelay = 0.5;
         }
+        else if (playerOrder === 4 && trackOrder === '1') {
+            timeToDelay = 1.5;
+        }
+        else if (playerOrder === 4 && trackOrder === '2') {
+            timeToDelay = 1;
+        }
+        else if (playerOrder === 4 && trackOrder === '3') {
+            timeToDelay = 0.5;
+        }
 
         //audio context delay code
         let audioCtx = new AudioContext();
@@ -218,13 +227,13 @@ function Recorder(props) {
 
         //if we are the last player, record the audio streams
         console.log("New stream player order: ", playerOrder);
-        if (playerOrder === 3) {
+        if (username === state.userList.at(-1)) {
             //Push ac sources
             const source = ac.createMediaStreamTrackSource(dest.stream.getAudioTracks()[0]);
             acSources.push(source);
             console.log("Acsource length", acSources.length);
             //if we have three streams.
-            if (acSources.length === 4) {
+            if (acSources.length === playerOrder) {
 
                 //connect all of the sources
                 for (let i = 0; i < acSources.length; i++) {
@@ -268,7 +277,7 @@ function Recorder(props) {
             console.log("Tracks Order: ", tracks);
 
             tracks.forEach(function (trackId) {
-                console.log("LMAO", trackId);
+
                 if (trackId === "1") {
                     enabledTracks.push("1");
                 }
@@ -356,7 +365,7 @@ function Recorder(props) {
     //publish the local stream
     function publish(publishStreamId, token) {
         console.log("Publishing");
-        let publishStreamName = '' + currentRoom + playerOrder;
+        let publishStreamName = '' + currentRoom + '-' + playerOrder;
         webRTCAdaptor.publish(publishStreamName, token, "", "", streamName, currentRoom, "{someKey:somveValue}", playerOrder);
     }
 
