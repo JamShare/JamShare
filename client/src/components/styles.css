@@ -1,0 +1,13 @@
+.list-container {
+  display: block;
+  font-size: 18px;
+  background-color: #eee;
+  flex-direction: column;
+}
+.item-container {
+  border-radius: 25px;
+  background-color: #fff;
+  border: 1px solid black;
+  padding: 25px 70px;
+  margin: 15px 50px;
+}

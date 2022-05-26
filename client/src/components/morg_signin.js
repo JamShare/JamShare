@@ -63,9 +63,9 @@ export class Morg_Signin extends React.Component {
         }
 
   render() {
-     if(typeof Cookies.get("sessionID") !== "undefined"){
+    /* if(typeof Cookies.get("sessionID") !== "undefined"){
         return(<Navigate to="/" replace={true}/>);
-     }
+     }*/
 
     return(
         <Card >

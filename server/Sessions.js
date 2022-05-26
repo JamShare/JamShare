@@ -1,9 +1,9 @@
-//Communicates with Room.js primarily. 
-const Socket = require('socket.io');
+//Communicates with Room.js primarily.
+const socket = require('socket.io');
 // const { default: Participants } = require('../client/src/components/Participants.js');
 
 // server components:
-const Clients = require('./Clients.js'); 
+const Clients = require('./Clients.js');
 const Streams = require('./Stream.js');
 
 class Sessions {
@@ -14,21 +14,31 @@ class Sessions {
 
   createSession(data, socket) {
     let genSessionID = this.generateSessionID();
-    if (this.sessions.get(genSessionID) != undefined) //recurse
+    if (this.sessions.get(genSessionID) != undefined)
+      //recurse
       return createSession(socket);
-    var session = new Session(genSessionID);  
+    var session = new Session(genSessionID);
     this.sessions.set(genSessionID, session);
-    socket.emit('create-session-response', genSessionID); //emit to only that client so they can view the code 
+    socket.emit('create-session-response', genSessionID); //emit to only that client so they can view the code
+    this.findSessionIDFromSocketID(socket.id);
   }
 
-  joinSession(data, socket) { //apparently does not need the socket.id
-    var sess = new Session();
-    let session = data.sessionID;
-    if (session) 
-      sess.joinSession(socket, data.guest);
-    else {
+  joinSession(data, socket) {
+    // var sess = new Session();
+    let sessionID = data.sessionID;
+    console.log("user joining session", data.guest);
+    if (sessionID) {
+      var currentSession = this.sessions.get(sessionID);
+      //console.log('currentSession');
+      //console.log(currentSession);
+      currentSession.joinSession(socket, data.guest);
+    } else {
       socket.emit('join-session-fail', data.sessionID);
-      console.log('User %s attempted to join session %s which does not exist.', data.username, data.sessionID);
+      console.log(
+        'User %s attempted to join session %s which does not exist.',
+        data.guest,
+        data.sessionID
+      );
     }
   }
 
@@ -38,15 +48,23 @@ class Sessions {
   }
 
   findSessionByID(sessionID) {
-    console.log("find session by id fucntion");
+    console.log('find session by id fucntion');
     return this.sessions.get(sessionID);
   }
 
-  findSessionIDFromSocketID(socket) {
-      var sessionID = sessions.find((sessionID) => 
-        sessions[sessionID].clients.clients.find((client) => 
-          client.socketID === socket.id));
-      return sessionID;
+  findSessionIDFromSocketID(socketI) {
+    var seshID = '';
+    this.sessions.forEach(function (valuesess, keysess) {
+      console.log(valuesess);
+      console.log(keysess);
+      valuesess.clients.clients.forEach(function (valueclient, keyclient) {
+        console.log(keyclient);
+      });
+      if (valuesess.clients.clients.socketID == socketI) seshID = keysess;
+    });
+    console.log('findsesh:');
+    console.log(seshID);
+    return seshID;
   }
 
   generateSessionID() {
@@ -54,19 +72,38 @@ class Sessions {
     // var id = crypto.randomBytes(20).toString('hex');
 
     let length = 20;
-    let genSessionID = "";
-    let characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let genSessionID = '';
+    let characters =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     for (var i = 0; i < length; i++) {
-      genSessionID += characters.charAt(Math.floor(Math.random() * characters.length));
+      genSessionID += characters.charAt(
+        Math.floor(Math.random() * characters.length)
+      );
     }
-      return genSessionID;
+    return genSessionID;
+  }
+  updateUserList(userList, sessionID) {
+    console.log('new userList incoming', userList);
+    var currentSession = this.sessions.get(sessionID);//gets session object with sessionID key
+    currentSession.updateClientsSessionsUsernameList(userList);
+    console.log('updatedUserList is now: ', currentSession.clients.clients);
   }
 
-  participantsOrder(data, socketID){
+  participantsOrder(data, socketID) {
     let session = this.findSessionIDFromSocketID(socketID);
     session.updateParticipants(data);
   }
+
+  getUserList(sessionID) {
+    console.log('Get Userlist');
+    var currentSession = this.sessions.get(sessionID);
+    let userList = currentSession.getClientsSessionsUsernameList();
+    return userList;
+  }
 }
+
+
+
 
 class Session {
   constructor(sessionID) {
@@ -75,24 +112,50 @@ class Session {
     // game session in progress or not? disallow changes to player order during runtime
     this.gameSession = false;
   }
-  updateParticipants(data){
-    console.log("updating paricipants order");
+
+  // retSessionIDandClients(){
+  //   return [this.sessionID, this.clients.retclients()];
+  // }
+
+  updateParticipants(data) {
+    console.log('updating paricipants order');
     socket.brodcast.to(sessionID).emit('participants-order', data);
   }
 
-  joinSession(socket, username){
+  joinSession(socket, username) {
     try {
-        this.clients.addClient(socket.id, username);
-        socket.join(this.sessionID);
-        //send usernames to client from client object
-        let usernames = this.clients.getUsernames();
-        socket.emit('join-session-success', usernames);
-        socket.emit('participants', {usernames});
-    }
-    catch (error) {
+      console.log('Using joinSession no S');
+      this.clients.addClient(socket.id, username);
+      socket.join(this.sessionID);
+      //send usernames to client from client object
+      let usernames = this.clients.getUsernames();
+      console.log(usernames);
+      socket.emit('join-session-success', usernames);
+
+      socket.to(this.sessionID).emit('client-update-userlist', usernames);
+      // socket.broadcast.emit('client-update-userlist', usernames);
+      
+    } catch (error) {
       socket.emit('join-session-failed');
       console.error(error);
     }
+  }
+
+  getClientsSessionsUsernameList() {
+    let usernames2 = this.clients.getUsernames();
+    console.log("newuserlist", usernames2)
+    socket.emit('client-update-userlist', usernames2);
+    return usernames2;
+  }
+
+  updateClientsSessionsUsernameList(userList) {
+    console.log('updateClientsSessionsUsernameList');
+    console.log(userList);
+    var newuserlist = this.clients.updateUsernames(userList);
+    // CURRENT NAME SPACE BROADCAST
+    socket.broadcast.emit('client-update-userlist', newuserlist);
+
+    // socket.to(this.sessionID).emit('client-update-userlist', newuserlist);
   }
 
   startGameSession() {
@@ -106,7 +169,7 @@ class Session {
   }
 
   sendStreams() {
-    usernames = this.clients.getUsernames()
+    usernames = this.clients.getUsernames();
     // socket.brodcast.to(sessionID).emit('stream-names', streams);
   }
 
