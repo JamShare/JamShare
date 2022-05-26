@@ -191,13 +191,15 @@ function Recorder(props) {
 
         let timeToDelay = 0;
 
-        console.log("Track ID: ", obj.trackId);
-        if (playerOrder === 2 && obj.trackId === "ARDAMSa1") {
+        let trackOrder = obj.trackId.slice(-1);
+
+        console.log("Track Order: ", trackOrder);
+        if (playerOrder === 2 && trackOrder === '1') {
             timeToDelay = 0.5;
-        } else if (playerOrder === 3 && obj.trackId === "ARDAMSa1") {
+        } else if (playerOrder === 3 && trackOrder === '1') {
             timeToDelay = 1;
         }
-        else if (playerOrder === 3 && obj.trackId === "ARDAMSa2") {
+        else if (playerOrder === 3 && trackOrder === '2') {
             timeToDelay = 0.5;
         }
 
@@ -263,7 +265,10 @@ function Recorder(props) {
         //tracks to play if we are player 2
         if (playerOrder === 2) {
             console.log("Player Order: ", playerOrder);
+            console.log("Tracks Order: ", tracks);
+
             tracks.forEach(function (trackId) {
+                console.log("LMAO", trackId);
                 if (trackId === "1") {
                     enabledTracks.push("1");
                 }
@@ -402,7 +407,8 @@ function Recorder(props) {
                     playAudio(obj);
                     if (tracks != null) {
                         tracks.forEach(function (trackId) {
-                            if (parseInt(trackId, 10) > parseInt(playerOrder, 10)) {
+                            let tempOrder = trackId.slice(-1);
+                            if (parseInt(tempOrder, 10) > parseInt(playerOrder, 10)) {
                                 enableTrack(trackId, false);
                             }
                         });
