@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
 import image1 from './assets/images/record.jpg'
+import image3 from './assets/images/add.jpg';
 
 const records = ['record1', 'record2', 'record3', 'record4', 'record5', 'record6',
  'record7', 'record8', 'record9', 'record10'];
@@ -41,6 +42,14 @@ class Viewer extends React.Component {
                         </div>
                     </div>
                 ))}
+                <div className='RoomComponentList RoomComponentListAddImg'>
+                    <img
+                        src={image3}
+                        width='50'
+                        height='50'
+                        alt=' add icon '>
+                        </img>
+                </div>  
             </div>
         );
     }

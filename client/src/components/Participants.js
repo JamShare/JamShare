@@ -4,6 +4,7 @@ import React, { useEffect, useState, useRef } from 'react';
 // import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import image2 from './assets/images/user.jpg';
+import image3 from './assets/images/add.jpg';
 import { Link, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
@@ -93,7 +94,7 @@ function Participants() {
                 <Draggable key={item} draggableId={item} index={index}>
                   {(provided) => (
                     <div
-                      className='UserComponentList RoomComponentList'
+                      className='RoomComponentList'
                       ref={provided.innerRef}
                       {...provided.dragHandleProps}
                       {...provided.draggableProps}>
@@ -113,6 +114,14 @@ function Participants() {
           )}
         </Droppable>
       </DragDropContext>
+      <div className='RoomComponentList RoomComponentListAddImg'>
+        <img
+          src={image3}
+          width='50'
+          height='50'
+          alt=' add icon '>
+        </img>
+      </div>      
     </div>
   );
 
