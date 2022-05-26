@@ -4,7 +4,9 @@ import React, { useEffect, useState, useRef } from 'react';
 // import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import image2 from './assets/images/user.jpg';
+import image4 from './assets/images/dragup.jpg';
 import image3 from './assets/images/add.jpg';
+import image5 from './assets/images/dragdn.jpg';
 import { Link, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
@@ -98,6 +100,18 @@ function Participants() {
                       ref={provided.innerRef}
                       {...provided.dragHandleProps}
                       {...provided.draggableProps}>
+                      <img className='dragUp'
+                        src={image4}
+                        width='20'
+                        height='5'
+                        alt=' UserImage '>
+                      </img>
+                      <img className='dragDn'
+                        src={image5}
+                        width='20'
+                        height='5'
+                        alt=' UserImage '>
+                      </img>
                       <img
                         className='round'
                         src={image2}

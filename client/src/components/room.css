@@ -52,6 +52,16 @@ button.rec{
   font-size: 10pt;
 }
 
+.dragUp{
+  top: 0px;
+  right: 43%;
+  position:absolute;
+}
+.dragDn{
+  bottom: 0px;
+  right: 43%;
+  position:absolute;
+}
 .ProjectSectionContent {
   display: flex;
   height: 100vh;
@@ -162,6 +172,12 @@ button.rec{
     top: 100px;
     left:-10px;
     box-sizing: content-box;
+  }
+  .dragUp{
+    width: 15px;
+  }
+  .dragDn{
+    width: 15px;
   }
   .recordblock{
     border: 0px solid #ffffff;
