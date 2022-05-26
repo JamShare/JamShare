@@ -19,22 +19,24 @@ class Sessions {
       return createSession(socket);
     var session = new Session(genSessionID);
     this.sessions.set(genSessionID, session);
-    socket.emit('create-session-response', genSessionID); //emit to only that client so they can view the code 
+    socket.emit('create-session-response', genSessionID); //emit to only that client so they can view the code
     this.findSessionIDFromSocketID(socket.id);
   }
 
-  joinSession(data, socket) { 
+  joinSession(data, socket) {
     // var sess = new Session();
     let sessionID = data.sessionID;
-    if (sessionID){
+    console.log("user joining session", data.guest);
+    if (sessionID) {
       var currentSession = this.sessions.get(sessionID);
+      //console.log('currentSession');
+      //console.log(currentSession);
       currentSession.joinSession(socket, data.guest);
-    }
-    else {
+    } else {
       socket.emit('join-session-fail', data.sessionID);
       console.log(
         'User %s attempted to join session %s which does not exist.',
-        data.username,
+        data.guest,
         data.sessionID
       );
     }
@@ -52,14 +54,13 @@ class Sessions {
 
   findSessionIDFromSocketID(socketI) {
     var seshID = '';
-    this.sessions.forEach(function(valuesess,keysess){
+    this.sessions.forEach(function (valuesess, keysess) {
       console.log(valuesess);
       console.log(keysess);
-      valuesess.clients.clients.forEach(function(valueclient,keyclient){
+      valuesess.clients.clients.forEach(function (valueclient, keyclient) {
         console.log(keyclient);
-      })
-      if(valuesess.clients.clients.socketID == socketI)
-        seshID = keysess;
+      });
+      if (valuesess.clients.clients.socketID == socketI) seshID = keysess;
     });
     console.log('findsesh:');
     console.log(seshID);
@@ -84,11 +85,12 @@ class Sessions {
   updateUserList(userList, sessionID) {
     console.log('userList');
     console.log(userList);
-    var currentSession = this.sessions.get(sessionID);
+    var currentSession = this.sessions.get(sessionID);//gets session object with sessionID key
     currentSession.updateClientsSessionsUsernameList(userList);
     console.log('updateUserList');
     console.log(currentSession.clients.clients);
   }
+
   participantsOrder(data, socketID) {
     let session = this.findSessionIDFromSocketID(socketID);
     session.updateParticipants(data);
@@ -102,6 +104,9 @@ class Sessions {
   }
 }
 
+
+
+
 class Session {
   constructor(sessionID) {
     this.clients = new Clients();
@@ -114,8 +119,8 @@ class Session {
   //   return [this.sessionID, this.clients.retclients()];
   // }
 
-  updateParticipants(data){
-    console.log("updating paricipants order");
+  updateParticipants(data) {
+    console.log('updating paricipants order');
     socket.brodcast.to(sessionID).emit('participants-order', data);
   }
 
@@ -126,6 +131,7 @@ class Session {
       socket.join(this.sessionID);
       //send usernames to client from client object
       let usernames = this.clients.getUsernames();
+      console.log(usernames);
       socket.emit('join-session-success', usernames);
       //socket.emit('participants', { usernames });
       socket.to(this.sessionID).emit('client-update-userlist', usernames);
@@ -137,16 +143,16 @@ class Session {
   }
   getClientsSessionsUsernameList() {
     let usernames2 = this.clients.getUsernames();
-    //socket.emit('join-session-success', usernames2);
+    console.log("newuserlist", usernames2)
+    socket.emit('client-update-userlist', usernames2);
     return usernames2;
   }
 
   updateClientsSessionsUsernameList(userList) {
-    console.log('Session no S updateClientsSessionsUsernameList');
+    console.log('updateClientsSessionsUsernameList');
     console.log(userList);
-    this.clients.updateUsernames(userList);
-    console.log('-------------------');
-    //socket.emit('join-session-success', usernames2);
+    newuserlist = this.clients.updateUsernames(userList);
+    socket.to(this.sessionID).emit('client-update-userlist', newuserlist);
   }
 
   startGameSession() {

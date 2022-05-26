@@ -5,15 +5,7 @@ class Clients {
     this.maxlength = 4;
   }
 
-  // retclientsmap(){
-  //   return this.clientsMap;
-  // }
-
-  // retclients(){
-  //   return this.clients;
-  // }
-
-  addClient(socketClientID, username)  {
+  addClient(socketClientID, username) {
     if (this.maxlength <= this.clients.length) {
       throw 'Room is full.';
     }
@@ -88,6 +80,7 @@ class Clients {
           }
         }
       }
+      return this.clients;
       //this.clients = userList;
     } else {
       console.log('why is the list empty?');

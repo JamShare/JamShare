@@ -80,28 +80,32 @@ io.on('connection', (socket) => {
     sessions.joinSession(data, socket);
   });
 
+  //update participants on server and broadcast to client when new user joins or host changes order
   socket.on('participants-order', (data) => {
     sessions.participantsOrder(data, socket);
   });
 
   socket.on('server-update-userlist', (userlist, sessionID) => {
-    console.log('server-update-userlist');
-
+    // console.log('server-update-userlist');
     sessions.updateUserList(userlist, sessionID);
-    console.log('userlist updated sending to client');
-    console.log(sessionID);
+    // console.log('userlist updated sending to client');
+    // console.log(sessionID);
 
     socket.emit("remote-client-update-userlist", userlist);
 
     //socket.emit('client-update-userlist', userlist);
     //socket.to(sessionID).emit('client-update-userlist', userlist);
-    io.in(sessionID).emit('client-update-userlist', userlist);
-    socket.broadcast.to(sessionID).emit('client-update-userlist', userlist);
-    socket.emit('client-update-userlist', userlist);
+    // io.in(sessionID).emit('client-update-userlist', userlist);
+    // socket.broadcast.to(sessionID).emit('client-update-userlist', userlist);
+    // socket.emit('client-update-userlist', userlist);
   });
+
   socket.on('get-userlist', (data) => {
     let userList = sessions.getUserList();
   });
+
+
+
 
   //broadcast incoming stream to all clients in session
   socket.on('client-audio-stream', (data) => {
