@@ -17,7 +17,10 @@ class Recorder extends React.Component {
       isPlaying: false,
       icon: require('./assets/images/record.png'),
       text: 'Jam!',
+      //data from Room.js (parent component)
       userlist: props.userlist,
+      sessionID: props.sessionID,
+      username: props.guest
     };
     console.log("recorder userlist: ", this.state.userlist);
     // const [image, setImage] = useState();
