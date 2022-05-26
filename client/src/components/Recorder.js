@@ -351,7 +351,8 @@ function Recorder(props) {
     //publish the local stream
     function publish(publishStreamId, token) {
         console.log("Publishing");
-        webRTCAdaptor.publish(publishStreamId, token, "", "", streamName, currentRoom, "{someKey:somveValue}", playerOrder);
+        let publishStreamName = '' + currentRoom + playerOrder;
+        webRTCAdaptor.publish(publishStreamName, token, "", "", streamName, currentRoom, "{someKey:somveValue}", playerOrder);
     }
 
     function onStartPlaying() {
