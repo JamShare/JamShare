@@ -16,12 +16,12 @@ function Recorder(props) {
     //room info
     let currentRoom = sessionID;
     let username = guest;
-    let usernames = null;
+    
 
     function getPlayerOrder() {
-        for (let i = 0; i < usernames.length; i++) {
-            if (username === usernames[i]) {
-                playerOrder = i;
+        for (let i = 0; i < state.userlist.length; i++) {
+            if (username === state.userlist[i]) {
+                playerOrder = i+1;
             }
         }
     }
@@ -89,23 +89,23 @@ function Recorder(props) {
 
     //socketio
     let socket = io.connect(SERVER);
-    socket.on("player-connected-server", (order) => {
+    // socket.on("player-connected-server", (order) => {
 
-        playerOrder = order;
+    //     playerOrder = order;
 
-        state.streamName = '' + playerOrder + '-' + currentRoom;
+    //     state.streamName = '' + playerOrder + '-' + currentRoom;
 
-        console.log("Player order", playerOrder);
-    });
+    //     console.log("Player order", playerOrder);
+    // });
 
-    socket.on('remote-client-update-userlist', (usernames) => {
-        console.log('user order update', usernames);
-    });
+  
 
 
 
     function startTheJam() {
+        getPlayerOrder()
         console.log("recorder userlist: ", state.userlist);
+        console.log("Current player order: ", playerOrder);
         getAudioDevicePlayer();
 
         setTimeout(function () {
