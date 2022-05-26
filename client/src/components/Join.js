@@ -50,7 +50,7 @@ function Join(props) {
       console.log(usernames);
       // let { state: { users } = {usernames} } = useLocation();
       let path = '/Room';
-      navigate(path, {state:{sessionID, guest}});
+      navigate(path, {state:{sessionID, guest, usernames}});
     });
 
     socket.on('join-session-failed', ()=>{

@@ -29,9 +29,15 @@ function Room() {
   // const [message, setMessage] = useState("");
   // const [messageReceived, setMessageReceived] = useState("");
   let {
-    state: { sessionID, guest },
+    state: { sessionID, guest, usernames },
   } = ({} = useLocation()); //gets the variable we passed from navigate
-  console.log(sessionID, guest);
+  
+  console.log("room state: ". sessionID, guest, usernames);
+
+  socket.on('client-update-userlist', (usernames) => {
+    console.log('user order update');
+    
+  });
   //const navigate = useNavigate();
   //navigate('/Chat', {state:{sessionID, guest}});
 
