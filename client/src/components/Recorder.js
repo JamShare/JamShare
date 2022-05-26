@@ -16,12 +16,12 @@ function Recorder(props) {
     //room info
     let currentRoom = sessionID;
     let username = guest;
-    
+
 
     function getPlayerOrder() {
         for (let i = 0; i < state.userlist.length; i++) {
             if (username === state.userlist[i]) {
-                playerOrder = i+1;
+                playerOrder = i + 1;
             }
         }
     }
@@ -74,7 +74,7 @@ function Recorder(props) {
     let playingIcon = require('./assets/images/playing.png')
 
     //playerOrder = 0;
-    
+
 
 
     //antmedia variables
@@ -98,7 +98,7 @@ function Recorder(props) {
     //     console.log("Player order", playerOrder);
     // });
 
-  
+
 
 
 
@@ -167,7 +167,10 @@ function Recorder(props) {
 
     //remotely play each audio stream
     function playAudio(obj, trackPlayerId) {
-        var room = currentRoom;
+        tracks.push(obj.trackId);
+        let room = currentRoom;
+        let trackOrder = obj.trackId.slice(-1);
+
         console.log("new stream available with id: "
             + obj.streamId + "on the room:" + room);
 
@@ -184,14 +187,14 @@ function Recorder(props) {
         var audioElement = document.getElementById("remoteVideo" + index);
 
         if (audioElement == null) {
-            createRemoteAudio(index);
+            createRemoteAudio(index, trackOrder);
             audioElement = document.getElementById("remoteVideo" + index);
             audioElement.srcObject = new MediaStream();
         }
 
         let timeToDelay = 0;
 
-        let trackOrder = obj.trackId.slice(-1);
+
 
         console.log("Track Order: ", trackOrder);
         if (playerOrder === 2 && trackOrder === '1') {
@@ -227,7 +230,8 @@ function Recorder(props) {
 
         //if we are the last player, record the audio streams
         console.log("New stream player order: ", playerOrder);
-        if (username === state.userList.at(-1)) {
+        console.log("User List: ", state.userlist.at(-1));
+        if (username === state.userlist.at(-1)) {
             //Push ac sources
             const source = ac.createMediaStreamTrackSource(dest.stream.getAudioTracks()[0]);
             acSources.push(source);
@@ -261,7 +265,8 @@ function Recorder(props) {
 
     //add tracks to the antmedia room
     function addTrackList(streamId, trackList) {
-        addVideoTrack(streamId);
+        //addVideoTrack(streamId);
+        console.log("Track list", trackList);
         trackList.forEach(function (trackId) {
             addVideoTrack(trackId);
         });
@@ -317,34 +322,19 @@ function Recorder(props) {
     //add antmedia stream to track list
     function addVideoTrack(trackId) {
         tracks.push(trackId);
-        var trackUl = document.getElementById("trackList");
-        var li = document.createElement("li");
-        var checkbox = document.createElement("input");
-        var label = document.createElement("label");
-        var description = document.createTextNode(trackId);
-        checkbox.type = "checkbox";
-        checkbox.name = trackId;
-        checkbox.id = "cbx" + trackId;
-        checkbox.checked = false;
-        checkbox.onclick = function () { enableTrack(trackId); };
-        label.appendChild(checkbox);
-        label.appendChild(description);
-        li.appendChild(label);
-        trackUl.appendChild(li);
     }
 
     //enable checked track
-    function enableTrack(trackId) {
-        var checkBox = document.getElementById("cbx" + trackId);
-        webRTCAdaptor.enableTrack(currentRoom, trackId, checkBox.checked);
+    function enableTrack(trackId, isEnabled) {
+        webRTCAdaptor.enableTrack(currentRoom, trackId, isEnabled);
     }
 
     //create antmedia remote audio player
-    function createRemoteAudio(streamId) {
+    function createRemoteAudio(streamId, playerName) {
         var player = document.createElement("div");
         player.className = "col-sm-3";
-        player.id = "player" + streamId;
-        player.innerHTML = '<video id="remoteVideo' + streamId + '"controls autoplay playsinline></video>' + streamId;
+        player.id = '' + playerName;
+        player.innerHTML = '<video id="remoteVideo' + streamId + '"controls autoplay playsinline></video>' + playerName;
         document.getElementById("players").appendChild(player);
     }
 
@@ -413,15 +403,21 @@ function Recorder(props) {
                 } else if (info === "streamInformation") {
 
                 } else if (info === "newStreamAvailable") {
-                    playAudio(obj);
-                    if (tracks != null) {
-                        tracks.forEach(function (trackId) {
-                            let tempOrder = trackId.slice(-1);
-                            if (parseInt(tempOrder, 10) > parseInt(playerOrder, 10)) {
-                                enableTrack(trackId, false);
-                            }
-                        });
+                    let tempOrder = obj.trackId.slice(-1);
+                    if (parseInt(tempOrder, 10) < parseInt(playerOrder, 10)) {
+                        console.log("Playing", obj.trackId);
+                        playAudio(obj);
                     }
+
+                    // if (tracks != null) {
+                    //     tracks.forEach(function (trackId) {
+                    //         let tempOrder = trackId.slice(-1);
+                    //         if (parseInt(tempOrder, 10) >= parseInt(playerOrder, 10)) {
+                    //             console.log("Disabling", trackId);
+                    //             enableTrack(trackId, false);
+                    //         }
+                    //     });
+                    // }
                 } else if (info === "ice_connection_state_changed") {
                     console.log("iceConnectionState Changed: ", JSON.stringify(obj));
                 } else if (info === "updated_stats") {
