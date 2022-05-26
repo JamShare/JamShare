@@ -80,6 +80,7 @@ class Clients {
           }
         }
       }
+      return this.clients;
       //this.clients = userList;
     } else {
       console.log('why is the list empty?');

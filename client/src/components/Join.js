@@ -18,40 +18,45 @@ const SERVER = "http://localhost:3001";
 // Join or create a Jam session room with link ID
 function Join(props) {
 
-    const [sessionID, setSessionID] = useState("");
-    const [showModal, setModal] = useState(false);
-    const handleClose = () => setModal(false);
-    const handleShow = () => setModal(true);
-    const [copied, setCopied] = useState(false);
-    const [joinSuccess, setJoinSuccess] = useState(false);
-    const inputArea = useRef(null);
-    const socket = io.connect(SERVER);
-    //breaks rendering
-    const navigate = useNavigate();
-    let { state: { guest } = {} } = useLocation(); //gets the variable we passed from navigate
+  const [sessionID, setSessionID] = useState("");
+  const [showModal, setModal] = useState(false);
+  const handleClose = () => setModal(false);
+  const handleShow = () => setModal(true);
+  const [copied, setCopied] = useState(false);
+  const [joinSuccess, setJoinSuccess] = useState(false);
+  const inputArea = useRef(null);
+  const socket = io.connect(SERVER);
   
+  // const[guest, setGuest] = useState("");
 
-    useEffect( () => {
-      socket.on("create-session-response", session_ID => {
-        console.log("create session response from server")
-        console.log(session_ID)
-        setSessionID(session_ID)
-        handleShow();
-      }); 
+  const navigate = useNavigate();
+  // const [guest, setGuest] = useState("");
+  const guest = useLocation().state.usn;
+  // let { state: { Signguest } = {} } = useLocation(); //gets the variable we passed from navigate
+  // setGuest(guest);
+  console.log("join username: ", guest);
 
-      socket.on('join-session-success', usernames =>{
-        //add usernames to local global data from data.usernames
-        // socket.emit('joinRoom', {guest, sessionID}) 
-        console.log(usernames);
-        // let { state: { users } = {usernames} } = useLocation();
-        let path = '/Room';
-        navigate(path, {state:{sessionID, guest}});
-      });
+  useEffect( () => {
+    socket.on("create-session-response", session_ID => {
+      console.log("create session response from server")
+      console.log(session_ID)
+      setSessionID(session_ID)
+      handleShow();
+    }); 
 
-      socket.on('join-session-failed', ()=>{
-        alert(`Session ID: ${sessionID} does not exist.`)
-      });
-    }, [socket])
+    socket.on('join-session-success', usernames =>{
+      //add usernames to local global data from data.usernames
+      // socket.emit('joinRoom', {guest, sessionID}) 
+      console.log(usernames);
+      // let { state: { users } = {usernames} } = useLocation();
+      let path = '/Room';
+      navigate(path, {state:{sessionID, guest}});
+    });
+
+    socket.on('join-session-failed', ()=>{
+      alert(`Session ID: ${sessionID} does not exist.`)
+    });
+  }, [socket])
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -62,7 +67,8 @@ function Join(props) {
     socket.emit('join-session', data);
   }
   
-  const joinSession = (join) => {
+  const joinSession = () => {
+    console.log("join guest name ", guest);
     socket.emit('join-session', {guest, sessionID}) 
     // let path = '/Room';
     // navigate(path, {state:{sessionID, guest}});

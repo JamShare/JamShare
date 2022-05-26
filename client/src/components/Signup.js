@@ -20,6 +20,8 @@ function Signup() {
 
   // const redirect = useState(false);
   const navigate = useNavigate();
+  
+
   // let data = localStorage.getItem('guest');
   // const [isOpen, setIsOpen] = useState(false);
   const handleClose = () => setModal(false);
@@ -45,16 +47,17 @@ function Signup() {
     if (username) 
       navToJoin(username)
     else if(guest_username)
-      navToJoin(guest_username)  }, []);
+      navToJoin(guest_username) 
+  }, []);
 
-
+    
   const handleGuest = (e) => {
     e.preventDefault();
-    
-    Cookies.set("guest_username", guest, {
+    console.log(guest);
+    Cookies.set("guest_username", e.target.value, {
       expires: 1,
     });
-
+    // setGuest(e.target.value);
     Cookies.set("sessionID", Math.random().toString(36).substr(2, 9), {
       expires: 1,
     });    
@@ -62,8 +65,11 @@ function Signup() {
     navToJoin(guest);
   };
 
-  const navToJoin = (usn) => 
+  const navToJoin = (usn) => {
+    console.log("navtojoin ", usn);
     navigate("./Join", { state: { usn } });
+  };
+
 
   const handleSignup = (e) => {
     e.preventDefault();

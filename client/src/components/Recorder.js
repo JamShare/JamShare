@@ -21,6 +21,9 @@ class Recorder extends React.Component {
     // const [image, setImage] = useState();
 
     // this.chunks = [];
+    // this.incomingStream = "";
+    // this.outgoingStream = this.session + guestname;
+
     this.streamOut = null;
     this.stream = null;
     this.recorder = null;
@@ -47,6 +50,11 @@ class Recorder extends React.Component {
       let audioURL = URL.createObjectURL(blob);
       this.audio = new Audio(audioURL);
     });
+    this.socket.on('stream-to-download', (streamName) => {
+        console.log("Listening to stream name: ", streamName);
+        this.incomingStream = streamName;
+    });
+    
   }
 
   // useEffect(unknownParameter = () => {
@@ -123,7 +131,8 @@ class Recorder extends React.Component {
     this.setState({ icon: this.playingIcon });
     this.setState({ isRecording: true });
     console.log('Recording started successfully.');
-    this.socket.emit('audio-stream-start');
+    
+    // this.socket.emit('audio-stream-start', this.outgoingStream);
     return;
   }
 

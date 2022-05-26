@@ -26,7 +26,7 @@ class Sessions {
   joinSession(data, socket) {
     // var sess = new Session();
     let sessionID = data.sessionID;
-    console.log('Using joinSession with S');
+    console.log("user joining session", data.guest);
     if (sessionID) {
       var currentSession = this.sessions.get(sessionID);
       //console.log('currentSession');
@@ -36,7 +36,7 @@ class Sessions {
       socket.emit('join-session-fail', data.sessionID);
       console.log(
         'User %s attempted to join session %s which does not exist.',
-        data.username,
+        data.guest,
         data.sessionID
       );
     }
@@ -85,11 +85,12 @@ class Sessions {
   updateUserList(userList, sessionID) {
     console.log('userList');
     console.log(userList);
-    var currentSession = this.sessions.get(sessionID);
+    var currentSession = this.sessions.get(sessionID);//gets session object with sessionID key
     currentSession.updateClientsSessionsUsernameList(userList);
     console.log('updateUserList');
     console.log(currentSession.clients.clients);
   }
+
   participantsOrder(data, socketID) {
     let session = this.findSessionIDFromSocketID(socketID);
     session.updateParticipants(data);
@@ -102,6 +103,9 @@ class Sessions {
     return userList;
   }
 }
+
+
+
 
 class Session {
   constructor(sessionID) {
@@ -127,6 +131,7 @@ class Session {
       socket.join(this.sessionID);
       //send usernames to client from client object
       let usernames = this.clients.getUsernames();
+      console.log(usernames);
       socket.emit('join-session-success', usernames);
       //socket.emit('participants', { usernames });
       socket.to(this.sessionID).emit('client-update-userlist', usernames);
@@ -138,16 +143,16 @@ class Session {
   }
   getClientsSessionsUsernameList() {
     let usernames2 = this.clients.getUsernames();
-    //socket.emit('join-session-success', usernames2);
+    console.log("newuserlist", usernames2)
+    socket.emit('client-update-userlist', usernames2);
     return usernames2;
   }
 
   updateClientsSessionsUsernameList(userList) {
-    console.log('Session no S updateClientsSessionsUsernameList');
+    console.log('updateClientsSessionsUsernameList');
     console.log(userList);
-    this.clients.updateUsernames(userList);
-    console.log('-------------------');
-    //socket.emit('join-session-success', usernames2);
+    newuserlist = this.clients.updateUsernames(userList);
+    socket.to(this.sessionID).emit('client-update-userlist', newuserlist);
   }
 
   startGameSession() {

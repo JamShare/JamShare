@@ -48,6 +48,20 @@ function Participants() {
     console.log(updatedList);
     socket.emit('server-update-userlist', updatedList, sessionID2);
   };
+  
+  socket.on('client-update-userlist', (usernames) => {
+    console.log('user order update');
+    setUsers(usernames); //this is where it actually gets updated
+  });
+
+//   socket.on('participants', (usernames) => {
+//     console.log('user order update');
+//     this.setState({ participants: usernames }); //this is where it actually gets updated
+//     if (this.socket.id == usernames[0].socketID) setHost({ host: true });
+//     else setHost({ host: false });
+//   });
+
+  
   // const[index, setIndex] = useState(0);
   // this.state={
   //     users: [guest, "test0", "test1"],
@@ -71,50 +85,41 @@ function Participants() {
   // this.participants = ['jammer1', 'jammer2', 'jammer3', 'jammer4', 'jammer5'];
   //     this.socket = io.connect(SERVER);
 
-  socket.on('participants', (usernames) => {
-    console.log('user order update');
-    this.setState({ participants: usernames }); //this is where it actually gets updated
-    if (this.socket.id == usernames[0].socketID) setHost({ host: true });
-    else setHost({ host: false });
-  });
 
   // };
 
-  const up = (i) => {
-    console.log(i);
-    var temparray = users;
+//   const up = (i) => {
+    // console.log(i);
+    // var temparray = users;
 
-    if (i > 0) var tempuser = temparray[i - 1];
-    else return;
+    // if (i > 0) var tempuser = temparray[i - 1];
+    // else return;
 
-    console.log(tempuser);
-    console.log(temparray);
+    // console.log(tempuser);
+    // console.log(temparray);
 
-    temparray.splice(i - 1, 1, temparray[i]);
-    console.log(temparray);
+    // temparray.splice(i - 1, 1, temparray[i]);
+    // console.log(temparray);
 
-    temparray.splice(i, 1, tempuser);
-    console.log(temparray);
+    // temparray.splice(i, 1, tempuser);
+    // console.log(temparray);
 
     // setUsers({ temparray });
 
     // this.setState({users: temparray});
 
-    console.log(users);
+    // console.log(users);
 
     // this.socket.emit('participants-order', {temparray, sessionID});
-  };
+//   };
 
-  function down(i) {
-    console.log(i);
+//   function down(i) {
+//     console.log(i);
     // var temp = this.state.participants[i+1];
     // this.state.participants.splice(i+1, 1, this.state.participants[i]);
     // this.state.participants.splice(i,1,temp);
-  }
-  socket.on('client-update-userlist', (usernames) => {
-    console.log('user order update');
-    setUsers(usernames); //this is where it actually gets updated
-  });
+//   }
+ 
 
   return (
     <div className='userblock'>
