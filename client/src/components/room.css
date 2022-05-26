@@ -188,6 +188,9 @@ button.rec{
     margin: 5px;
     top: 100px;
   }
+  .userblock div img{
+    margin-right: 10px;
+  }
   .recordblock{
     padding-top: 0px;
     padding-left: 10px;
@@ -196,6 +199,9 @@ button.rec{
     left: 305px;
     right: 305px;
     top: 100px;
+  }
+  .recordblock div img{
+    margin-right: 10px;
   }
   .jamblock{
     padding: 0px;
@@ -212,6 +218,9 @@ button.rec{
     margin: 10px;
     top: 130px;
   }
+  .userblock div img{
+    margin-right: 10px;
+  }
   .recordblock{
     padding-top: 10px;
     padding-left: 30px;
@@ -220,6 +229,9 @@ button.rec{
     left: 350px;
     right: 350px;
     top: 130px;
+  }
+  .recordblock div img{
+    margin-right: 10px;
   }
   .jamblock{
     padding-top: 50px;
