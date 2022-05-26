@@ -132,8 +132,8 @@ class Session {
       console.log(usernames);
       socket.emit('join-session-success', usernames);
 
-      // socket.to(this.sessionID).emit('client-update-userlist', usernames);
-      socket.broadcast.emit('client-update-userlist', usernames);
+      socket.to(this.sessionID).emit('client-update-userlist', usernames);
+      // socket.broadcast.emit('client-update-userlist', usernames);
       
     } catch (error) {
       socket.emit('join-session-failed');
