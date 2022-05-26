@@ -15,45 +15,41 @@ const SERVER = "https://berryhousehold.ddns.net:3001";
 const socket = io.connect(SERVER);
 
 // class Participants extends React.Component {
-function Participants() {
-  let {
-    state: { sessionID, guest, usernames },
-  } = ({} = useLocation()); //gets the variable we passed from navigate
-  if (!usernames) {
-    usernames = ['badeed', 'Zach', 'JC', 'Morg', 'not badeed'];
-  }
-  const [users, setUsers] = useState(usernames);
-  const [sessionID2, setSessionID2] = useState(sessionID);
-  const [host, setHost] = useState(true);
+function Participants(props) {
 
-  const defaultList = ['badeed', 'Zach', 'JC', 'Morg', 'not badeed'];
   // React state to track order of items
-  const [itemList, setItemList] = useState(defaultList);
+    // const [users, setUsers] = useState([]);
+
+    const [sessionID, setSessionID] = useState(props.sessionID);
+    console.log("participants sessionID", sessionID);
+    console.log("participants userlist:", props.userlist);
 
   // Function to update list on drop
-  const handleDrop = (droppedItem) => {
-    // Ignore drop outside droppable container
-    if (!droppedItem.destination) return;
-    //var updatedList = [...itemList];
-    var updatedList = [...users];
-    // Remove dragged item
-    const [reorderedItem] = updatedList.splice(droppedItem.source.index, 1);
-    // Add dropped item
-    updatedList.splice(droppedItem.destination.index, 0, reorderedItem);
-    // Update State
-    //setItemList(updatedList);
-    setUsers(updatedList);
+    const handleDrop = (droppedItem) => {
+        // Ignore drop outside droppable container
+        if (!droppedItem.destination) return;
+        //var updatedList = [...itemList];
+        var updatedList = [...props.userlist];
+        // Remove dragged item
+        const [reorderedItem] = updatedList.splice(droppedItem.source.index, 1);
+        // Add dropped item
+        updatedList.splice(droppedItem.destination.index, 0, reorderedItem);
+        // Update State
+        
+        // setUsers(updatedList);
 
-    //emit new list to server
-    console.log('Sending updated order to server');
-    console.log(updatedList);
-    socket.emit('server-update-userlist', updatedList, sessionID2);
+        //emit new list to server
+        console.log('Sending updated order to server');
+        console.log(updatedList);
+        socket.emit('server-update-userlist', updatedList, sessionID);
   };
-  
-  socket.on('client-update-userlist', (usernames) => {
-    console.log('user order update');
-    setUsers(usernames); //this is where it actually gets updated
-  });
+    //happens in room.js
+//   socket.on('client-update-userlist', (usernames) => {
+    // console.log('user order update');
+    // setUsers(props.userlist); //this is where it actually gets updated
+//   });
+
+
 
 //   socket.on('participants', (usernames) => {
 //     console.log('user order update');
@@ -128,7 +124,7 @@ function Participants() {
         <Droppable droppableId='RoomComponentList'>
           {(provided) => (
             <div {...provided.droppableProps} ref={provided.innerRef}>
-              {users.map((item, index) => (
+              {props.userlist.map((item, index) => (
                 <Draggable key={item} draggableId={item} index={index}>
                   {(provided) => (
                     <div

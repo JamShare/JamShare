@@ -35,10 +35,13 @@ function Room() {
   
   console.log("room state: ". sessionID, guest, usernames);
 
-  socket.on('client-update-userlist', (usernames) => {
-    console.log('user order update');
+  const [serverUserList, setServerUserList] = useState(usernames);
 
+  socket.on('client-update-userlist', (usernames) => {
+    console.log('user order update', usernames);
+    setServerUserList(usernames);
   });
+  
   //const navigate = useNavigate();
   //navigate('/Chat', {state:{sessionID, guest}});
 
@@ -76,9 +79,9 @@ function Room() {
       </div>
       {/* <Chat></Chat> */}
 
-      <Participants></Participants>
-      <Viewer></Viewer>
-      <Recorder userlist={usernames}></Recorder>
+      <Participants userlist={serverUserList} sessionID={sessionID} guest={guest}></Participants>
+      <Viewer userlist={usernames} sessionID={sessionID} guest={guest}></Viewer>
+      <Recorder userlist={usernames} sessionID={sessionID} guest={guest}></Recorder>
     </div>
   );
 }

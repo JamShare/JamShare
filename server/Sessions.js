@@ -1,5 +1,5 @@
 //Communicates with Room.js primarily.
-const Socket = require('socket.io');
+const socket = require('socket.io');
 // const { default: Participants } = require('../client/src/components/Participants.js');
 
 // server components:
@@ -83,12 +83,10 @@ class Sessions {
     return genSessionID;
   }
   updateUserList(userList, sessionID) {
-    console.log('userList');
-    console.log(userList);
+    console.log('new userList incoming', userList);
     var currentSession = this.sessions.get(sessionID);//gets session object with sessionID key
     currentSession.updateClientsSessionsUsernameList(userList);
-    console.log('updateUserList');
-    console.log(currentSession.clients.clients);
+    console.log('updatedUserList is now: ', currentSession.clients.clients);
   }
 
   participantsOrder(data, socketID) {
@@ -133,14 +131,16 @@ class Session {
       let usernames = this.clients.getUsernames();
       console.log(usernames);
       socket.emit('join-session-success', usernames);
-      //socket.emit('participants', { usernames });
+
       socket.to(this.sessionID).emit('client-update-userlist', usernames);
-      //socket.brodcast.to(sessionID).emit('stream-names', streams);
+      // socket.broadcast.emit('client-update-userlist', usernames);
+      
     } catch (error) {
       socket.emit('join-session-failed');
       console.error(error);
     }
   }
+
   getClientsSessionsUsernameList() {
     let usernames2 = this.clients.getUsernames();
     console.log("newuserlist", usernames2)
@@ -151,8 +151,11 @@ class Session {
   updateClientsSessionsUsernameList(userList) {
     console.log('updateClientsSessionsUsernameList');
     console.log(userList);
-    newuserlist = this.clients.updateUsernames(userList);
-    socket.to(this.sessionID).emit('client-update-userlist', newuserlist);
+    var newuserlist = this.clients.updateUsernames(userList);
+    // CURRENT NAME SPACE BROADCAST
+    socket.broadcast.emit('client-update-userlist', newuserlist);
+
+    // socket.to(this.sessionID).emit('client-update-userlist', newuserlist);
   }
 
   startGameSession() {
