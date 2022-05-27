@@ -15,15 +15,20 @@ import registerServiceWorker from './registerServiceWorker';
 import './fonts/Indie_Flower/IndieFlower-Regular.ttf';
 import './index.css';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-//import { Socket } from 'socket.io-client';
+import { Socket } from 'socket.io-client';
+
+const io = require('socket.io-client');
+const SERVER = "http://localhost:3001";
+let socket = io("http://localhost:3001");
+export default socket;
 
 ReactDOM.render(
   <div>
     <BrowserRouter>
       <Routes>
-        <Route exact path='/' element={<Signup />} />
-        <Route path='/join' element={<Join />} />
-        <Route path='/room' element={<Room />} />
+        <Route exact path='/' element={<Signup socket={io}/>} />
+        <Route path='/join' element={<Join socket={io}/>} />
+        <Route path='/room' element={<Room socket={io}/>} />
         <Route path='/signup2' element={<Morg_Signup />} />
         <Route path='/signin2' element={<Morg_Signin />} />
       </Routes>

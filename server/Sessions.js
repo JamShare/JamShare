@@ -12,31 +12,48 @@ class Sessions {
     this.sessions = new Map();
   }
 
+  disconnectUser=(socket, sessionID, guest)=>{
+    // console.log("disconnect");
+    try{
+      let currentSession = this.sessions.get(sessionID);
+      if(currentSession.disconnectClient(socket, guest)){
+        currentSession.sendClientsSessionsUsernameList();//update remaining clients
+        // socket.disconnect();
+        console.log("user",guest,"disconnected. users remaining in:",sessionID,currentSession.clients.getUsernames());
+      }
+      else console.log("error disconnecting user", guest, socketID, sessionID);
+    } catch (error){
+      console.log("failed to disconnect user...\n", error);
+    }
+  }
+
   createSession(data, socket) {
     let genSessionID = this.generateSessionID();
-    if (this.sessions.get(genSessionID) != undefined)
-      //recurse
+    if (this.sessions.get(genSessionID) != undefined)//recurse
       return createSession(socket);
+
+    //create new session and add it to the sessions map
+    console.log("creating new session for user",socket.id);
     var session = new Session(genSessionID);
-    this.sessions.set(genSessionID, session);
-    socket.emit('create-session-response', genSessionID); //emit to only that client so they can view the code
-    this.findSessionIDFromSocketID(socket.id);
+    this.sessions.set(genSessionID, session); //maps session object with key=genSessionID
+    console.log("new session created", this.sessions.get(genSessionID));
+    socket.emit('create-session-response', genSessionID); //emit to only that client 
+    // this.findSessionIDFromSocketID(socket.id);
   }
 
   joinSession(data, socket) {
     // var sess = new Session();
     let sessionID = data.sessionID;
-    console.log("user joining session", data.guest);
+    console.log("user joining session:", data.username);
     if (sessionID) {
       var currentSession = this.sessions.get(sessionID);
-      //console.log('currentSession');
-      //console.log(currentSession);
-      currentSession.joinSession(socket, data.guest);
+      //console.log('currentSession',currentSession);
+      currentSession.joinSession(socket, data.username);
     } else {
       socket.emit('join-session-fail', data.sessionID);
       console.log(
         'User %s attempted to join session %s which does not exist.',
-        data.guest,
+        data.username,
         data.sessionID
       );
     }
@@ -70,7 +87,6 @@ class Sessions {
   generateSessionID() {
     // var crypto = require("crypto");
     // var id = crypto.randomBytes(20).toString('hex');
-
     let length = 20;
     let genSessionID = '';
     let characters =
@@ -82,6 +98,7 @@ class Sessions {
     }
     return genSessionID;
   }
+  
   updateUserList(userList, sessionID) {
     console.log('new userList incoming', userList);
     var currentSession = this.sessions.get(sessionID);//gets session object with sessionID key
@@ -117,6 +134,18 @@ class Session {
   //   return [this.sessionID, this.clients.retclients()];
   // }
 
+  disconnectClient=(socket, guest)=>{
+    console.log("disconnectclient");
+    // try{
+    //   return this.clients.removeClient(socket,guest);
+    // }
+    // catch(error) {
+    //   // socket.emit('disconnect-session-failed');
+    //   console.error("failed to disconnected user", socket.id, error);
+    //   return false;
+    // }
+  }
+
   updateParticipants(data) {
     console.log('updating paricipants order');
     socket.brodcast.to(sessionID).emit('participants-order', data);
@@ -124,24 +153,23 @@ class Session {
 
   joinSession(socket, username) {
     try {
-      console.log('Using joinSession no S');
+      // console.log('Using joinSession no S);
       this.clients.addClient(socket.id, username);
       socket.join(this.sessionID);
       //send usernames to client from client object
       let usernames = this.clients.getUsernames();
-      console.log(usernames);
+      console.log("usernames now in session:",usernames);
       socket.emit('join-session-success', usernames);
-
+      console.log("updating user list of:",this.sessionID);
       socket.to(this.sessionID).emit('client-update-userlist', usernames);
       // socket.broadcast.emit('client-update-userlist', usernames);
-      
     } catch (error) {
       socket.emit('join-session-failed');
       console.error(error);
     }
   }
 
-  getClientsSessionsUsernameList() {
+  sendClientsSessionsUsernameList() {
     let usernames2 = this.clients.getUsernames();
     console.log("newuserlist", usernames2)
     socket.emit('client-update-userlist', usernames2);

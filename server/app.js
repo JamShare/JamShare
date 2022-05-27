@@ -60,6 +60,7 @@ const socketHistory = {};
 
 // Listening for incoming connections
 io.on('connection', (socket) => {
+  console.log("client connected:",socket.id);
   //recieve the data from the user
   clientObject = undefined;
   socket.on('create-session', (data) => {
@@ -67,7 +68,6 @@ io.on('connection', (socket) => {
   });
 
   //'join-session' emitted from client when user clicks 'join jam session' in /Join.js modal popup, or when user enters session ID in orange box and presses enter.
-  //apparently, does not require adding the client's socket.id to a list for each session.
   socket.on('join-session', (data) => {
     sessions.joinSession(data, socket);
   });
@@ -77,41 +77,24 @@ io.on('connection', (socket) => {
     sessions.participantsOrder(data, socket);
   });
 
-  socket.on('server-update-userlist', (userlist, sessionID) => {
-    // console.log('server-update-userlist');
-    sessions.updateUserList(userlist, sessionID);
-    // console.log('userlist updated sending to client');
-    // console.log(sessionID);
-
-    //socket.emit('client-update-userlist', userlist);
-    //socket.to(sessionID).emit('client-update-userlist', userlist);
-    // io.in(sessionID).emit('client-update-userlist', userlist);
-    // socket.broadcast.to(sessionID).emit('client-update-userlist', userlist);
-    // socket.emit('client-update-userlist', userlist);
+  socket.on('server-update-userlist', (data) => {
+    sessions.updateUserList(data.userlist, data.sessionID);
   });
 
   socket.on('get-userlist', (data) => {
     let userList = sessions.getUserList();
   });
 
-
-
+  socket.on('disconnect', (data)=>{
+    // console.log();
+    sessions.disconnectUser(socket, data.sessionID, data.guest);
+  });
 
   //broadcast incoming stream to all clients in session
-  socket.on('client-audio-stream', (data) => {
-    sessions.streamToSession(data, socket);
-  });
+  // socket.on('client-audio-stream', (data) => {
+  //   sessions.streamToSession(data, socket);
+  // });
 
-  socket.on('room-exists', (data) => {
-    console.log('room-exists beng called');
-    if (io.sockets.adapter.rooms.has(data.sessionID)) {
-      console.log(`room ${data.sessionID} exists`);
-      sessions.joinSession(data, socket);
-    } else {
-      console.log(`session id ${data.sessionID} doesn't exist`);
-      socket.emit('join-session-failed');
-    }
-  });
 
   //socket.emit('me', socket.id);
 
@@ -177,12 +160,12 @@ io.on('connection', (socket) => {
   });
 
   //Change username of the socket
-  socket.on('setSocketName', (username) => {
-    socketMap[socket.id] = username;
-  });
+  // socket.on('setSocketName', (username) => {
+  //   socketMap[socket.id] = username;
+  // });
 
   socket.on('disconnect', () => {
-    //console.log(`Disconnected just msg: ${socket.id}`);
+    console.log("Disconnected :",socket.id);
     //socket.broadcast.emit('callEnded');
   });
   /*

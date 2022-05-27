@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { io, Socket } from 'socket.io-client';
+// import { io, Socket } from 'socket.io-client';
 import image1 from './assets/images/playing.png';
 import image2 from './assets/images/record.png';
 
@@ -14,6 +14,7 @@ class Viewer extends React.Component {
       isDownloading: false, //if true, animate or highlight incoming stream list item
     };
 
+    // this.socket = props.socket;
     this.files = [];
     //     this.stream = ss.createStream();
     // this.middleBuffer = [];

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import image1 from './assets/images/playing.png';
-const io = require('socket.io-client');
-
-const SERVER = 'http://localhost:3001';
+// const io = require('socket.io-client');
+// const SERVER = 'http://localhost:3001';
+import socket from "../index";
 
 var audiocontext = new AudioContext();
 // var audioworkletnode = new AudioWorkletNode(audiocontext, "workletnode");
@@ -11,7 +11,7 @@ var sources = [];
 class Recorder extends React.Component {
   constructor(props) {
     super(props);
-
+    
     this.state = {
       isRecording: false,
       isPlaying: false,
@@ -47,15 +47,16 @@ class Recorder extends React.Component {
     this.connectMediaStream = this.connectMediaStream.bind(this);
     this.connectAudioBuffer = this.connectAudioBuffer.bind(this);
 
-    this.socket = io.connect(SERVER);
+    // this.socket = io.connect(SERVER);
+    // this.socket = props.socket;
 
-    this.socket.on('audio-blob', (chunks) => {
+    socket.on('audio-blob', (chunks) => {
       console.log('Audio blob recieved.');
       let blob = new Blob(chunks, { type: 'audio/ogg; codecs=opus' });
       let audioURL = URL.createObjectURL(blob);
       this.audio = new Audio(audioURL);
     });
-    this.socket.on('stream-to-download', (streamName) => {
+    socket.on('stream-to-download', (streamName) => {
         console.log("Listening to stream name: ", streamName);
         this.incomingStream = streamName;
     });

@@ -6,15 +6,18 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import FormLabel from "react-bootstrap/esm/FormLabel";
 import { Link, Navigate, useNavigate, useLocation } from "react-router-dom";
-import { Socket } from 'socket.io-client';
+// import { Socket } from 'socket.io-client';
 import Modal from 'react-bootstrap/Modal';
 
 import {Morg_Signup} from "./component_export"
 
 
 import JoinModal from './JoinModal';
-const io = require('socket.io-client');
-const SERVER = "http://localhost:3001";
+// const io = require('socket.io-client');
+// const SERVER = "http://localhost:3001";
+import socket from "../index";
+
+
 // Join or create a Jam session room with link ID
 function Join(props) {
 
@@ -25,78 +28,47 @@ function Join(props) {
   const [copied, setCopied] = useState(false);
   const [joinSuccess, setJoinSuccess] = useState(false);
   const inputArea = useRef(null);
-  const socket = io.connect(SERVER);
-  
-  // const[guest, setGuest] = useState("");
+
+  // const socket = io.connect(SERVER);
+  // const socket = props.socket;
 
   const navigate = useNavigate();
-  // const [guest, setGuest] = useState("");
+  //state passed in from Signup.js
   const guest = useLocation().state.usn;
-  // let { state: { Signguest } = {} } = useLocation(); //gets the variable we passed from navigate
-  // setGuest(guest);
+
   console.log("join username: ", guest);
 
-  useEffect( () => {
-    socket.on("create-session-response", session_ID => {
-      console.log("create session response from server")
-      console.log(session_ID)
-      setSessionID(session_ID)
-      handleShow();
-    }); 
+  socket.on("create-session-response", session_ID => {
+    console.log("create session response from server")
+    console.log(session_ID)
+    setSessionID(session_ID)
+    handleShow();
+  }); 
 
-    socket.on('join-session-success', usernames =>{
-      //add usernames to local global data from data.usernames
-      // socket.emit('joinRoom', {guest, sessionID}) 
-      console.log(usernames);
-      // let { state: { users } = {usernames} } = useLocation();
-      let path = '/Room';
-      navigate(path, {state:{sessionID, guest, usernames}});
-    });
+  socket.on('join-session-success', usernames =>{
+    console.log("joining session with users:",usernames);
+    let path = '/Room';
+    navigate(path, {state:{sessionID, guest, usernames}});
+  });
 
-    socket.on('join-session-failed', ()=>{
-      alert(`Session ID: ${sessionID} does not exist.`)
-    });
-  }, [socket])
+  socket.on('join-session-failed', ()=>{
+    alert(`Session ID: ${sessionID} does not exist.`)
+  });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(e.target.elements.session.value);
-    console.log(sessionID)
-    // handleShow();
-    let data = {sessionID:sessionID, username:guest};
-    socket.emit('join-session', data);
-  }
-  
-  const joinSession = () => {
-    console.log("join guest name ", guest);
-    socket.emit('join-session', {guest, sessionID}) 
-    // let path = '/Room';
-    // navigate(path, {state:{sessionID, guest}});
-  }
-  // const joinSession = (join) => {
-  //   socket.emit('join-session', { guest, sessionID });
-  //   // let path = '/Room';
-  //   // navigate(path, {state:{sessionID, guest}});
-  // };
-
-  const joinExistingSession = (j) => {
-    j.preventDefault();
-    console.log(sessionID);
-    console.log(guest);
-    socket.emit('room-exists', { guest, sessionID });
-    console.log('fininishe joining');
-  };
-
-    // const joinExistingSession = (j) => {
-    //   j.preventDefault();
-    //   console.log(sessionID);
-    //   socket.emit("room-exists", {guest, sessionID});
-    // }
+  // useEffect( () => {
+  // }, [socket])
 
   const createSession = (room) => {
     room.preventDefault();
-    handleShow();
     socket.emit("create-session", guest);
+  }
+
+  const joinSession = (e) => {
+    e.preventDefault();
+    // console.log(e.target.value);
+    console.log(sessionID)
+    let data = {sessionID:sessionID, username:guest};
+    socket.emit('join-session', data);
   }
 
   function updateClipboard(newClip) {
@@ -119,6 +91,7 @@ function Join(props) {
         }
       });
     }
+
     return (
         <>
         <Modal {...props} aria-labelledby="contained-modal-title-vcenter" 
@@ -164,7 +137,7 @@ function Join(props) {
                                     <br></br>
                                     <br></br>
                             <div >
-                            <form onSubmit={joinExistingSession} >
+                            <form onSubmit={joinSession} >
                                         <input type="text" name="session" onChange={e => setSessionID(e.target.value)}  />
                                         <input type="submit" value="Submit"/*className="a-button" */ /> 
                                     </form>

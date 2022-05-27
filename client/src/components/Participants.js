@@ -9,15 +9,17 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import './styles.css';
 // let { state: {sessionID, guest}} = {}  = useLocation(); //gets the variable we passed from navigate
 
-const io = require('socket.io-client');
-const SERVER = 'http://localhost:3001';
-const socket = io.connect(SERVER);
-
+// const io = require('socket.io-client');
+// const SERVER = 'http://localhost:3001';
+// const socket = io.connect(SERVER);
+import socket from "../index";
 // class Participants extends React.Component {
 function Participants(props) {
 
   // React state to track order of items
     // const [users, setUsers] = useState([]);
+  // const socket = props.socket;
+  
 
     const [sessionID, setSessionID] = useState(props.sessionID);
     console.log("participants sessionID", sessionID);

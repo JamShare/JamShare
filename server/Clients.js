@@ -16,7 +16,7 @@ class Clients {
       priv = false;
     }
     var client = new Client(socketClientID, username, priv);
-    console.log(client);
+    console.log("client added to clients",client);
     // initialize more client information if needed
     // create another map using other information?
     this.clients.push(client);
@@ -28,6 +28,7 @@ class Clients {
     this.clients.indexOf(client);
     this.clients.splice(index, 1);
     this.clientsMap.delete(socketClientID);
+    return true;
   }
 
   findClientByID(socketClientID) {
