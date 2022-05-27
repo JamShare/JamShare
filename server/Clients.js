@@ -73,11 +73,15 @@ class Clients {
     console.log('Clients updateUsernames');
     if (userList) {
       for (var i = 0; i < userList.length; i++) {
-        for (var j = i; j < userList.length; j++) {
-          if (this.clients[i].username == userList[j]) {
-            console.log('this.clients[i].username ' + this.clients[i].username);
-            console.log('userList[j] ' + userList[j]);
-            this.swap(i, j);
+      // for (var i = 0; i < this.clients.length; i++) {//loop our array
+        if(this.clients[i].username != userList[i]){//if it doesnt match the index
+          //loop second array until it does and swap them
+          for (var j = i; j < userList.length; j++) {
+            if (this.clients[i].username == userList[j]) {
+              console.log('this.clients[i].username ' + this.clients[i].username);
+              console.log('userList[j] ' + userList[j]);
+              this.swap(i, j);
+            }
           }
         }
       }

@@ -78,7 +78,8 @@ io.on('connection', (socket) => {
   });
 
   socket.on('server-update-userlist', (data) => {
-    sessions.updateUserList(data.userlist, data.sessionID);
+    console.log("UPDATING",data);
+    sessions.updateUserList(data.updatedList, data.sessionID);
   });
 
   socket.on('get-userlist', (data) => {

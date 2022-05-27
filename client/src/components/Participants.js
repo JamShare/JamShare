@@ -21,8 +21,8 @@ function Participants(props) {
   // const socket = props.socket;
   
 
-    const [sessionID, setSessionID] = useState(props.sessionID);
-    console.log("participants sessionID", sessionID);
+    // const [sessionID, setSessionID] = useState(props.seshID);
+    console.log("participants sessionID", props.sessionID);
     console.log("participants userlist:", props.userlist);
 
   // Function to update list on drop
@@ -40,9 +40,9 @@ function Participants(props) {
         // setUsers(updatedList);
 
         //emit new list to server
-        console.log('Sending updated order to server');
-        console.log(updatedList);
-        socket.emit('server-update-userlist', updatedList, sessionID);
+        let data = {updatedList:updatedList, sessionID:props.sessionID};
+        console.log('Sending updated order to server',data);
+        socket.emit('server-update-userlist', data);
   };
     //happens in room.js
 //   socket.on('client-update-userlist', (usernames) => {

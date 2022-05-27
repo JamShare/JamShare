@@ -98,21 +98,21 @@ class Sessions {
     }
     return genSessionID;
   }
-  
+
   updateUserList(userList, sessionID) {
-    console.log('new userList incoming', userList);
+    console.log('new userList incoming', userList, sessionID);
     var currentSession = this.sessions.get(sessionID);//gets session object with sessionID key
-    currentSession.updateClientsSessionsUsernameList(userList);
-    console.log('updatedUserList is now: ', currentSession.clients.clients);
+    ret=>currentSession.updateClientsSessionsUsernameList(userList);
+    console.log('updatedUserList is now: ', currentSession.getClientsSessionsUsernameList());
   }
 
-  participantsOrder(data, socketID) {
-    let session = this.findSessionIDFromSocketID(socketID);
-    session.updateParticipants(data);
-  }
+  // participantsOrder(data, socketID) {
+  //   let session = this.findSessionIDFromSocketID(socketID);
+  //   session.updateParticipants(data);
+  // }
 
   getUserList(sessionID) {
-    console.log('Get Userlist');
+    console.log('Get Userlist', sessionID);
     var currentSession = this.sessions.get(sessionID);
     let userList = currentSession.getClientsSessionsUsernameList();
     return userList;
@@ -146,10 +146,10 @@ class Session {
     // }
   }
 
-  updateParticipants(data) {
-    console.log('updating paricipants order');
-    socket.brodcast.to(sessionID).emit('participants-order', data);
-  }
+  // updateParticipants(data) {
+  //   console.log('updating paricipants order');
+  //   socket.brodcast.to(sessionID).emit('participants-order', data);
+  // }
 
   joinSession(socket, username) {
     try {
@@ -160,7 +160,7 @@ class Session {
       let usernames = this.clients.getUsernames();
       console.log("usernames now in session:",usernames);
       socket.emit('join-session-success', usernames);
-      console.log("updating user list of:",this.sessionID);
+      console.log("user joined. updating user list of:",this.sessionID);
       socket.to(this.sessionID).emit('client-update-userlist', usernames);
       // socket.broadcast.emit('client-update-userlist', usernames);
     } catch (error) {
@@ -184,6 +184,10 @@ class Session {
     socket.broadcast.emit('client-update-userlist', newuserlist);
 
     // socket.to(this.sessionID).emit('client-update-userlist', newuserlist);
+  }
+
+  getClientsSessionsUsernameList(){
+    return this.clients.getUsernames();
   }
 
   startGameSession() {

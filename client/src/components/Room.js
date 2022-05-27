@@ -28,7 +28,7 @@ function Room() {
   let { state: { sessionID, guest, usernames }, } = ({} = useLocation()); //gets the variable we passed from navigate
   const [serverUserList, setServerUserList] = useState(usernames);
 
-  console.log("room state: ". sessionID, guest, usernames);
+  console.log("room state: ", sessionID, guest, serverUserList);
   // const socket = props.socket;
 
   socket.on('client-update-userlist', (usernames) => {
