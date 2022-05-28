@@ -1,13 +1,4 @@
 import React, { useEffect, useState, useRef } from 'react';
-import {
-  initiateSocket,
-  switchRooms,
-  disconnectSocket,
-  joinChatRoom,
-  sendMessage,
-  loadInitialChat,
-  setSocketName,
-} from './Socket';
 
 // import io, { Socket } from 'socket.io-client';
 import Chat from './Chat';
@@ -26,13 +17,15 @@ import socket from "../index";
 
 function Room() {
   let { state: { sessionID, guest, usernames }, } = ({} = useLocation()); //gets the variable we passed from navigate
+  // const sID = useLocation().state.sessionID;
+
   const [serverUserList, setServerUserList] = useState(usernames);
+  // const [roomSessionID, setRoomSessionID]=useState(sessionID);//initial state was not working 
 
   console.log("room state: ", sessionID, guest, serverUserList);
-  // const socket = props.socket;
 
   socket.on('client-update-userlist', (usernames) => {
-    console.log('user order update', usernames);
+    console.log('room got user order update', usernames);
     setServerUserList(usernames);
   });
 

@@ -70,7 +70,7 @@ class Clients {
   }
 
   updateUsernames(userList) {
-    console.log('Clients updateUsernames');
+    console.log('Clients updateUsernames', userList);
     if (userList) {
       for (var i = 0; i < userList.length; i++) {
       // for (var i = 0; i < this.clients.length; i++) {//loop our array

@@ -12,20 +12,20 @@ class Sessions {
     this.sessions = new Map();
   }
 
-  disconnectUser=(socket, sessionID, guest)=>{
-    // console.log("disconnect");
-    try{
-      let currentSession = this.sessions.get(sessionID);
-      if(currentSession.disconnectClient(socket, guest)){
-        currentSession.sendClientsSessionsUsernameList();//update remaining clients
-        // socket.disconnect();
-        console.log("user",guest,"disconnected. users remaining in:",sessionID,currentSession.clients.getUsernames());
-      }
-      else console.log("error disconnecting user", guest, socketID, sessionID);
-    } catch (error){
-      console.log("failed to disconnect user...\n", error);
-    }
-  }
+  // disconnectUser=(socket, sessionID, guest)=>{
+  //   // console.log("disconnect");
+  //   try{
+  //     let currentSession = this.sessions.get(sessionID);
+  //     if(currentSession.disconnectClient(socket, guest)){
+  //       currentSession.sendClientsSessionsUsernameList();//update remaining clients
+  //       // socket.disconnect();
+  //       console.log("user",guest,"disconnected. users remaining in:",sessionID,currentSession.clients.getUsernames());
+  //     }
+  //     else console.log("error disconnecting user", guest, socketID, sessionID);
+  //   } catch (error){
+  //     console.log("failed to disconnect user...\n", error);
+  //   }
+  // }
 
   createSession(data, socket) {
     let genSessionID = this.generateSessionID();
@@ -100,10 +100,10 @@ class Sessions {
   }
 
   updateUserList(userList, sessionID) {
-    console.log('new userList incoming', userList, sessionID);
+    console.log('sessions updating userlist', userList, sessionID);
     var currentSession = this.sessions.get(sessionID);//gets session object with sessionID key
-    ret=>currentSession.updateClientsSessionsUsernameList(userList);
-    console.log('updatedUserList is now: ', currentSession.getClientsSessionsUsernameList());
+    currentSession.updateClientsSessionsUsernameList(userList);
+    // console.log('updatedUserList is now: ', ret=>currentSession.getClientsSessionsUsernameList());
   }
 
   // participantsOrder(data, socketID) {
@@ -134,8 +134,8 @@ class Session {
   //   return [this.sessionID, this.clients.retclients()];
   // }
 
-  disconnectClient=(socket, guest)=>{
-    console.log("disconnectclient");
+  // disconnectClient=(socket, guest)=>{
+  //   console.log("disconnectclient");
     // try{
     //   return this.clients.removeClient(socket,guest);
     // }
@@ -144,7 +144,7 @@ class Session {
     //   console.error("failed to disconnected user", socket.id, error);
     //   return false;
     // }
-  }
+  // }
 
   // updateParticipants(data) {
   //   console.log('updating paricipants order');
@@ -162,7 +162,6 @@ class Session {
       socket.emit('join-session-success', usernames);
       console.log("user joined. updating user list of:",this.sessionID);
       socket.to(this.sessionID).emit('client-update-userlist', usernames);
-      // socket.broadcast.emit('client-update-userlist', usernames);
     } catch (error) {
       socket.emit('join-session-failed');
       console.error(error);
@@ -171,19 +170,15 @@ class Session {
 
   sendClientsSessionsUsernameList() {
     let usernames2 = this.clients.getUsernames();
-    console.log("newuserlist", usernames2)
+    console.log("sending updating userlist", usernames2)
     socket.emit('client-update-userlist', usernames2);
     return usernames2;
   }
 
-  updateClientsSessionsUsernameList(userList) {
-    console.log('updateClientsSessionsUsernameList');
-    console.log(userList);
+  updateClientsSessionsUsernameList(userList){
+    console.log('updateClientsSessionsUsernameList',userList, this.sessionID);
     var newuserlist = this.clients.updateUsernames(userList);
-    // CURRENT NAME SPACE BROADCAST
-    socket.broadcast.emit('client-update-userlist', newuserlist);
-
-    // socket.to(this.sessionID).emit('client-update-userlist', newuserlist);
+    socket.to(this.sessionID).emit('client-update-userlist', newuserlist);
   }
 
   getClientsSessionsUsernameList(){

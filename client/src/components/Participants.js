@@ -26,23 +26,19 @@ function Participants(props) {
     console.log("participants userlist:", props.userlist);
 
   // Function to update list on drop
-    const handleDrop = (droppedItem) => {
-        // Ignore drop outside droppable container
-        if (!droppedItem.destination) return;
-        //var updatedList = [...itemList];
-        var updatedList = [...props.userlist];
-        // Remove dragged item
-        const [reorderedItem] = updatedList.splice(droppedItem.source.index, 1);
-        // Add dropped item
-        updatedList.splice(droppedItem.destination.index, 0, reorderedItem);
-        // Update State
-        
-        // setUsers(updatedList);
-
-        //emit new list to server
-        let data = {updatedList:updatedList, sessionID:props.sessionID};
-        console.log('Sending updated order to server',data);
-        socket.emit('server-update-userlist', data);
+  const handleDrop = (droppedItem) => {
+    // Ignore drop outside droppable container
+    if (!droppedItem.destination) return;
+    //var updatedList = [...itemList];
+    var updatedList = [...props.userlist];
+    // Remove dragged item
+    const [reorderedItem] = updatedList.splice(droppedItem.source.index, 1);
+    // Add dropped item
+    updatedList.splice(droppedItem.destination.index, 0, reorderedItem);
+    //emit new list to server and update it when we get the response in room.js, which is handed to this component in props.
+    let data = {updatedList:updatedList, sessionID:props.sessionID};
+    console.log('Sending updated order to server',data);
+    socket.emit('server-update-userlist', data);
   };
     //happens in room.js
 //   socket.on('client-update-userlist', (usernames) => {

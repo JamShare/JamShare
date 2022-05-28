@@ -28,10 +28,6 @@ function Join(props) {
   const [copied, setCopied] = useState(false);
   const [joinSuccess, setJoinSuccess] = useState(false);
   const inputArea = useRef(null);
-
-  // const socket = io.connect(SERVER);
-  // const socket = props.socket;
-
   const navigate = useNavigate();
   //state passed in from Signup.js
   const guest = useLocation().state.usn;
@@ -39,24 +35,30 @@ function Join(props) {
   console.log("join username: ", guest);
 
   socket.on("create-session-response", session_ID => {
-    console.log("create session response from server")
-    console.log(session_ID)
-    setSessionID(session_ID)
+    console.log("create session response from server", session_ID);
+    setSessionID(session_ID);//doesnt seem to actually work
+    // console.log(sessionID);//should have session_ID value in state sessionID but doesnt because its async
     handleShow();
   }); 
+  useEffect(() => {
+    console.log("session ID updated:",sessionID);
+    // setSessionID(sessionID)
+  },[sessionID]);
 
-  socket.on('join-session-success', usernames =>{
-    console.log("joining session with users:",usernames);
-    let path = '/Room';
-    navigate(path, {state:{sessionID, guest, usernames}});
-  });
+  useEffect(() => {
+    socket.on('join-session-success', usernames =>{
+      console.log("joining session with users:",usernames);
+      let path = '/Room';
+      navigate(path, {state:{sessionID, guest, usernames}});
+    });
+  },[sessionID]);
 
   socket.on('join-session-failed', ()=>{
     alert(`Session ID: ${sessionID} does not exist.`)
   });
 
-  // useEffect( () => {
-  // }, [socket])
+
+  // }, [])
 
   const createSession = (room) => {
     room.preventDefault();
