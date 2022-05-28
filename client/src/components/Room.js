@@ -24,9 +24,9 @@ function Room() {
 
   console.log("room state: ", sessionID, guest, serverUserList);
 
-  socket.on('client-update-userlist', (usernames) => {
-    console.log('room got user order update', usernames);
-    setServerUserList(usernames);
+  socket.on('client-update-userlist', (newusernames) => {
+    console.log('room got user order update', newusernames);
+    setServerUserList(newusernames);
   });
 
 

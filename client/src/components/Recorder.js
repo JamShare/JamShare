@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import image1 from './assets/images/playing.png';
+// import image1 from './assets/images/playing.png';
 // const io = require('socket.io-client');
 // const SERVER = 'http://localhost:3001';
 import socket from "../index";
@@ -28,6 +28,8 @@ class Recorder extends React.Component {
     // this.chunks = [];
     // this.incomingStream = "";
     // this.outgoingStream = this.session + guestname;
+    this.countdown = 3;
+    this.startCountdown = false;
 
     this.streamOut = null;
     this.stream = null;
@@ -46,6 +48,7 @@ class Recorder extends React.Component {
     this.createAudioSource = this.createAudioSource.bind(this);
     this.connectMediaStream = this.connectMediaStream.bind(this);
     this.connectAudioBuffer = this.connectAudioBuffer.bind(this);
+    this.countdownTimer = this.countdownTimer(this);
 
     // this.socket = io.connect(SERVER);
     // this.socket = props.socket;
@@ -233,10 +236,63 @@ class Recorder extends React.Component {
   //     setImage(this.recordIcon);
   // }
 
+  runGame(){//runs when we click start streaming button. 
+    //name the stream for this user and send to antmedia server.
+    this.streamOut = this.state.username + this.state.sessionID;
+    console.log("stream from this user:", this.streamOut);
+
+    //stream to listen to:
+    var index = 0;
+    for(var i = 0; i < this.state.userlist; i++){
+      if(this.state.username === this.state.userlist[i])//this is the position we are in. listen to the person prior's stream.
+        if(i===0){
+          this.streamIn = this.state.userlist[this.state.userlist.length-1];
+          index=i;
+          break;
+        }
+        else{
+          this.streamIn = this.state.userlist[i-1];
+          index=i;
+          break;
+        }     
+    }
+    console.log("listening to stream name:",this.streamIn);
+
+    //signal to next players that you are playing so they can begin listening.
+    let data = {index:index, sessionID:this.state.sessionID};
+    socket.emit("client-stream-out",data);
+
+    //display countdown for player to start playing    
+    this.countdownTimer();
+    //or do this:
+    //if(this.countdownTimer()){
+      //begin streaming
+    // }
+  }
+
+  countdownTimer(){
+    this.startCountdown=true;
+    var myInterval = setInterval(function(){
+      if(this.countdown <= 0){
+        clearInterval(myInterval);//clear counter at 0
+        //BEGIN RECORDING/STREAMING:
+        //return true;
+
+
+
+      }
+      else{
+        this.countdown-=1; //decrement counter
+      }
+    return false;
+    }, 1000);
+  }
+
   render() {
     return (
       <div className='jamblock'>
         <h1>JAM</h1>
+        {this.startCountdown ? <> {this.countdown} </> : <>{}</>}
         {/* <button onClick={buttonclicked()}> */}
         <img
           className='rounded'

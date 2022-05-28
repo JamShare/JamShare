@@ -17,7 +17,7 @@ class Sessions {
   //   try{
   //     let currentSession = this.sessions.get(sessionID);
   //     if(currentSession.disconnectClient(socket, guest)){
-  //       currentSession.sendClientsSessionsUsernameList();//update remaining clients
+  //       currentSession.sendClientsSessionsUsernameList(socket);//update remaining clients
   //       // socket.disconnect();
   //       console.log("user",guest,"disconnected. users remaining in:",sessionID,currentSession.clients.getUsernames());
   //     }
@@ -26,6 +26,11 @@ class Sessions {
   //     console.log("failed to disconnect user...\n", error);
   //   }
   // }
+
+  streamStarting(data, socket){
+    var currentSession = this.sessions.get(data.sessionID);
+    currentSession.notifyStreamStart(data.index, socket);
+  }
 
   createSession(data, socket) {
     let genSessionID = this.generateSessionID();
@@ -99,10 +104,10 @@ class Sessions {
     return genSessionID;
   }
 
-  updateUserList(userList, sessionID) {
+  updateUserList(userList, sessionID, socket) {
     console.log('sessions updating userlist', userList, sessionID);
     var currentSession = this.sessions.get(sessionID);//gets session object with sessionID key
-    currentSession.updateClientsSessionsUsernameList(userList);
+    currentSession.updateClientsSessionsUsernameList(userList, socket);
     // console.log('updatedUserList is now: ', ret=>currentSession.getClientsSessionsUsernameList());
   }
 
@@ -151,6 +156,10 @@ class Session {
   //   socket.brodcast.to(sessionID).emit('participants-order', data);
   // }
 
+  notifyStreamStart(index, socket){
+
+  }
+
   joinSession(socket, username) {
     try {
       // console.log('Using joinSession no S);
@@ -168,24 +177,26 @@ class Session {
     }
   }
 
-  sendClientsSessionsUsernameList() {
+  sendClientsSessionsUsernameList(socket) {
     let usernames2 = this.clients.getUsernames();
     console.log("sending updating userlist", usernames2)
     socket.emit('client-update-userlist', usernames2);
     return usernames2;
   }
 
-  updateClientsSessionsUsernameList(userList){
+  updateClientsSessionsUsernameList(userList, socket){
     console.log('updateClientsSessionsUsernameList',userList, this.sessionID);
     var newuserlist = this.clients.updateUsernames(userList);
-    socket.to(this.sessionID).emit('client-update-userlist', newuserlist);
+    console.log("newuserlist update being sent to client:", newuserlist);
+    socket.to(this.sessionID).emit('client-update-userlist', newuserlist);//sends to everyone else in the session
+    socket.emit('client-update-userlist', newuserlist);//required to send back to client that sent the update
   }
 
   getClientsSessionsUsernameList(){
     return this.clients.getUsernames();
   }
 
-  startGameSession() {
+  startGameSession(socket) {
     this.gameSession = true;
     // socket.brodcast.to(sessionID).emit('game-started');
   }
@@ -195,7 +206,7 @@ class Session {
     // socket.to(nextSID).emit('start-stream');
   }
 
-  sendStreams() {
+  sendStreams(socket) {
     usernames = this.clients.getUsernames();
     // socket.brodcast.to(sessionID).emit('stream-names', streams);
   }

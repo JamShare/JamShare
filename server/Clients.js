@@ -72,20 +72,29 @@ class Clients {
   updateUsernames(userList) {
     console.log('Clients updateUsernames', userList);
     if (userList) {
-      for (var i = 0; i < userList.length; i++) {
-      // for (var i = 0; i < this.clients.length; i++) {//loop our array
-        if(this.clients[i].username != userList[i]){//if it doesnt match the index
+      // for (var i = 0; i < userList.length; i++) {
+      for (var i = 0; i < this.clients.length; i++) {//loop server array
+        console.log("comparing",this.clients[i].username,":",userList[i]);
+        if(this.clients[i].getUsername() != userList[i]){//if it doesnt match val at same index
+          console.log("to be swapped",this.clients[i].username,":",userList[i]);
           //loop second array until it does and swap them
           for (var j = i; j < userList.length; j++) {
-            if (this.clients[i].username == userList[j]) {
-              console.log('this.clients[i].username ' + this.clients[i].username);
-              console.log('userList[j] ' + userList[j]);
+            console.log("seeking index to swap",i,j,this.clients[i].username,":",userList[j]);
+            if (this.clients[i].getUsername() == userList[j]) {
+              console.log("Swapping",  this.clients[i].username,i, "with",  this.clients[j].username,j );
               this.swap(i, j);
+              break;
             }
           }
+          break;
         }
       }
-      return this.clients;
+
+      let newclientlist=[];
+      for(var i = 0; i < this.clients.length;i++){
+        newclientlist.push(this.clients[i].getUsername());
+      }
+      return newclientlist;
       //this.clients = userList;
     } else {
       console.log('why is the list empty?');
