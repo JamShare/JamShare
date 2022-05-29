@@ -297,10 +297,10 @@ class Recorder extends React.Component {
     return (
         <div class="jamblock">
             <h1>JAM</h1>
-            {this.startCountdown ? <> {this.countdown} </> : <>{}</>}
-
             {/* <button onClick={buttonclicked()}> */}
                 <img class="round" src={this.state.icon} width="200" height="200"alt=" recording "></img>
+            {this.startCountdown ? <h1> {this.countdown} </h1> : <>{}</>}
+
             {/* </button> */}
             <button onClick={this.featureRun}>
                 <image src={this.icon} alt=""></image>
