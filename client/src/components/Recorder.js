@@ -91,7 +91,6 @@ class Recorder extends React.Component {
         if (this.state.isRecording) {
             return;
         }
-        // this.recorder.start(5000);
         recorderNode.parameters.get('isRecording').setValueAtTime(1, recordContext.currentTime);
         this.setState({ isRecording: true});
         console.log("Recording started successfully.");
@@ -113,8 +112,10 @@ class Recorder extends React.Component {
     playRecording() {
         this.connectMediaStreams();
         // audioBuffer.connect(playbackContext.destination);
+
         this.connectAudioBuffer(); // connect an audio buffer to start
         this.intervalReturn = setInterval(this.connectAudioBuffer, 1000); // connect an audio buffer every 1000ms
+        
         let audioTag = document.getElementById("audio");
         audioTag.srcObject = this.streamOut.stream;
         playbackContext.resume();
@@ -123,7 +124,6 @@ class Recorder extends React.Component {
 
     // takes recorded audio data and creates an audio source from it
     createAudioBufferSource(audioData) {
-        console.log("Creation Started");
         // createBuffer(channels, seconds, sampleRate)
         let buffer = playbackContext.createBuffer(1, playbackContext.sampleRate*1, playbackContext.sampleRate); 
         buffer.copyToChannel(audioData, 0);
@@ -131,14 +131,13 @@ class Recorder extends React.Component {
         bufferIn.buffer = buffer;
         // bufferIn.onended = this.connectAudioBuffer();
         sources.push(bufferIn);
-        console.log("Creation Completed");
     }
 
     connectAudioBuffer() { // add delay parameter to control when audiobuffer plays back? (in ms)
         console.log("loading audio buffer");
         let audioBuffer = sources.splice(0, 1)[0];
         if (audioBuffer) {
-            audioBuffer.connect(playbackContext.destination);
+            // audioBuffer.connect(playbackContext.destination);
             audioBuffer.connect(this.streamOut);
             audioBuffer.start();
             console.log("audio buffer connected");
@@ -198,7 +197,6 @@ class Recorder extends React.Component {
                 <button onClick={this.playRecording}>
                     Play/pause recording
                 </button>
-                <audio id="audio" controls></audio>
             </div>
         );
     }
