@@ -74,6 +74,7 @@ function Recorder(props) {
     //antmedia variables
     let webRTCAdaptor = null;
     let streamName = getUrlParameter("streamName");
+    let streamOut = null;
 
     //audio tracks
     let tracks = [];
@@ -161,6 +162,9 @@ function Recorder(props) {
 
     //remotely play each audio stream
     function playAudio(obj, trackPlayerId) {
+        //For now nick merge test
+        recorderNode.parameters.get('isRecording').setValueAtTime(1, recordContext.currentTime);
+
         tracks.push(obj.trackId);
         let room = currentRoom;
         let trackOrder = obj.trackId.slice(-1);
@@ -377,7 +381,7 @@ function Recorder(props) {
         buffer.copyToChannel(audioData, 0);
         let bufferIn = playbackContext.createBufferSource();
         bufferIn.buffer = buffer;
-        // bufferIn.onended = this.connectAudioBuffer();
+        // bufferIn.onended = connectAudioBuffer();
         sources.push(bufferIn);
     }
 
@@ -386,7 +390,7 @@ function Recorder(props) {
         let audioBuffer = sources.splice(0, 1)[0];
         if (audioBuffer) {
             // audioBuffer.connect(playbackContext.destination);
-            audioBuffer.connect(this.streamOut);
+            audioBuffer.connect(streamOut);
             audioBuffer.start();
             console.log("audio buffer connected");
         } else {
@@ -395,9 +399,9 @@ function Recorder(props) {
     }
 
     function connectMediaStreams() {
-        var streamIn = playbackContext.createMediaStreamSource(this.stream); // local stream
-        this.streamOut = playbackContext.createMediaStreamDestination(); // output new combined stream
-        streamIn.connect(this.streamOut); // connect to new combined stream
+        var streamIn = playbackContext.createMediaStreamSource(stream); // local stream
+        streamOut = playbackContext.createMediaStreamDestination(); // output new combined stream
+        streamIn.connect(streamOut); // connect to new combined stream
     }
 
     //join the antmedia room with audio only amcu
