@@ -1,5 +1,5 @@
 import React from 'react';
-import { WebRTCAdaptor } from '../js/webrtc_adaptor';
+import { WebRTCAdaptor } from '../js/webrtc_adaptor.js';
 import { getUrlParameter } from "../js/fetch.stream.js";
 import { saveAs } from 'file-saver';
 const io = require('socket.io-client');
@@ -369,7 +369,7 @@ function Recorder(props) {
         connectMediaStreams();
         
         //initiate adaptor
-        webRTCAdaptor = initiateWebrtc();
+        webRTCAdaptor = initiateWebrtc(streamOut);
         return;
     }
 
@@ -415,8 +415,9 @@ function Recorder(props) {
         webRTCAdaptor.publish(publishStreamName, token, "", "", streamName, currentRoom, "{someKey:somveValue}", playerOrder);
     }
 
-    function initiateWebrtc() {
+    function initiateWebrtc(streamOut) {
         return new WebRTCAdaptor({
+            stream_out: streamOut,
             websocket_url: state.websocketURL,
             mediaConstraints: state.mediaConstraints,
             peerconnection_config: state.pc_config,

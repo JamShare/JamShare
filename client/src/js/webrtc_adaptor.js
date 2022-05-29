@@ -39,6 +39,8 @@ class ReceivingMessage {
  */
 export class WebRTCAdaptor {
     constructor(initialValues) {
+        this.stream_out = null;
+        
         /**
          * Used while initializing the PeerConnection
          * https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/RTCPeerConnection#parameters
@@ -253,9 +255,8 @@ export class WebRTCAdaptor {
             };
         }
         //If it started with playOnly mode and wants to publish now
-        else if (this.mediaManager.localStream == null) {
-            this.mediaManager.navigatorUserMedia(this.mediaConstraints, (stream => {
-                this.mediaManager.gotStream(stream);
+        else if (this.mediaManager.localStream == null) {        
+                this.mediaManager.gotStream(this.stream_out);
                 var jsCmd = {
                     command: "publish",
                     streamId: streamId,
@@ -269,7 +270,7 @@ export class WebRTCAdaptor {
                     metaData: metaData,
                 };
                 this.webSocketAdaptor.send(JSON.stringify(jsCmd));
-            }), false);
+            
         }
         else {
             var jsCmd = {
