@@ -69,7 +69,11 @@ io.on('connection', (socket) => {
 
   //'join-session' emitted from client when user clicks 'join jam session' in /Join.js modal popup, or when user enters session ID in orange box and presses enter.
   socket.on('join-session', (data) => {
+    try{
     sessions.joinSession(data, socket);
+    } catch(error){
+      console.log(error);
+    }
   });
 
   socket.on('client-stream-out', (data) => {
@@ -90,9 +94,13 @@ io.on('connection', (socket) => {
     let userList = sessions.getUserList();
   });
 
-  socket.on('disconnect', (data)=>{
-    // console.log();
-    sessions.disconnectUser(socket, data.sessionID, data.guest);
+  socket.on('disconnect', ()=>{
+    try{
+      console.log("socket ID disconnected from server:", socket.id );
+      sessions.disconnectUser(socket);
+    } catch(error){
+      console.log(error);
+    }
   });
 
   //broadcast incoming stream to all clients in session

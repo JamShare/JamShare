@@ -104,24 +104,25 @@ function Join(props) {
         onHide={handleClose}
         centered
         size="xl"
+        
       >
-        <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-vcenter">
+        <Modal.Header closeButton className='purplebg'>
+          <Modal.Title id="contained-modal-title-vcenter" className='orange'>
               {guest}, Share this link with your fellow Jammers!
           </Modal.Title>
         </Modal.Header>
-        <Modal.Body className="show-grid">
+        <Modal.Body className="show-grid purplebg">
           <Container>
             <Row>
               <Col lg={4}></Col>
-                <Col lg={4} id="a" ref={inputArea} >
+                <Col lg={4} id="a" ref={inputArea} className='purple' >
                   {sessionID}
                 </Col>
               <Col lg={4}></Col>
             </Row>
           </Container>
         </Modal.Body>
-        <Modal.Footer>
+        <Modal.Footer className='purplebg'>
             <Button onClick={copyLink}>Copy to Clipboard</Button>
             <Button onClick={joinSession} >Join Session</Button>
             <Button onClick={handleClose}>Close</Button>

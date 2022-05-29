@@ -12,19 +12,27 @@ class Sessions {
     this.sessions = new Map();
   }
 
-  disconnectUser=(socket, sessionID, guest)=>{
-    console.log("disconnect user",guest,"from",sessionID);
-    try{
-      let currentSession = this.sessions.get(sessionID);
-      if(currentSession.disconnectClient(socket, guest)){
+  // disconnectUser=(socket, sessionID, guest)=>{
+  disconnectUser(socket){
+    // try{
+      const currentSID = this.findSessionIDFromSocketID(socket.id)
+      console.log("currentSID", currentSID);
+
+      const currentSession = this.sessions.get(currentSID);
+      console.log("client", socket.id, "disconnecting from session:", currentSession);
+
+      let dcUser = null;
+      dcUser = currentSession.disconnectClient(socket);
+      console.log("DCuser being removed from:",currentSession.sessionID, dcUser);
+      
+      if(dcUser!= null){
         currentSession.sendClientsSessionsUsernameList(socket);//update remaining clients
-        // socket.disconnect();
-        console.log("user",guest,"disconnected. users remaining in:",sessionID,currentSession.clients.getUsernames());
-      }
-      else console.log("error disconnecting user", guest, socketID, sessionID);
-    } catch (error){
-      console.log("failed to disconnect user...\n", error);
-    }
+        socket.disconnect();
+        console.log("user", dcUser.username, "disconnected. users remaining in:", currentSession.sessionID , currentSession.clients.getUsernames());
+      } else console.log("error disconnecting user", dcUser.username, dcUser.socketID, currentSession.sessionID);
+    // } catch (error){
+    //   console.log("failed to disconnect user...\n",dcUser.username, dcUser.socketID, currentSession.sessionID, error);
+    // } 
   }
 
   streamStarting(data, socket){
@@ -70,22 +78,22 @@ class Sessions {
   }
 
   findSessionByID(sessionID) {
-    console.log('find session by id fucntion');
+    console.log('find session by id function');
     return this.sessions.get(sessionID);
   }
 
-  findSessionIDFromSocketID(socketI) {
+  findSessionIDFromSocketID=(socketID)=>{
     var seshID = '';
     this.sessions.forEach(function (valuesess, keysess) {
-      console.log(valuesess);
-      console.log(keysess);
+      console.log("findsesh",keysess,valuesess);
       valuesess.clients.clients.forEach(function (valueclient, keyclient) {
-        console.log(keyclient);
+        console.log("clientfindsesh",keyclient,valueclient);
+        if (valueclient.socketID == socketID) {
+          seshID = keysess;
+          console.log("findsesh final:", seshID)
+        }
       });
-      if (valuesess.clients.clients.socketID == socketI) seshID = keysess;
     });
-    console.log('findsesh:');
-    console.log(seshID);
     return seshID;
   }
 
@@ -139,17 +147,19 @@ class Session {
   //   return [this.sessionID, this.clients.retclients()];
   // }
 
-  // disconnectClient=(socket, guest)=>{
-  //   console.log("disconnectclient");
-    // try{
-    //   return this.clients.removeClient(socket,guest);
-    // }
-    // catch(error) {
-    //   // socket.emit('disconnect-session-failed');
-    //   console.error("failed to disconnected user", socket.id, error);
-    //   return false;
-    // }
-  // }
+  disconnectClient(socket){
+    console.log("session disconnectclient", socket.id);
+    try{
+      var removedclient = this.clients.removeClient(socket.id);
+      console.log("client removed:", removedclient);
+      return removedclient;
+    }
+    catch(error) {
+      // socket.emit('disconnect-session-failed');
+      console.error("failed to disconnected user", socket.id, error);
+      return null;
+    }
+  }
 
   // updateParticipants(data) {
   //   console.log('updating paricipants order');
@@ -180,7 +190,7 @@ class Session {
   sendClientsSessionsUsernameList(socket) {
     let usernames2 = this.clients.getUsernames();
     console.log("sending updating userlist", usernames2)
-    socket.emit('client-update-userlist', usernames2);
+    socket.to(this.sessionID).emit('client-update-userlist', usernames2);
     return usernames2;
   }
 

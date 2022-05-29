@@ -33,7 +33,9 @@ function Room() {
   useEffect(()=>{
     window.addEventListener('beforeunload', keepOnPage);//this is fired upon component mounting
     return()=>{//things in return of useEffect are ran upon unmounting
-        // socket.emit('disconnect', {sessionID, guest});  
+        // var data = {sessionID:sessionID, guest:guest}
+        // socket.emit('disconnect');//do not send data: server only recieved undefined.
+
         // socket.disconnect();//client wont try to reconnect.
         console.log("component unmounting"); 
         window.removeEventListener('beforeunload', keepOnPage);
@@ -84,10 +86,10 @@ function Room() {
       
 
       <Participants userlist={serverUserList} sessionID={sessionID} guest={guest}></Participants>
-      <Viewer userlist={usernames} sessionID={sessionID} guest={guest}></Viewer>
-      <Recorder userlist={usernames} sessionID={sessionID} guest={guest}></Recorder>
+      <Viewer userlist={serverUserList} sessionID={sessionID} guest={guest}></Viewer>
+      <Recorder userlist={serverUserList} sessionID={sessionID} guest={guest}></Recorder>
       <div class="jybannerb">
-      SessionID: {sessionID} - Portland State University - JamShare - 2022
+      Session ID: {sessionID} - Portland State University - JamShare - 2022
       </div>
     </div>
   );
