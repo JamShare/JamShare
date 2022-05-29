@@ -255,7 +255,8 @@ export class WebRTCAdaptor {
             };
         }
         //If it started with playOnly mode and wants to publish now
-        else if (this.mediaManager.localStream == null) {        
+        else if (this.mediaManager.localStream == null) {  
+                console.log("streamout", this.stream_out);      
                 this.mediaManager.gotStream(this.stream_out);
                 var jsCmd = {
                     command: "publish",

@@ -219,12 +219,22 @@ function Recorder(props) {
         // delay.connect(dest);
         // audioElement.srcObject.addTrack(dest.stream.getAudioTracks()[0]);
 
+        console.log("obj track", obj.track);
+
         //Nick merge code-----------------------------------------------------------------
-        recorderSource = recordContext.createMediaStreamTrackSource(obj.track);
+        //recorderSource = recordContext.createMediaStreamTrackSource(obj.track);
+        let test = new MediaStream();
+        test.addTrack(obj.track);
+        
+        recorderSource = recordContext.createMediaStreamSource(test);
+        
         recorderSource.connect(recorderNode);
         recorderNode.connect(recordContext.destination);
+        console.log("Recorder source", recorderSource);
+        console.log("Recorder node", recorderNode);
         recorderNode.port.onmessage = (e) => {
             if (e.data.eventType === 'data') {
+                console.log("E buffer", e.data.audioBuffer);
                 const audioData = e.data.audioBuffer;
                 createAudioBufferSource(audioData);
             }
@@ -240,7 +250,7 @@ function Recorder(props) {
         connectAudioBuffer(); // connect an audio buffer to start
         intervalReturn = setInterval(this.connectAudioBuffer, 1000); // connect an audio buffer every 1000ms
 
-        audioElement.srcObject= streamOut.stream;
+        audioElement.srcObject.addTrack(streamOut.stream.getAudioTracks()[0]);
         playbackContext.resume();
 
         //Nick merge code-----------------------------------------------------------------
@@ -402,7 +412,7 @@ function Recorder(props) {
         console.log("loading audio buffer");
         let audioBuffer = sources.splice(0, 1)[0];
         if (audioBuffer) {
-            // audioBuffer.connect(playbackContext.destination);
+            audioBuffer.connect(playbackContext.destination);
             audioBuffer.connect(streamOut);
             audioBuffer.start();
             console.log("audio buffer connected");

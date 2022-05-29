@@ -74,6 +74,7 @@ class RecorderWorkletProcessor extends AudioWorkletProcessor { // this worklet i
             }
 
             if (shouldRecord) {
+                console.log("Recorder node", inputs);
                 this._appendToBuffer(inputs[0][0][dataIndex]);
             }
         }
