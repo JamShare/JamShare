@@ -370,6 +370,17 @@ function Recorder(props) {
         return;
     }
 
+    // takes recorded audio data and creates an audio source from it
+    function createAudioBufferSource(audioData) {
+        // createBuffer(channels, seconds, sampleRate)
+        let buffer = playbackContext.createBuffer(1, playbackContext.sampleRate * 1, playbackContext.sampleRate);
+        buffer.copyToChannel(audioData, 0);
+        let bufferIn = playbackContext.createBufferSource();
+        bufferIn.buffer = buffer;
+        // bufferIn.onended = this.connectAudioBuffer();
+        sources.push(bufferIn);
+    }
+
     //join the antmedia room with audio only amcu
     function joinRoom() {
         webRTCAdaptor.joinRoom(currentRoom, state.streamName, "multitrack", "amcu");
