@@ -9,16 +9,15 @@ import { Link, Navigate, useNavigate, useLocation } from "react-router-dom";
 // import { Socket } from 'socket.io-client';
 import Modal from 'react-bootstrap/Modal';
 import JamShareLogo from "./assets/images/JamShareLogo.jpg";
-
+import JoinModal from './JoinModal';
+import socket from "../index";
 
 // import {Morg_Signup} from "./component_export"
-
-import JoinModal from './JoinModal';
 
 //const SERVER = 'http://localhost:3001';
 const SERVER = "https://berryhousehold.ddns.net:3001";
 
-import socket from "../index";
+
 
 
 // Join or create a Jam session room with link ID
