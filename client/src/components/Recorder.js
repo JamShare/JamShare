@@ -86,6 +86,7 @@ function Recorder(props) {
     //Merge variables
     let stream = null;
     let recorderSource = null;
+    let intervalReturn = null;
 
     function getPlayerOrder() {
         for (let i = 0; i < state.userlist.length; i++) {
@@ -160,9 +161,6 @@ function Recorder(props) {
 
     //remotely play each audio stream
     function playAudio(obj, trackPlayerId) {
-        //For now nick merge test
-        recorderNode.parameters.get('isRecording').setValueAtTime(1, recordContext.currentTime);
-
         tracks.push(obj.trackId);
         let room = currentRoom;
         let trackOrder = obj.trackId.slice(-1);
@@ -210,17 +208,39 @@ function Recorder(props) {
         // }
 
         //audio context delay code
-        let audioCtx = new AudioContext();
-        const delay = new DelayNode(audioCtx, {
-            delayTime: timeToDelay,
-        });
+        // let audioCtx = new AudioContext();
+        // const delay = new DelayNode(audioCtx, {
+        //     delayTime: timeToDelay,
+        // });
 
-        var source = audioCtx.createMediaStreamTrackSource(obj.track);
-        source.connect(delay);
-        var dest = audioCtx.createMediaStreamDestination();
-        delay.connect(dest);
-        audioElement.srcObject.addTrack(dest.stream.getAudioTracks()[0]);
+        // var source = audioCtx.createMediaStreamTrackSource(obj.track);
+        // source.connect(delay);
+        // var dest = audioCtx.createMediaStreamDestination();
+        // delay.connect(dest);
+        // audioElement.srcObject.addTrack(dest.stream.getAudioTracks()[0]);
 
+        //Nick merge code-----------------------------------------------------------------
+        recorderSource = recordContext.createMediaStreamTrackSource(obj.track);
+        recorderSource.connect(recorderNode);
+        recorderNode.connect(recordContext.destination);
+        recorderNode.port.onmessage = (e) => {
+            if (e.data.eventType === 'data') {
+                const audioData = e.data.audioBuffer;
+                createAudioBufferSource(audioData);
+            }
+            if (e.data.eventType === 'stop') {
+                // recording stopped
+            }
+        }
+        recordContext.resume();
+        console.log("Local stream acquired.");
+
+        //For now nick merge test
+        recorderNode.parameters.get('isRecording').setValueAtTime(1, recordContext.currentTime);
+        connectAudioBuffer(); // connect an audio buffer to start
+        intervalReturn = setInterval(this.connectAudioBuffer, 1000); // connect an audio buffer every 1000ms
+
+        //Nick merge code-----------------------------------------------------------------
 
         //if we are the last player, record the audio streams
         console.log("New stream player order: ", playerOrder);
@@ -348,26 +368,9 @@ function Recorder(props) {
             console.error(err)
             stream = null;
         }
-        recorderSource = null;
-        if (stream) {
-            recorderSource = recordContext.createMediaStreamSource(stream);
-            recorderSource.connect(recorderNode);
-            recorderNode.connect(recordContext.destination);
-            recorderNode.port.onmessage = (e) => {
-                if (e.data.eventType === 'data') {
-                    const audioData = e.data.audioBuffer;
-                    createAudioBufferSource(audioData);
-                }
-                if (e.data.eventType === 'stop') {
-                    // recording stopped
-                }
-            }
-            recordContext.resume();
-            console.log("Local stream acquired.");
-        }
 
         connectMediaStreams();
-        
+
         //initiate adaptor
         webRTCAdaptor = initiateWebrtc(streamOut);
         return;
