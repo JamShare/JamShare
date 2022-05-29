@@ -18,8 +18,6 @@ const playbackContext = new AudioContext();
 
 var sources = [];
 
-
-
 //const SERVER = "http://localhost:3001";
 const SERVER = "https://berryhousehold.ddns.net:3001";
 
@@ -336,7 +334,6 @@ function Recorder(props) {
         socket.emit("player-connected", socket.id);
         console.log("id", socket.id);
 
-        stream = null;
         try {
             stream = await navigator.mediaDevices
                 .getUserMedia({
@@ -368,6 +365,8 @@ function Recorder(props) {
             recordContext.resume();
             console.log("Local stream acquired.");
         }
+
+        connectMediaStreams();
         
         //initiate adaptor
         webRTCAdaptor = initiateWebrtc();
