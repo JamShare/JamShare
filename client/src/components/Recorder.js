@@ -2,30 +2,13 @@ import React from 'react';
 import { WebRTCAdaptor } from '../js/webrtc_adaptor';
 import { getUrlParameter } from "../js/fetch.stream.js";
 import { saveAs } from 'file-saver';
-import { useLocation } from "react-router-dom";
 const io = require('socket.io-client');
 
 //const SERVER = "http://localhost:3001";
 const SERVER = "https://berryhousehold.ddns.net:3001";
 
 function Recorder(props) {
-
-    let { state: { sessionID, guest } } = useLocation(); //gets the variable we passed from navigate
-    console.log(sessionID, guest)
-
-    //room info
-    let currentRoom = '' + sessionID + '-';
-    let username = guest;
-
-    function getPlayerOrder() {
-        for (let i = 0; i < state.userlist.length; i++) {
-            if (username === state.userlist[i]) {
-                playerOrder = i + 1;
-            }
-        }
-    }
-
-    //audio context sources
+    //audio context sourcesuserlistsessionId
     let acSources = [];
     let playerOrder = 0;
     let ac = new AudioContext();
@@ -37,6 +20,8 @@ function Recorder(props) {
         icon: '',
         text: 'Jam!',
         userlist: props.userlist,
+        sessionID: props.sessionID,
+        username: props.guest,
 
         //the following constraints allow the best for music
         mediaConstraints: {
@@ -79,6 +64,17 @@ function Recorder(props) {
 
     //socketio
     let socket = io.connect(SERVER);
+
+    //room info
+    let currentRoom = '' + state.sessionID + '-';
+
+    function getPlayerOrder() {
+        for (let i = 0; i < state.userlist.length; i++) {
+            if (state.username === state.userlist[i]) {
+                playerOrder = i + 1;
+            }
+        }
+    }
 
     function startTheJam() {
         getPlayerOrder()
@@ -207,7 +203,7 @@ function Recorder(props) {
         //if we are the last player, record the audio streams
         console.log("New stream player order: ", playerOrder);
         console.log("User List: ", state.userlist.at(-1));
-        if (username === state.userlist.at(-1)) {
+        if (state.username === state.userlist.at(-1)) {
             //Push ac sources
             const source = ac.createMediaStreamTrackSource(dest.stream.getAudioTracks()[0]);
             acSources.push(source);
@@ -251,14 +247,12 @@ function Recorder(props) {
     //play the enabled antmedia room tracks
     function startPlaying() {
         var enabledTracks = [];
-
         //tracks to play if we are player 2
         if (playerOrder === 2) {
             console.log("Player Order: ", playerOrder);
             console.log("Tracks Order: ", tracks);
 
             tracks.forEach(function (trackId) {
-
                 if (trackId === "1") {
                     enabledTracks.push("1");
                 }
@@ -288,12 +282,10 @@ function Recorder(props) {
                 enabledTracks.push(("!") + trackId);
             });
         }
-
         //play the room tracks
         //streamId = "room1";
         webRTCAdaptor.play(currentRoom, state.token, "");
     }
-
 
     //add antmedia stream to track list
     function addVideoTrack(trackId) {
@@ -335,12 +327,7 @@ function Recorder(props) {
         webRTCAdaptor.publish(publishStreamName, token, "", "", streamName, currentRoom, "{someKey:somveValue}", playerOrder);
     }
 
-    function onStartPlaying() {
-        startPlaying();
-    }
-
     function initiateWebrtc() {
-
         return new WebRTCAdaptor({
             websocket_url: state.websocketURL,
             mediaConstraints: state.mediaConstraints,
@@ -410,24 +397,9 @@ function Recorder(props) {
             }
         });
     }
-    //const { streamName, isShow } = state;
 
     return (
-
         <div class="jamblock">
-
-            {
-                /*
-                <h1>JAM</h1>
-                <img class="rounded" src={image1} width="250" height="250"alt=" recording "></img>
-
-                <button onClick={featureRun}>
-                    <image src={icon} alt=""></image>
-                    {text}
-                </button>
-                */
-            }
-
             <button onClick={startTheJam}>
                 Start The Jam!
             </button>
@@ -442,7 +414,6 @@ function Recorder(props) {
             <button onClick={playRecording}>
                 Play recording
             </button>
-
             <div>
                 Local Audio
                 <audio id="local_audio" autoPlay muted playsInline controls={true} />
