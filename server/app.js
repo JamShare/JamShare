@@ -90,12 +90,10 @@ io.on('connection', (socket) => {
     let userList = sessions.getUserList();
   });
 
-
-
-  // socket.on('disconnect', (data)=>{
-  //   // console.log();
-  //   sessions.disconnectUser(socket, data.sessionID, data.guest);
-  // });
+  socket.on('disconnect', (data)=>{
+    // console.log();
+    sessions.disconnectUser(socket, data.sessionID, data.guest);
+  });
 
   //broadcast incoming stream to all clients in session
   // socket.on('client-audio-stream', (data) => {

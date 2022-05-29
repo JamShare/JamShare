@@ -12,20 +12,20 @@ class Sessions {
     this.sessions = new Map();
   }
 
-  // disconnectUser=(socket, sessionID, guest)=>{
-  //   // console.log("disconnect");
-  //   try{
-  //     let currentSession = this.sessions.get(sessionID);
-  //     if(currentSession.disconnectClient(socket, guest)){
-  //       currentSession.sendClientsSessionsUsernameList(socket);//update remaining clients
-  //       // socket.disconnect();
-  //       console.log("user",guest,"disconnected. users remaining in:",sessionID,currentSession.clients.getUsernames());
-  //     }
-  //     else console.log("error disconnecting user", guest, socketID, sessionID);
-  //   } catch (error){
-  //     console.log("failed to disconnect user...\n", error);
-  //   }
-  // }
+  disconnectUser=(socket, sessionID, guest)=>{
+    console.log("disconnect user",guest,"from",sessionID);
+    try{
+      let currentSession = this.sessions.get(sessionID);
+      if(currentSession.disconnectClient(socket, guest)){
+        currentSession.sendClientsSessionsUsernameList(socket);//update remaining clients
+        // socket.disconnect();
+        console.log("user",guest,"disconnected. users remaining in:",sessionID,currentSession.clients.getUsernames());
+      }
+      else console.log("error disconnecting user", guest, socketID, sessionID);
+    } catch (error){
+      console.log("failed to disconnect user...\n", error);
+    }
+  }
 
   streamStarting(data, socket){
     var currentSession = this.sessions.get(data.sessionID);
