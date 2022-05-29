@@ -14,7 +14,7 @@ function Recorder(props) {
     console.log(sessionID, guest)
 
     //room info
-    let currentRoom = sessionID;
+    let currentRoom = '' + sessionID + '-';
     let username = guest;
 
     function getPlayerOrder() {
@@ -213,7 +213,7 @@ function Recorder(props) {
             acSources.push(source);
             console.log("Acsource length", acSources.length);
             //if we have three streams.
-            if (acSources.length === playerOrder) {
+            if (acSources.length === playerOrder - 1) {
 
                 //connect all of the sources
                 for (let i = 0; i < acSources.length; i++) {
@@ -291,7 +291,7 @@ function Recorder(props) {
 
         //play the room tracks
         //streamId = "room1";
-        webRTCAdaptor.play(currentRoom, state.token, "", enabledTracks);
+        webRTCAdaptor.play(currentRoom, state.token, "");
     }
 
 
