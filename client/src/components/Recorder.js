@@ -84,6 +84,10 @@ function Recorder(props) {
     //room info
     let currentRoom = '' + state.sessionID + '-';
 
+    //Merge variables
+    let stream = null;
+    let recorderSource = null;
+
     function getPlayerOrder() {
         for (let i = 0; i < state.userlist.length; i++) {
             if (state.username === state.userlist[i]) {
@@ -96,7 +100,7 @@ function Recorder(props) {
         getPlayerOrder()
         console.log("recorder userlist: ", state.userlist);
         console.log("Current player order: ", playerOrder);
-        getAudioDevicePlayer();
+        getAudioDevice();
 
         setTimeout(function () {
             joinRoom();
@@ -323,12 +327,47 @@ function Recorder(props) {
     }
 
     //connect webrtc adaptor
-    function getAudioDevicePlayer() {
+    async function getAudioDevice() {
         //get player order from node server
         socket.emit("player-connected", socket.id);
         console.log("id", socket.id);
+
+        stream = null;
+        try {
+            stream = await navigator.mediaDevices
+                .getUserMedia({
+                    audio: {
+                        echoCancellation: false,
+                        autoGainControl: false,
+                        noiseSuppression: false,
+                        latency: 0
+                    }
+                });
+        } catch (err) {
+            console.error(err)
+            stream = null;
+        }
+        recorderSource = null;
+        if (stream) {
+            recorderSource = recordContext.createMediaStreamSource(stream);
+            recorderSource.connect(recorderNode);
+            recorderNode.connect(recordContext.destination);
+            recorderNode.port.onmessage = (e) => {
+                if (e.data.eventType === 'data') {
+                    const audioData = e.data.audioBuffer;
+                    createAudioBufferSource(audioData);
+                }
+                if (e.data.eventType === 'stop') {
+                    // recording stopped
+                }
+            }
+            recordContext.resume();
+            console.log("Local stream acquired.");
+        }
+        
         //initiate adaptor
         webRTCAdaptor = initiateWebrtc();
+        return;
     }
 
     //join the antmedia room with audio only amcu
