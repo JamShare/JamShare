@@ -9,7 +9,7 @@ import { Link, Navigate, useNavigate, useLocation } from "react-router-dom";
 import './App.css'
 import './room.css'
 import JamShareLogo from './assets/images/JamShareLogo.jpg'
-import headlong from './assets/musics/headlong.mp3'
+//import headlong from './assets/musics/headlong70.mp3'
 
 // const SERVER = "http://localhost:3001";
 // const socket = io.connect(SERVER);
@@ -70,17 +70,14 @@ function Room() {
 
   return (
     <div class="ProjectSectionContent" >
-      
       {/* <audio src={headlong} autoPlay></audio> */}
-      
-      {/* <input placeholder='message' onChange={(e) =>{setMessage(e.target.value)}} /> */}
-      {/* <button onClick={sendMessage}>send message</button> */}
-      {/*<h1>Welcome {guest}</h1>
+      {/* <input placeholder='message' onChange={(e) =>{setMessage(e.target.value)}} /> 
+       <button onClick={sendMessage}>send message</button> 
+      <h1>Welcome {guest}</h1>
       <h2>Session ID: {sessionID}</h2>
-      {/* {messageReceived} */}
+       {messageReceived} */}
       <div class="jybanner">
         <img class='jam-logo' src={JamShareLogo} alt='logo'/>
-        <h2>{sessionID}</h2>
       </div>
       {/* <Chat></Chat> */}
       
@@ -88,6 +85,9 @@ function Room() {
       <Participants userlist={serverUserList} sessionID={sessionID} guest={guest}></Participants>
       <Viewer userlist={usernames} sessionID={sessionID} guest={guest}></Viewer>
       <Recorder userlist={usernames} sessionID={sessionID} guest={guest}></Recorder>
+      <div class="jybannerb">
+      SessionID: {sessionID} - Portland State University - JamShare - 2022
+      </div>
     </div>
   );
 }

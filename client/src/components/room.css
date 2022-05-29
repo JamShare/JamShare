@@ -9,6 +9,22 @@
   display:flex;
   overflow: hidden;
 }
+
+.jybannerb {
+  background-color:black;
+  width: 100%;
+  height: 50px;
+  color: orange;
+  bottom: 0px;
+  margin-bottom: -10px;
+  position:fixed;
+  justify-content: center;
+  display:flex;
+  overflow: hidden;
+  font-size: 15pt;
+  text-align: center;
+}
+
 .jam-logo {
   width:auto;
   height: 100px;;
@@ -22,30 +38,6 @@
   overflow: hidden;
 }
 
-button.up{
-  height: 25px;
-  text-align: center;
-  width: 40px;
-  color: orange;
-  background-color:  purple;
-  font-weight: bold;
-  font-size: 10pt;
-  top: -1px;
-  right: 2px;
-  position:absolute;
-}
-button.down{
-  height: 25px;
-  text-align: center;
-  width: 40px;
-  color: orange;
-  background-color:  purple;
-  font-weight: bold;
-  font-size: 10pt;
-  bottom: -1px;
-  right: 2px;
-  position:absolute;
-}
 button.rec{
   height: 50px;
   width: 240px;
@@ -58,15 +50,22 @@ button.rec{
   border-radius: 5px;
   font-weight: bold;
   font-size: 10pt;
+}
 
+.dragUp{
+  top: 0px;
+  right: 43%;
+  position:absolute;
+}
+.dragDn{
+  bottom: 0px;
+  right: 43%;
+  position:absolute;
 }
 .ProjectSectionContent {
   display: flex;
   height: 100vh;
   background-color:  rgb(46, 46, 46);
-}
-.ProjectSectionBlock {
-  display:grid;
 }
 
 .RoomComponentList{
@@ -84,6 +83,16 @@ button.rec{
   font-size: 18pt;
   font-weight: bold;
   position: relative;
+  overflow: hidden;
+}
+
+.RoomComponentListAddImg{
+  height: 50px;
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  background-color: rgb(117, 117, 117);
+  border: 0px solid #ffffff; 
 }
 
 .userblock{
@@ -95,11 +104,12 @@ button.rec{
   width: 300px;
   height: auto;
   left: 10px;
-  bottom: 60px;
+  bottom: 100px;
   position: fixed;
   overflow:scroll;
     overflow-x:hidden;
     overflow-y:auto;
+  z-index: 3;
 }
 
 .recordblock{
@@ -114,11 +124,12 @@ button.rec{
   margin-bottom: 100px;
   left: 500px;
     right: 500px;
-    bottom: 60px;
+    bottom: 100px;
   position: fixed;
   overflow:scroll;
     overflow-x:hidden;
     overflow-y:auto;
+  z-index: 2;
 }
 
 .jamblock{
@@ -132,17 +143,24 @@ button.rec{
   height: auto;
   font-family: "IndieFlower";
   font-size: 18pt;
-  bottom: 60px;
+  bottom: 100px;
   position: fixed;
   overflow:scroll;
     overflow-x:hidden;
     overflow-y:auto;
+    z-index: 3;
+}
+
+.jamblock h1{
+  font-weight: bold;
+  margin: 10px;
+}
+
+.jamblock img{
+  margin-bottom: 5px;
 }
 
 @media (0px<=width<=820px) {
-  .UserComponentList{
-    font-size: 0px;
-  }
   .RoomComponentList{
     margin-right: 8px;
   }
@@ -155,6 +173,12 @@ button.rec{
     left:-10px;
     box-sizing: content-box;
   }
+  .dragUp{
+    width: 15px;
+  }
+  .dragDn{
+    width: 15px;
+  }
   .recordblock{
     border: 0px solid #ffffff;
     padding: 0px;
@@ -163,6 +187,7 @@ button.rec{
     right: 263px;
     top: 100px;
     min-width: 175px;
+    z-index: 3;
   }
   .jamblock{
     padding: 0px;  
@@ -184,6 +209,10 @@ button.rec{
     margin: 5px;
     top: 100px;
   }
+  .userblock div img{
+    margin-left: 10px;
+    margin-right: 10px;
+  }
   .recordblock{
     padding-top: 0px;
     padding-left: 10px;
@@ -192,6 +221,10 @@ button.rec{
     left: 305px;
     right: 305px;
     top: 100px;
+  }
+  .recordblock div img{
+    margin-left: 10px;
+    margin-right: 10px;
   }
   .jamblock{
     padding: 0px;
@@ -208,6 +241,10 @@ button.rec{
     margin: 10px;
     top: 130px;
   }
+  .userblock div img{
+    margin-left: 10px;
+    margin-right: 10px;
+  }
   .recordblock{
     padding-top: 10px;
     padding-left: 30px;
@@ -217,10 +254,27 @@ button.rec{
     right: 350px;
     top: 130px;
   }
+  .recordblock div img{
+    margin-left: 10px;
+    margin-right: 10px;
+  }
   .jamblock{
     padding-top: 50px;
     margin: 10px;
     top: 130px;
     right: 10px;
   }
+}
+.list-container {
+  display: block;
+  font-size: 18px;
+  background-color: #eee;
+  flex-direction: column;
+}
+.item-container {
+  border-radius: 25px;
+  background-color: #fff;
+  border: 1px solid black;
+  padding: 25px 70px;
+  margin: 15px 50px;
 }

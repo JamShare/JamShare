@@ -24,8 +24,6 @@ class Recorder extends React.Component {
     };
     console.log("recorder userlist: ", this.state.userlist);
     // const [image, setImage] = useState();
-
-    // this.chunks = [];
     // this.incomingStream = "";
     // this.outgoingStream = this.session + guestname;
     this.countdown = 3;
@@ -35,10 +33,11 @@ class Recorder extends React.Component {
     this.stream = null;
     this.recorder = null;
     this.audio = null;
-    this.recordIcon = require('./assets/images/record.png');
-    this.playingIcon = require('./assets/images/playing.png');
+    this.recordIcon = require('./assets/images/stop.jpg');
+    this.playingIcon = require('./assets/images/play.jpg');
+    this.pauseIcon = require('./assets/images/paus.jpg');
 
-    // bind functions to instance
+    //bind functions to instance
     this.onDataAvailable = this.onDataAvailable.bind(this);
     this.onStop = this.onStop.bind(this);
     this.getAudioDevice = this.getAudioDevice.bind(this);
@@ -158,11 +157,17 @@ class Recorder extends React.Component {
     return;
   }
 
-  playRecording() {
-    audiocontext.resume();
-    this.connectMediaStream();
-    setInterval(this.connectAudioBuffer, 5000);
-    /*
+    playRecording() {
+        if (this.state.isRecording) {
+            this.setState({icon: this.pauseIcon});
+        }
+        if (!this.state.isRecording) {
+            this.setState({icon: this.playingIcon});
+        }
+        // audiocontext.resume();
+        // this.connectMediaStream();
+        // setInterval(this.connectAudioBuffer, 5000);
+        /*
         if (!this.audio) {
             return;
         }
@@ -290,32 +295,36 @@ class Recorder extends React.Component {
 
   render() {
     return (
-      <div className='jamblock'>
-        <h1>JAM</h1>
-        {this.startCountdown ? <> {this.countdown} </> : <>{}</>}
-        {/* <button onClick={buttonclicked()}> */}
-        <img
-          className='rounded'
-          src={this.state.icon}
-          width='250'
-          height='250'
-          alt=' recording '></img>
-        {/* </button> */}
-        <button onClick={this.featureRun}>
-          <img src={this.icon} alt=''></img>
-          {this.text}
-        </button>
+        <div class="jamblock">
+            <h1>JAM</h1>
+            {this.startCountdown ? <> {this.countdown} </> : <>{}</>}
 
-        <button onClick={this.getAudioDevice}>Choose audio device</button>
+            {/* <button onClick={buttonclicked()}> */}
+                <img class="round" src={this.state.icon} width="200" height="200"alt=" recording "></img>
+            {/* </button> */}
+            <button onClick={this.featureRun}>
+                <image src={this.icon} alt=""></image>
+                {this.text}
+            </button>
 
-        <button onClick={this.startRecording}>Start recording</button>
+            <button className='rec' onClick={this.getAudioDevice}>
+                Choose audio device
+            </button>
 
-        <button onClick={this.stopRecording}>Stop recording</button>
+            <button className='rec' onClick={this.startRecording}>
+                Start recording
+            </button>
 
-        <button onClick={this.playRecording}>Play/pause recording</button>
-      </div>
+            <button className='rec' onClick={this.stopRecording}>
+                Stop recording
+            </button>
+
+            <button className='rec' onClick={this.playRecording}>
+                Play/pause recording
+            </button>
+        </div>
     );
-  }
+}
 }
 
 export default Recorder;

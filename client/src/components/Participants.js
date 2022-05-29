@@ -3,10 +3,12 @@ import React, { useEffect, useState, useRef } from 'react';
 // import Row from 'react-bootstrap/Row';
 // import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
-import image2 from './assets/images/record.png';
+import image2 from './assets/images/user.jpg';
+import image4 from './assets/images/dragup.jpg';
+import image3 from './assets/images/add.jpg';
+import image5 from './assets/images/dragdn.jpg';
 import { Link, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import './styles.css';
 // let { state: {sessionID, guest}} = {}  = useLocation(); //gets the variable we passed from navigate
 
 // const io = require('socket.io-client');
@@ -78,42 +80,10 @@ function Participants(props) {
 
   // this.participants = ['jammer1', 'jammer2', 'jammer3', 'jammer4', 'jammer5'];
   //     this.socket = io.connect(SERVER);
-
-
-  // };
-
-//   const up = (i) => {
-    // console.log(i);
-    // var temparray = users;
-
-    // if (i > 0) var tempuser = temparray[i - 1];
-    // else return;
-
-    // console.log(tempuser);
-    // console.log(temparray);
-
-    // temparray.splice(i - 1, 1, temparray[i]);
-    // console.log(temparray);
-
-    // temparray.splice(i, 1, tempuser);
-    // console.log(temparray);
-
-    // setUsers({ temparray });
-
-    // this.setState({users: temparray});
-
-    // console.log(users);
-
-    // this.socket.emit('participants-order', {temparray, sessionID});
-//   };
-
-//   function down(i) {
-//     console.log(i);
-    // var temp = this.state.participants[i+1];
-    // this.state.participants.splice(i+1, 1, this.state.participants[i]);
-    // this.state.participants.splice(i,1,temp);
-//   }
- 
+  // socket.on('client-update-userlist', (usernames) => {
+  //   console.log('user order update');
+  //   setUsers(usernames); //this is where it actually gets updated
+  // });
 
   return (
     <div className='userblock'>
@@ -129,13 +99,10 @@ function Participants(props) {
                       ref={provided.innerRef}
                       {...provided.dragHandleProps}
                       {...provided.draggableProps}>
-                      <img
-                        className='round'
-                        src={image2}
-                        width='50'
-                        height='50'
-                        alt=' UserImage '></img>
-                      {item}
+                      <img className='dragUp' src={image4} width='20' height='5' alt=' dragImage '></img>                                           
+                      <img className='dragDn' src={image5} width='20' height='5' alt=' dragImage '></img>                                        
+                      <img className='round' src={image2} width='50' height='50' alt=' UserImage '></img>
+                      {item+": "+(index+1)}
                     </div>
                   )}
                 </Draggable>
@@ -145,6 +112,9 @@ function Participants(props) {
           )}
         </Droppable>
       </DragDropContext>
+      <div className='RoomComponentList RoomComponentListAddImg'>
+        <img src={image3} width='50' height='50' alt=' add icon '></img>
+      </div>      
     </div>
   );
 
