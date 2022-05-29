@@ -15,6 +15,7 @@ import Recorder from './Recorder';
 import Viewer from './Viewer';
 import Participants from './Participants';
 import { Link, Navigate, useNavigate, useLocation } from "react-router-dom";
+
 import './App.css'
 import './room.css'
 import JamShareLogo from './assets/images/JamShareLogo.jpg'
@@ -65,6 +66,9 @@ function Room() {
       <Recorder></Recorder>
       <div class="jybannerb">
         Portland State University - JamShare - 2022
+        <button className='about'>
+          <a href="https://github.com/JamShare">About Us</a>
+        </button>
       </div>
     </div>
   );

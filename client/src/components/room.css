@@ -8,6 +8,7 @@
   justify-content: center;
   display:flex;
   overflow: hidden;
+  z-index: 4;
 }
 
 .jybannerb {
@@ -23,6 +24,7 @@
   overflow: hidden;
   font-size: 15pt;
   text-align: center;
+  z-index: 4;
 }
 
 .jam-logo {
@@ -37,19 +39,34 @@
   border-radius: 50%;
   overflow: hidden;
 }
+button.about{
+  position:absolute;
+  top: 6px;
+  right: 15px;
+  background-color:  orange;
+  border: 3px solid orange; 
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 13pt;
+  text-align: center;
+  height: 28px;
+  width: auto;
+}
+button.about a{
+  color:purple;
+}
 
 button.rec{
   height: 50px;
   width: 240px;
   margin-top: 20px;
-
   text-align: center;
   color: orange;
   background-color:  purple;
   border: 3px solid #ffffff; 
   border-radius: 5px;
   font-weight: bold;
-  font-size: 10pt;
+  font-size: 13pt;
 }
 
 .dragUp{
@@ -63,9 +80,13 @@ button.rec{
   position:absolute;
 }
 .ProjectSectionContent {
-  display: flex;
-  height: 100vh;
+  height: 105vh;
   background-color:  rgb(46, 46, 46);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center;
+  background-size: contain;
+  overflow: hidden;
 }
 
 .RoomComponentList{
@@ -89,12 +110,27 @@ button.rec{
 .RoomComponentListAddImg{
   height: 50px;
   margin-top: 15px;
+  margin-bottom: 15px;
   display: flex;
   justify-content: center;
   background-color: rgb(117, 117, 117);
   border: 0px solid #ffffff; 
 }
 
+.ViewerComponentList{
+  border: 3px solid rgb(216, 216, 216);
+  background-image: url('assets/images/wave.png');
+  background-repeat: repeat-x;
+  background-attachment:local;
+  background-position:center;
+  background-size:auto;
+  overflow: hidden;
+}
+.ViewerComponentList span{
+  border-radius: 50%;
+  background-color: #ffffff;
+  padding: 1px;
+}
 .userblock{
   background-color: rgb(117, 117, 117);
   display: block;
@@ -102,10 +138,10 @@ button.rec{
   border-radius: 5px;
   color: rgb(216, 216, 216);
   width: 300px;
-  height: auto;
+  height: 700px;
   left: 10px;
-  bottom: 100px;
-  position: fixed;
+  
+  position:absolute;
   overflow:scroll;
     overflow-x:hidden;
     overflow-y:auto;
@@ -119,17 +155,17 @@ button.rec{
   border-radius: 5px;
   color: rgb(216, 216, 216);
   width:auto;
-  height: auto;
+  height: 700px;
   margin-top: 100px;
   margin-bottom: 100px;
   left: 500px;
-    right: 500px;
-    bottom: 100px;
-  position: fixed;
+  right: 500px;
   overflow:scroll;
     overflow-x:hidden;
     overflow-y:auto;
   z-index: 2;
+ 
+  position:absolute;
 }
 
 .jamblock{
@@ -140,15 +176,16 @@ button.rec{
   border-radius: 5px;
   color: rgb(216, 216, 216);
   width: 300px;
-  height: auto;
+  height: 700px;
   font-family: "IndieFlower";
   font-size: 18pt;
-  bottom: 100px;
-  position: fixed;
+ 
+  position:absolute;
   overflow:scroll;
     overflow-x:hidden;
     overflow-y:auto;
-    z-index: 3;
+  z-index: 3;
+
 }
 
 .jamblock h1{
@@ -226,6 +263,10 @@ button.rec{
     margin-left: 10px;
     margin-right: 10px;
   }
+  .ViewerComponentList span{
+    margin-left: -10px;
+    padding-left: 10px;
+  }
   .jamblock{
     padding: 0px;
     margin: 5px;
@@ -253,6 +294,10 @@ button.rec{
     left: 350px;
     right: 350px;
     top: 130px;
+  }
+  .ViewerComponentList span{
+    margin-left: -10px;
+    padding-left: 10px;
   }
   .recordblock div img{
     margin-left: 10px;
