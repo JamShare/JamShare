@@ -233,12 +233,15 @@ function Recorder(props) {
             }
         }
         recordContext.resume();
-        console.log("Local stream acquired.");
+        console.log("Remote stream acquired.");
 
         //For now nick merge test
         recorderNode.parameters.get('isRecording').setValueAtTime(1, recordContext.currentTime);
         connectAudioBuffer(); // connect an audio buffer to start
         intervalReturn = setInterval(this.connectAudioBuffer, 1000); // connect an audio buffer every 1000ms
+
+        audioElement.srcObject= streamOut.stream;
+        playbackContext.resume();
 
         //Nick merge code-----------------------------------------------------------------
 
@@ -428,7 +431,7 @@ function Recorder(props) {
 
     function initiateWebrtc(streamOut) {
         return new WebRTCAdaptor({
-            stream_out: streamOut,
+            stream_out: streamOut.stream,
             websocket_url: state.websocketURL,
             mediaConstraints: state.mediaConstraints,
             peerconnection_config: state.pc_config,
