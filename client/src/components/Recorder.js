@@ -79,7 +79,7 @@ function Recorder(props) {
 
     //socketio
     let socket = io.connect(SERVER);
-    
+
     function startTheJam() {
         getPlayerOrder()
         console.log("recorder userlist: ", state.userlist);
@@ -454,19 +454,6 @@ function Recorder(props) {
             <div>
                 Local Audio
                 <audio id="local_audio" autoPlay muted playsInline controls={true} />
-
-                Remote Audio
-                <audio id="remote_audio" autoPlay playsInline controls={true} />
-                {
-
-                    <button
-                        onClick={onStartPlaying.bind(this, streamName)}
-                        className="btn btn-primary"
-                        id="start_play_button"> Start
-                        Playing
-                    </button>
-
-                }
             </div>
             <div class="container">
                 <ul id="trackList" name="trackList">
