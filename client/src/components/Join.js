@@ -2,17 +2,19 @@ import React, { useEffect, useState, useRef } from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
+// import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import FormLabel from "react-bootstrap/esm/FormLabel";
+// import FormLabel from "react-bootstrap/esm/FormLabel";
 import { Link, Navigate, useNavigate, useLocation } from "react-router-dom";
-import { Socket } from 'socket.io-client';
+// import { Socket } from 'socket.io-client';
 import Modal from 'react-bootstrap/Modal';
+import JamShareLogo from "./assets/images/JamShareLogo.jpg";
 
-import {Morg_Signup} from "./component_export"
+
+// import {Morg_Signup} from "./component_export"
 
 
-import JoinModal from './JoinModal';
+// import JoinModal from './JoinModal';
 const io = require('socket.io-client');
 const SERVER = "http://localhost:3001";
 // Join or create a Jam session room with link ID
@@ -23,7 +25,7 @@ function Join(props) {
   const handleClose = () => setModal(false);
   const handleShow = () => setModal(true);
   const [copied, setCopied] = useState(false);
-  const [joinSuccess, setJoinSuccess] = useState(false);
+//   const [joinSuccess, setJoinSuccess] = useState(false);
   const inputArea = useRef(null);
   const socket = io.connect(SERVER);
   
@@ -131,7 +133,7 @@ function Join(props) {
       >
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-vcenter">
-              {guest}, share this link with your fellow Jammers
+              {guest}, Share this link with your fellow Jammers!
           </Modal.Title>
         </Modal.Header>
         <Modal.Body className="show-grid">
@@ -146,44 +148,44 @@ function Join(props) {
           </Container>
         </Modal.Body>
         <Modal.Footer>
-            <Button onClick={copyLink}>copy to clipboard</Button>
+            <Button onClick={copyLink}>Copy to Clipboard</Button>
             <Button onClick={joinSession} >Join Session</Button>
             <Button onClick={handleClose}>Close</Button>
         </Modal.Footer>
       </Modal>
-        <div id="container"  className={'centered'} >
-            <Container>
-                <Row>
+        <div id="container"  className={'bgcolor'} >
+            <div class="banner">
+                <img class="jamshare-logo" src={JamShareLogo} alt="logo" />
+            </div>
+            <br></br>
+            <br></br>
+            <h1 className={'gentext orange'}>Let's get Jammin'</h1>
+            <div className='joinbox'>
+                <Row>    
                     <Col></Col>
-                    <Col>
-                        <Row>Join existing </Row>
-                        <Row>Jam Session</Row> 
-                        <div className={'session-id'}>
+                    <Col> 
+                        <div className='orange-session-id'>
+                            <h2>Join Existing Jam Session</h2>
                             <br></br>
-                                    <label>session id:</label>
-                                    <br></br>
-                                    <br></br>
-                            <div >
                             <form onSubmit={joinExistingSession} >
-                                        <input type="text" name="session" onChange={e => setSessionID(e.target.value)}  />
-                                        <input type="submit" value="Submit"/*className="a-button" */ /> 
-                                    </form>
-                            </div>
+                                <input type="text" name="session" onChange={e => setSessionID(e.target.value)}  />
+                                <input type="submit" value="Submit"/*className="a-button" *//> 
+                            </form>
                         </div>
                     </Col>
                     <Col></Col>
                     <Col>
-                        <Row>Create New</Row>
-                        <Row>Jam Session</Row> 
-                        <div >
-                            <Button variant="flat" className='join-button' flex style={{backgroundColor: "pink"}} onClick={createSession} >
-                                create new ID/Link
-                            </Button>
-                        </div>
+                            <div className='purple-new-id'>
+                                <h2>Create New Jam Session</h2>
+                                <br></br>
+                                <Button variant="flat" className='join-button' flex style={{backgroundColor: "orange"}} onClick={createSession}>
+                                    <h5>Create New ID</h5>
+                                </Button>
+                            </div>
                     </Col>
                     <Col></Col>
                 </Row>
-            </Container>
+            </div>
         </div>
         </>
     );
