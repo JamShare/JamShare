@@ -381,6 +381,25 @@ function Recorder(props) {
         sources.push(bufferIn);
     }
 
+    function connectAudioBuffer() { // add delay parameter to control when audiobuffer plays back? (in ms)
+        console.log("loading audio buffer");
+        let audioBuffer = sources.splice(0, 1)[0];
+        if (audioBuffer) {
+            // audioBuffer.connect(playbackContext.destination);
+            audioBuffer.connect(this.streamOut);
+            audioBuffer.start();
+            console.log("audio buffer connected");
+        } else {
+            console.error("No audio buffer sources found; cannot connect to playback context.");
+        }
+    }
+
+    function connectMediaStreams() {
+        var streamIn = playbackContext.createMediaStreamSource(this.stream); // local stream
+        this.streamOut = playbackContext.createMediaStreamDestination(); // output new combined stream
+        streamIn.connect(this.streamOut); // connect to new combined stream
+    }
+
     //join the antmedia room with audio only amcu
     function joinRoom() {
         webRTCAdaptor.joinRoom(currentRoom, state.streamName, "multitrack", "amcu");
