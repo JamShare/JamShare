@@ -15,7 +15,7 @@ class Recorder extends React.Component {
         this.state = {
             isRecording: false,
             isPlaying: false,
-            icon: require('./assets/images/device.jpg'),
+            icon: require('./assets/images/microphone.jpg'),
             text: 'Jam!',
         };
         // const [image, setImage] = useState();
