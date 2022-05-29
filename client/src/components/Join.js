@@ -164,24 +164,26 @@ function Join(props) {
                 <Row>    
                     <Col></Col>
                     <Col> 
+                        <h2>Join Existing Jam Session</h2>
                         <div className='orange-session-id'>
-                            <h2>Join Existing Jam Session</h2>
                             <br></br>
+                            <br></br>
+                            <h2>Enter ID:</h2>
                             <form onSubmit={joinExistingSession} >
                                 <input type="text" name="session" onChange={e => setSessionID(e.target.value)}  />
-                                <input type="submit" value="Submit"/*className="a-button" *//> 
+                                <input type="submit" value="Submit"/> 
                             </form>
                         </div>
                     </Col>
                     <Col></Col>
                     <Col>
-                            <div className='purple-new-id'>
-                                <h2>Create New Jam Session</h2>
-                                <br></br>
-                                <Button variant="flat" className='join-button' flex style={{backgroundColor: "orange"}} onClick={createSession}>
-                                    <h5>Create New ID</h5>
-                                </Button>
-                            </div>
+                        <h2>Create New Jam Session</h2>
+                        {/* <div className='purple-new-id'> */}
+                            {/* <br></br> */}
+                            <Button variant="flat" className='purple-new-id' flex style={{backgroundColor: "purple"}} onClick={createSession}>
+                                <h2>Create New ID</h2>
+                            </Button>
+                        {/* </div> */}
                     </Col>
                     <Col></Col>
                 </Row>
