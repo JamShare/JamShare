@@ -79,6 +79,11 @@ io.on('connection', (socket) => {
   socket.on('client-stream-out', (data) => {
     sessions.streamStarting(data, socket);
   });
+  
+  socket.on('chat-message', (data) => {
+    try{sessions.emitChatMessage(data, socket);
+    } catch(error){console.log(error);}
+  });
 
   //update participants on server and broadcast to client when new user joins or host changes order
   socket.on('participants-order', (data) => {

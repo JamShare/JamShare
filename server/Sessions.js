@@ -119,6 +119,13 @@ class Sessions {
     // console.log('updatedUserList is now: ', ret=>currentSession.getClientsSessionsUsernameList());
   }
 
+
+  emitChatMessage(data, socket){
+    var currentSession=this.sessions.get(data.sessionID);
+    currentSession.sessionEmitChatmessage(data, socket);
+  }
+
+
   // participantsOrder(data, socketID) {
   //   let session = this.findSessionIDFromSocketID(socketID);
   //   session.updateParticipants(data);
@@ -146,6 +153,12 @@ class Session {
   // retSessionIDandClients(){
   //   return [this.sessionID, this.clients.retclients()];
   // }
+
+  sessionEmitChatmessage(data, socket){
+    console.log("sesssion emit message:", this.sessionID, data.msg);
+    let newdata = {newMsg:data.msg};
+    socket.to(this.sessionID).emit("new-chat-message", newdata);
+  }
 
   disconnectClient(socket){
     console.log("session disconnectclient", socket.id);

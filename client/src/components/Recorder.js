@@ -265,7 +265,7 @@ class Recorder extends React.Component {
 
     //signal to next players that you are playing so they can begin listening.
     let data = {index:index, sessionID:this.state.sessionID};
-    socket.emit("client-stream-out",data);
+    socket.emit("client-stream-out", data);
 
     //display countdown for player to start playing    
     this.countdownTimer();

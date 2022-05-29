@@ -12,17 +12,20 @@ function Chat(props) {
   const [message, setMessage] = useState('');
   const [chat, setChat] = useState([]);
   
-  socket.on("chat-message", (data) => {
+  socket.on("new-chat-message", (data) => {
+    console.log("recieved message:", data.newMsg);
     setChat((oldChats)=>[data.newMsg, ...oldChats]);
   });
 
 
   const sendMessage=(e)=>{
-          e.preventDefault();
+    e.preventDefault();
+    if(message == '')
+      return;
 
     let newMsg = `${props.guest}: ${message}`;
     setChat((oldChats) => [newMsg, ...oldChats]);
-    var data = {username:props.guest, msg:message ,sessionID:props.sessionID}
+    var data = {username:props.guest, msg:newMsg, sessionID:props.sessionID}
     socket.emit("chat-message", data);
     setMessage("");//clear input box. (value={message})
   }
