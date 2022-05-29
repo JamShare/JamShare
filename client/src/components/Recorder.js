@@ -339,10 +339,6 @@ function Recorder(props) {
         startPlaying();
     }
 
-    function resetPlayerCount() {
-        socket.emit("reset-player-count");
-    }
-
     function initiateWebrtc() {
 
         return new WebRTCAdaptor({
@@ -434,10 +430,6 @@ function Recorder(props) {
 
             <button onClick={startTheJam}>
                 Start The Jam!
-            </button>
-
-            <button onClick={resetPlayerCount}>
-                4. Reset Player Count
             </button>
 
             <button onClick={startRecording}>
