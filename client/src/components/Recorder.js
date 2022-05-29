@@ -17,7 +17,6 @@ function Recorder(props) {
     let currentRoom = sessionID;
     let username = guest;
 
-
     function getPlayerOrder() {
         for (let i = 0; i < state.userlist.length; i++) {
             if (username === state.userlist[i]) {
@@ -25,8 +24,6 @@ function Recorder(props) {
             }
         }
     }
-
-
 
     //audio context sources
     let acSources = [];
@@ -73,35 +70,16 @@ function Recorder(props) {
     let recordIcon = require('./assets/images/record.png')
     let playingIcon = require('./assets/images/playing.png')
 
-    //playerOrder = 0;
-
-
-
     //antmedia variables
     let webRTCAdaptor = null;
     let streamName = getUrlParameter("streamName");
-    let streamId = null;
+
     //audio tracks
     let tracks = [];
 
-    //tracks to disable
-    let disabledTracks = [];
-
     //socketio
     let socket = io.connect(SERVER);
-    // socket.on("player-connected-server", (order) => {
-
-    //     playerOrder = order;
-
-    //     state.streamName = '' + playerOrder + '-' + currentRoom;
-
-    //     console.log("Player order", playerOrder);
-    // });
-
-
-
-
-
+    
     function startTheJam() {
         getPlayerOrder()
         console.log("recorder userlist: ", state.userlist);
@@ -193,8 +171,6 @@ function Recorder(props) {
         }
 
         let timeToDelay = 0;
-
-
 
         console.log("Track Order: ", trackOrder);
         if (playerOrder === 2 && trackOrder === '1') {
@@ -325,9 +301,9 @@ function Recorder(props) {
     }
 
     //enable checked track
-    function enableTrack(trackId, isEnabled) {
-        webRTCAdaptor.enableTrack(currentRoom, trackId, isEnabled);
-    }
+    // function enableTrack(trackId, isEnabled) {
+    //     webRTCAdaptor.enableTrack(currentRoom, trackId, isEnabled);
+    // }
 
     //create antmedia remote audio player
     function createRemoteAudio(streamId, playerName) {
@@ -353,7 +329,7 @@ function Recorder(props) {
     }
 
     //publish the local stream
-    function publish(publishStreamId, token) {
+    function publish(token) {
         console.log("Publishing");
         let publishStreamName = '' + currentRoom + '-' + playerOrder;
         webRTCAdaptor.publish(publishStreamName, token, "", "", streamName, currentRoom, "{someKey:somveValue}", playerOrder);
@@ -408,16 +384,6 @@ function Recorder(props) {
                         console.log("Playing", obj.trackId);
                         playAudio(obj);
                     }
-
-                    // if (tracks != null) {
-                    //     tracks.forEach(function (trackId) {
-                    //         let tempOrder = trackId.slice(-1);
-                    //         if (parseInt(tempOrder, 10) >= parseInt(playerOrder, 10)) {
-                    //             console.log("Disabling", trackId);
-                    //             enableTrack(trackId, false);
-                    //         }
-                    //     });
-                    // }
                 } else if (info === "ice_connection_state_changed") {
                     console.log("iceConnectionState Changed: ", JSON.stringify(obj));
                 } else if (info === "updated_stats") {
