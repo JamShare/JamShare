@@ -190,26 +190,26 @@ function Recorder(props) {
             audioElement.srcObject = new MediaStream();
         }
 
-        let timeToDelay = 0;
+        // let timeToDelay = 0;
 
-        console.log("Track Order: ", trackOrder);
-        if (playerOrder === 2 && trackOrder === '1') {
-            timeToDelay = 0.5;
-        } else if (playerOrder === 3 && trackOrder === '1') {
-            timeToDelay = 1;
-        }
-        else if (playerOrder === 3 && trackOrder === '2') {
-            timeToDelay = 0.5;
-        }
-        else if (playerOrder === 4 && trackOrder === '1') {
-            timeToDelay = 1.5;
-        }
-        else if (playerOrder === 4 && trackOrder === '2') {
-            timeToDelay = 1;
-        }
-        else if (playerOrder === 4 && trackOrder === '3') {
-            timeToDelay = 0.5;
-        }
+        // console.log("Track Order: ", trackOrder);
+        // if (playerOrder === 2 && trackOrder === '1') {
+        //     timeToDelay = 0.5;
+        // } else if (playerOrder === 3 && trackOrder === '1') {
+        //     timeToDelay = 1;
+        // }
+        // else if (playerOrder === 3 && trackOrder === '2') {
+        //     timeToDelay = 0.5;
+        // }
+        // else if (playerOrder === 4 && trackOrder === '1') {
+        //     timeToDelay = 1.5;
+        // }
+        // else if (playerOrder === 4 && trackOrder === '2') {
+        //     timeToDelay = 1;
+        // }
+        // else if (playerOrder === 4 && trackOrder === '3') {
+        //     timeToDelay = 0.5;
+        // }
 
         //audio context delay code
         let audioCtx = new AudioContext();
