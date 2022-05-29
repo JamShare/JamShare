@@ -14,7 +14,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 
-function Signup() {
+function Signup(props) {
   const [guest, setGuest] = useState("");
   const [showModal, setModal] = useState(false);
 

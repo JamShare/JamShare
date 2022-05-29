@@ -68,6 +68,7 @@ const socketHistory = {};
 
 // Listening for incoming connections
 io.on('connection', (socket) => {
+  console.log("client connected:",socket.id);
   //recieve the data from the user
   clientObject = undefined;
   socket.on('create-session', (data) => {
@@ -75,9 +76,12 @@ io.on('connection', (socket) => {
   });
 
   //'join-session' emitted from client when user clicks 'join jam session' in /Join.js modal popup, or when user enters session ID in orange box and presses enter.
-  //apparently, does not require adding the client's socket.id to a list for each session.
   socket.on('join-session', (data) => {
     sessions.joinSession(data, socket);
+  });
+
+  socket.on('client-stream-out', (data) => {
+    sessions.streamStarting(data, socket);
   });
 
   //update participants on server and broadcast to client when new user joins or host changes order
@@ -85,70 +89,52 @@ io.on('connection', (socket) => {
     sessions.participantsOrder(data, socket);
   });
 
-  socket.on('server-update-userlist', (userlist, sessionID) => {
-    // console.log('server-update-userlist');
-    sessions.updateUserList(userlist, sessionID);
-    // console.log('userlist updated sending to client');
-    // console.log(sessionID);
-
-    socket.emit("remote-client-update-userlist", userlist);
-
-    //socket.emit('client-update-userlist', userlist);
-    //socket.to(sessionID).emit('client-update-userlist', userlist);
-    // io.in(sessionID).emit('client-update-userlist', userlist);
-    // socket.broadcast.to(sessionID).emit('client-update-userlist', userlist);
-    // socket.emit('client-update-userlist', userlist);
+  socket.on('server-update-userlist', (data) => {
+    console.log("app updating userlist",data);
+    sessions.updateUserList(data.updatedList, data.sessionID, socket);
   });
 
   socket.on('get-userlist', (data) => {
     let userList = sessions.getUserList();
   });
 
-
-
+  socket.on('disconnect', (data)=>{
+    // console.log();
+    sessions.disconnectUser(socket, data.sessionID, data.guest);
+  });
 
   //broadcast incoming stream to all clients in session
-  socket.on('client-audio-stream', (data) => {
-    sessions.streamToSession(data, socket);
-  });
+  // socket.on('client-audio-stream', (data) => {
+  //   sessions.streamToSession(data, socket);
+  // });
 
-  socket.on('room-exists', (data) => {
-    console.log('room-exists beng called');
-    if (io.sockets.adapter.rooms.has(data.sessionID)) {
-      console.log(`room ${data.sessionID} exists`);
-      sessions.joinSession(data, socket);
-    } else {
-      console.log(`session id ${data.sessionID} doesn't exist`);
-      socket.emit('join-session-failed');
-    }
-  });
 
   //socket.emit('me', socket.id);
 
   // socket.on('chat')
 
-  let socketRoom; //Current room of the socket for chat prototype
+  // let socketRoom; //Current room of the socket for chat prototype
 
-  //Joining a room and sending them chat history
-  socket.on('joinRoom', (data) => {
-    // const user = userJoin(socket.id, username, room);
-    socket.join(data.sessionID);
-    //sock
-    socketRoom = data.sessionID;
-    socketMap[socket.id] = data.guest;
-    //Send chat history to client
-    socket.broadcast
-      .to(data.sessionID)
-      .emit(
-        'message',
-        console.log(`${data.guest} has joined the room ${data.sessionID}`)
-      );
-    socket.emit('joinResponse', socketHistory[socketRoom]);
-  });
+  // //Joining a room and sending them chat history
+  // socket.on('joinRoom', (data) => {
+  //   // const user = userJoin(socket.id, username, room);
+  //   socket.join(data.sessionID);
+  //   //sock
+  //   socketRoom = data.sessionID;
+  //   socketMap[socket.id] = data.guest;
+  //   //Send chat history to client
+  //   socket.broadcast
+  //     .to(data.sessionID)
+  //     .emit(
+  //       'message',
+  //       console.log(`${data.guest} has joined the room ${data.sessionID}`)
+  //     );
+  //   socket.emit('joinResponse', socketHistory[socketRoom]);
+  // });
 
-  socket.on('send_message', (data) => {
-    socket.to(data.sessionID).emit('receive_message', data);
-  });
+  // socket.on('send_message', (data) => {
+  //   socket.to(data.sessionID).emit('receive_message', data);
+  // });
 
   //Switch rooms
   // socket.on('switchRoom', (data) => {
@@ -170,30 +156,38 @@ io.on('connection', (socket) => {
   // });
 
   //Send a msg to the current chat
-  socket.on('sendChatMessage', (data) => {
-    const { message, room, name } = data;
-    let newMsg = message;
-    if (name) {
-      newMsg = `${name}: ${message}`;
-    }
-    socket.broadcast.to(socketRoom).emit('sendChatMessage', newMsg, name);
+  // socket.on('sendChatMessage', (data) => {
+  //   const { message, room, name } = data;
+  //   let newMsg = message;
+  //   if (name) {
+  //     newMsg = `${name}: ${message}`;
+  //   }
+  //   socket.broadcast.to(socketRoom).emit('sendChatMessage', newMsg, name);
 
     //this can be changed TODO
 
     //let newMsg = message;
-    socketHistory[socketRoom] = socketHistory[socketRoom]
-      ? [newMsg, ...socketHistory[socketRoom]]
-      : [newMsg];
-  });
+  //   socketHistory[socketRoom] = socketHistory[socketRoom]
+  //     ? [newMsg, ...socketHistory[socketRoom]]
+  //     : [newMsg];
+  // });
 
   //Change username of the socket
-  socket.on('setSocketName', (username) => {
-    socketMap[socket.id] = username;
-  });
+  // socket.on('setSocketName', (username) => {
+  //   socketMap[socket.id] = username;
+  // });
 
-  socket.on('disconnect', () => {
-    //console.log(`Disconnected just msg: ${socket.id}`);
-    //socket.broadcast.emit('callEnded');
+  // socket.on('disconnect', () => {
+  //   console.log("Disconnected :",socket.id);
+  //   //socket.broadcast.emit('callEnded');
+  // });
+
+  socket.on('callUser', (data) => {
+    io.to(data.userToCall).emit('callUser', {
+      signal: data.signalData,
+      from: data.from,
+      name: data.name,
+    });
   });
 
   socket.on('answerCall', (data) => {
@@ -204,17 +198,28 @@ io.on('connection', (socket) => {
   //   io.emit('RECEIVE_MESSAGE', data);
   // });
 
-  socket.on("player-connected", (id) => {
+  // socket.on('audio-stream', (data) => {
+  //   //console.log("Audio streaming.");
+  //   chunks.push(data);
+  // });
 
-    socket.emit("player-connected-server", assignPlayer(id));
-    console.log("Players", players);
-  });
+  // socket.on('audio-stream-start', () => {
+  //   console.log('Audio streaming started.');
+  // });
 
-  socket.on('reset-player-count', () => {
-    players = [];
-    console.log("Resetting player order");
-    console.log(players);
-  });
+  // socket.on('audio-stream-end', () => {
+  //   console.log('Audio streaming ended.');
+  //   // emits to all connected clients
+  //   // TODO change this when we establish multiple rooms
+  //   io.emit('audio-blob', chunks);
+  //   chunks = [];
+  // });
+
+  // socket.on('create-audio-file', function(data)  {
+  //   let blob = new Blob(this.chunks, {'type': 'audio/ogg; codecs=opus'})
+  //   let audioURL = URL.createObjectURL(blob);
+  //   this.audio = new Audio(audioURL);
+  // });
 });
 
 function assignPlayer(id) {
