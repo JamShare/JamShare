@@ -3,6 +3,22 @@ import { WebRTCAdaptor } from '../js/webrtc_adaptor';
 import { getUrlParameter } from "../js/fetch.stream.js";
 import { saveAs } from 'file-saver';
 const io = require('socket.io-client');
+const audioWorkletURL = new URL("./RecorderProcessor.js", import.meta.url);
+
+// recorder context records incoming audio; playback context plays it back to the user and combines local user audio 
+// with the recording(s) in order to create a new stream
+const recordContext = new AudioContext();
+var recorderNode = null;
+
+recordContext.audioWorklet.addModule(audioWorkletURL.href)
+    .then(() => {
+        recorderNode = new AudioWorkletNode(recordContext, 'recorder-worklet');
+    })
+const playbackContext = new AudioContext();
+
+var sources = [];
+
+
 
 //const SERVER = "http://localhost:3001";
 const SERVER = "https://berryhousehold.ddns.net:3001";
