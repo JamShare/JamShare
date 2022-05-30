@@ -137,7 +137,7 @@ class Recorder extends React.Component {
         console.log("loading audio buffer");
         let audioBuffer = sources.splice(0, 1)[0];
         if (audioBuffer) {
-            // audioBuffer.connect(playbackContext.destination);
+            audioBuffer.connect(playbackContext.destination);
             audioBuffer.connect(this.streamOut);
             audioBuffer.start();
             console.log("audio buffer connected");
