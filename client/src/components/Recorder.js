@@ -2,7 +2,6 @@ import React from 'react';
 import { WebRTCAdaptor } from '../js/webrtc_adaptor.js';
 import { getUrlParameter } from "../js/fetch.stream.js";
 import { saveAs } from 'file-saver';
-const audioWorkletURL = new URL("./RecorderProcessor.js", import.meta.url);
 
 function Recorder(props) {
     //audio context sourcesuserlistsessionId
@@ -53,7 +52,7 @@ function Recorder(props) {
     let sources = [];
     let chunks = [];
     let recorderNode = null;
-    recordContext.audioWorklet.addModule(audioWorkletURL.href)
+    recordContext.audioWorklet.addModule("RecorderProcessor.js")
     .then(() => {
         recorderNode = new AudioWorkletNode(recordContext, 'recorder-worklet');
     })
