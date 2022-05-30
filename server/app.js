@@ -60,7 +60,7 @@ const socketHistory = {};
 
 // Listening for incoming connections
 io.on('connection', (socket) => {
-  console.log("client connected:",socket.id);
+  console.log('client connected:', socket.id);
   //recieve the data from the user
   clientObject = undefined;
   socket.on('create-session', (data) => {
@@ -69,9 +69,9 @@ io.on('connection', (socket) => {
 
   //'join-session' emitted from client when user clicks 'join jam session' in /Join.js modal popup, or when user enters session ID in orange box and presses enter.
   socket.on('join-session', (data) => {
-    try{
-    sessions.joinSession(data, socket);
-    } catch(error){
+    try {
+      sessions.joinSession(data, socket);
+    } catch (error) {
       console.log(error);
     }
   });
@@ -79,19 +79,30 @@ io.on('connection', (socket) => {
   socket.on('client-stream-out', (data) => {
     sessions.streamStarting(data, socket);
   });
-  
-  socket.on('chat-message', (data) => {
-    try{sessions.emitChatMessage(data, socket);
-    } catch(error){console.log(error);}
-  });
 
+  socket.on('chat-message', (data) => {
+    try {
+      console.log('chat-message :', data);
+      sessions.emitChatMessage(data, socket);
+    } catch (error) {
+      console.log(error);
+    }
+  });
+  socket.on('chat-message-history', (data) => {
+    try {
+      console.log('chat-message-history :', data);
+      sessions.emitChatHisttory(data, socket);
+    } catch (error) {
+      console.log(error);
+    }
+  });
   //update participants on server and broadcast to client when new user joins or host changes order
   socket.on('participants-order', (data) => {
     sessions.participantsOrder(data, socket);
   });
 
   socket.on('server-update-userlist', (data) => {
-    console.log("app updating userlist",data);
+    console.log('app updating userlist', data);
     sessions.updateUserList(data.updatedList, data.sessionID, socket);
   });
 
@@ -99,11 +110,11 @@ io.on('connection', (socket) => {
     let userList = sessions.getUserList();
   });
 
-  socket.on('disconnect', ()=>{
-    try{
-      console.log("socket ID disconnected from server:", socket.id );
+  socket.on('disconnect', () => {
+    try {
+      console.log('socket ID disconnected from server:', socket.id);
       sessions.disconnectUser(socket);
-    } catch(error){
+    } catch (error) {
       console.log(error);
     }
   });
@@ -112,7 +123,6 @@ io.on('connection', (socket) => {
   // socket.on('client-audio-stream', (data) => {
   //   sessions.streamToSession(data, socket);
   // });
-
 
   //socket.emit('me', socket.id);
 
@@ -169,9 +179,9 @@ io.on('connection', (socket) => {
   //   }
   //   socket.broadcast.to(socketRoom).emit('sendChatMessage', newMsg, name);
 
-    //this can be changed TODO
+  //this can be changed TODO
 
-    //let newMsg = message;
+  //let newMsg = message;
   //   socketHistory[socketRoom] = socketHistory[socketRoom]
   //     ? [newMsg, ...socketHistory[socketRoom]]
   //     : [newMsg];

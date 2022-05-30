@@ -1,3 +1,7 @@
+import io from 'socket.io-client';
+let socket = io('http://localhost:3001');
+export default socket; //https://stackoverflow.com/questions/48794919/reactjs-socket-io-best-way-to-handle-socket-connection
+
 // import io from 'socket.io-client';
 // // import ss from 'socket.io-stream';
 // // import path from 'path';//pathDownloadingFile = path.basename(data.name) //from data in stream

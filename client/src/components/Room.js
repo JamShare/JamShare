@@ -83,20 +83,17 @@ function Room() {
        {messageReceived} */}
       <div className='jybanner'>
         <img className='jam-logo' src={JamShareLogo} alt='logo' />
-        <Chat
-          userlist={serverUserList}
-          sessionID={sessionID}
-          guest={guest}></Chat>
       </div>
 
       <Participants
         userlist={serverUserList}
         sessionID={sessionID}
         guest={guest}></Participants>
-      <Viewer
+
+      <Chat
         userlist={serverUserList}
         sessionID={sessionID}
-        guest={guest}></Viewer>
+        guest={guest}></Chat>
       <Recorder
         userlist={serverUserList}
         sessionID={sessionID}
