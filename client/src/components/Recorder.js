@@ -93,7 +93,7 @@ function Recorder(props) {
         chunks.push(e.data);
     }
 
-    function onStop(e) {
+    function onStop() {
         console.log("Recording stopped successfully.");
         let blob = new Blob(chunks, { 'type': 'audio/wav; codecs=opus' })
         let audioURL = URL.createObjectURL(blob);
@@ -162,7 +162,6 @@ function Recorder(props) {
             audioElement.srcObject = new MediaStream();
         }
 
-
         //set delay based on player
         let timeToDelay = 0;
         console.log("Track Order: ", trackOrder);
@@ -196,7 +195,6 @@ function Recorder(props) {
         var dest = audioCtx.createMediaStreamDestination();
         delay.connect(dest);
         audioElement.srcObject.addTrack(dest.stream.getAudioTracks()[0]);
-
 
         //if we are the last player, record the audio streams
         console.log("New stream player order: ", playerOrder);
@@ -256,7 +254,6 @@ function Recorder(props) {
             callback: function (info, obj) {
                 if (info === "initialized") {
                     console.log("initialized");
-
                 } else if (info === "publish_started") {
                     //stream is being published
                     console.log("publish started");
@@ -277,6 +274,7 @@ function Recorder(props) {
                 } else if (info === "streamInformation") {
 
                 } else if (info === "newStreamAvailable") {
+                    //get every stream behind you
                     let tempOrder = obj.trackId.slice(-1);
                     if (parseInt(tempOrder, 10) < parseInt(playerOrder, 10)) {
                         console.log("Playing", obj.trackId);
