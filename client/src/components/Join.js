@@ -73,14 +73,16 @@ function Join(props) {
 
   function copyLink(event) {
     inputArea.current?.select();
-    document.execCommand('copy');
+    document.execCommand("copy");
     event.target.focus();
-    navigator.permissions.query({ name: 'clipboard-write' }).then((result) => {
-      if (result.state === 'granted' || result.state === 'prompt') {
-        updateClipboard(inputArea.current?.innerText);
-      }
-    });
-  }
+    navigator.permissions
+      .query({ name: "clipboard-write" })
+      .then((result) => {
+        if (result.state === "granted" || result.state === "prompt") {
+          updateClipboard(inputArea.current?.innerText);
+        }
+      });
+    }
 
   return (
     <>
@@ -100,12 +102,15 @@ function Join(props) {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body className='show-grid purplebg'>
-          <Container>
+        <Container>
             <Row>
               <Col lg={4}></Col>
-              <Col lg={4} id='a' ref={inputArea} className='purple'>
-                {sessionID}
-              </Col>
+                <Col lg={4} id="a" >
+                <input
+                  ref={inputArea}
+                  value={sessionID}
+                  ></input>
+                </Col>
               <Col lg={4}></Col>
             </Row>
           </Container>
