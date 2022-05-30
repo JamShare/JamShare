@@ -10,7 +10,6 @@ const fs = require("fs");
 const port = process.env.PORT || 3001;
 var chunks = [];
 const Sessions = require('./Sessions.js');
-const { userJoin, getCurrentUser } = require('./Users');
 
 const {register_new_user, validate_creds} = require("./auth/auth.js")
 let players = [];
@@ -235,5 +234,10 @@ function assignPlayer(id) {
 server.listen(port, () => console.log(`Listening on port ${port}`));
 
 app.use(express.static(path.resolve(__dirname, './client/build')));
+
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, './client/build/index.html'));
+});
 
 module.exports = app;
