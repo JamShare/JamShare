@@ -22,14 +22,17 @@ const SERVER = "http://localhost:3001";
 let socket = io("http://localhost:3001");
 export default socket; //https://stackoverflow.com/questions/48794919/reactjs-socket-io-best-way-to-handle-socket-connection
 
+socket.on('error', error=>{
+  console.log("server error", error);
+});
 
 ReactDOM.render(
   <div>
     <BrowserRouter>
       <Routes>
-        <Route exact path='/' element={<Signup socket={io}/>} />
-        <Route path='/join' element={<Join socket={io}/>} />
-        <Route path='/room' element={<Room socket={io}/>} />
+        <Route exact path='/' element={<Signup/>} />
+        <Route path='/join' element={<Join/>} />
+        <Route path='/room' element={<Room/>} />
         <Route path='/signup2' element={<Morg_Signup />} />
         <Route path='/signin2' element={<Morg_Signin />} />
       </Routes>

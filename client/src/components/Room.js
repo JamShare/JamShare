@@ -42,10 +42,11 @@ function Room() {
       {/* <audio src={headlong} autoPlay></audio> */}
       <div class="jybanner">
         <img class='jam-logo' src={JamShareLogo} alt='logo'/>
-        <Chat userlist={serverUserList} sessionID={sessionID} guest={guest}></Chat>
+        
       </div>
       <Participants userlist={serverUserList} sessionID={sessionID} guest={guest}></Participants>
       <Viewer userlist={serverUserList} sessionID={sessionID} guest={guest}></Viewer>
+      {/* <Chat userlist={serverUserList} sessionID={sessionID} guest={guest}></Chat> */}
       <Recorder userlist={serverUserList} sessionID={sessionID} guest={guest}></Recorder>
       <div class="jybannerb">
       Session ID: {sessionID} - Portland State University - JamShare - 2022

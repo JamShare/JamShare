@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import socket from "../index";
 
-
 function Chat(props) {
   const [message, setMessage] = useState('');
   const [chat, setChat] = useState([]);
@@ -31,7 +30,7 @@ function Chat(props) {
 
  return (
    <div className='ProjectSectionContent'>
-     <div className='a3'>
+     <div className='recordblock'>
       <br></br>
         <input type='text' name='message' id='messageinput' value={message}
           onChange={(e) => setMessage(e.target.value)}

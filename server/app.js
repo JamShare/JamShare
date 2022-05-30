@@ -53,7 +53,11 @@ io.on('connection', (socket) => {
   //recieve the data from the user
   clientObject = undefined;
   socket.on('create-session', (data) => {
-    sessions.createSession(data, socket);
+    try{
+      sessions.createSession(data, socket);
+    }catch(error){console.log(error); 
+      socket.emit('error',error);
+    }
   });
 
   //'join-session' emitted from client when user clicks 'join jam session' in /Join.js modal popup, or when user enters session ID in orange box and presses enter.
@@ -80,8 +84,10 @@ io.on('connection', (socket) => {
   });
 
   socket.on('server-update-userlist', (data) => {
+    try{
     console.log("app updating userlist",data);
     sessions.updateUserList(data.updatedList, data.sessionID, socket);
+    } catch(error){ console.log(error); }
   });
 
   socket.on('get-userlist', (data) => {
