@@ -243,9 +243,9 @@ function Recorder(props) {
         console.log("Remote stream acquired.");
 
         //For now nick merge test
-        recorderNode.parameters.get('isRecording').setValueAtTime(1, recordContext.currentTime);
+        recorderNode.parameters.get('isRecording').setValueAtTime(1, recordContext.currentTime+1000);
         connectAudioBuffer(); // connect an audio buffer to start
-        intervalReturn = setInterval(this.connectAudioBuffer, 1000); // connect an audio buffer every 1000ms
+        intervalReturn = setInterval(connectAudioBuffer, 1000); // connect an audio buffer every 1000ms
 
         audioElement.srcObject.addTrack(streamOut.stream.getAudioTracks()[0]);
         playbackContext.resume();
