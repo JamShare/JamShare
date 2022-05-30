@@ -6,6 +6,7 @@ import Button from 'react-bootstrap/Button';
 import { Link, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import Modal from 'react-bootstrap/Modal';
 import JamShareLogo from './assets/images/JamShareLogo.jpg';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 // import {Morg_Signup} from "./component_export"
 import JoinModal from './JoinModal';
 
@@ -170,7 +171,21 @@ function Join(props) {
           </Row>
         </div>
       </div>
+
       <div className='jybannerb'>
+        <div>
+          <input value={copied} onChange={(e) => setCopied(copied)} />
+
+          <CopyToClipboard text={copied} onCopy={() => setCopied(copied)}>
+            <span>Copy to clipboard with span</span>
+          </CopyToClipboard>
+
+          <CopyToClipboard text={copied} onCopy={() => setCopied(copied)}>
+            <button>Copy to clipboard with button</button>
+          </CopyToClipboard>
+
+          {copied ? <span style={{ color: 'red' }}>Copied.</span> : null}
+        </div>
         Portland State University - JamShare - 2022
       </div>
     </>
