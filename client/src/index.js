@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { render } from 'react-dom';
-import { getSocketEndpoint } from './componentConfig';
+import { getSocketEndpoint } from './components/componentConfig';
 
 import {
   Signup,
