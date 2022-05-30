@@ -30,6 +30,8 @@ function Signup() {
   const [signup_psw, set_signup_psw] = React.useState("");
   const [signin_usn, set_signin_usn] = React.useState("");
   const [signin_psw, set_signin_psw] = React.useState("");
+  const [id, set_id] = React.useState("");
+
 
   const checkPassword = (p) => {
     if (!regex.test(p) && p.length <= 30) handleShow();
@@ -38,7 +40,7 @@ function Signup() {
   //Redirect if cookie exists
   useEffect(() => {
     const [username, guest_username] = ["username", "guest_username"]
-      .map(e=> Cookies.get("username"))
+      .map(e=> Cookies.get(e))
 
     console.log(username, guest_username)
 
@@ -46,7 +48,6 @@ function Signup() {
       navToJoin(username)
     else if(guest_username)
       navToJoin(guest_username)  }, []);
-
 
   const handleGuest = (e) => {
     e.preventDefault();
@@ -62,8 +63,13 @@ function Signup() {
     navToJoin(guest);
   };
 
-  const navToJoin = (usn) => 
-    navigate("./Join", { state: { usn } });
+  const navToJoin = (usn) => {
+    let path = '/Join';
+    set_id(p => usn)
+    console.log("#####$$" + usn)
+    console.log("#####" + id)
+    navigate(path, { state: { id } });
+  }
 
   const handleSignup = (e) => {
     e.preventDefault();
@@ -83,7 +89,7 @@ function Signup() {
             expires: 1,
           });
           
-          navToJoin(signup_usn);
+          navToJoin("12345");
 
         } else alert("Account name taken.");
       })

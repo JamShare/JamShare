@@ -9,7 +9,6 @@ const ss = require('socket.io-stream')
 const port = process.env.PORT || 3001;
 var chunks = [];
 const Sessions = require('./Sessions.js');
-const { userJoin, getCurrentUser } = require('./Users')
 
 const {register_new_user, validate_creds} = require("./auth/auth.js")
 
@@ -186,7 +185,6 @@ io.on('connection', (socket) => {
       chunks = [];
   });
 
-
   // socket.on('create-audio-file', function(data)  {
   //   let blob = new Blob(this.chunks, {'type': 'audio/ogg; codecs=opus'})
   //   let audioURL = URL.createObjectURL(blob);
@@ -195,7 +193,6 @@ io.on('connection', (socket) => {
 });
 
 server.listen(port, () => console.log(`Listening on port ${port}`));
-
 app.use(express.static(path.resolve(__dirname, './client/build')));
 
 module.exports = app;
