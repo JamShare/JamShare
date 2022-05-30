@@ -2,11 +2,7 @@ import React from 'react';
 import { WebRTCAdaptor } from '../js/webrtc_adaptor.js';
 import { getUrlParameter } from "../js/fetch.stream.js";
 import { saveAs } from 'file-saver';
-const io = require('socket.io-client');
 const audioWorkletURL = new URL("./RecorderProcessor.js", import.meta.url);
-
-//const SERVER = "http://localhost:3001";
-const SERVER = "https://berryhousehold.ddns.net:3001";
 
 function Recorder(props) {
     //audio context sourcesuserlistsessionId
@@ -74,9 +70,6 @@ function Recorder(props) {
     //audio tracks
     let tracks = [];
 
-    //socketio
-    let socket = io.connect(SERVER);
-
     //room info
     let currentRoom = '' + state.sessionID + '-';
 
@@ -95,8 +88,7 @@ function Recorder(props) {
 
     function startTheJam() {
         getPlayerOrder()
-        console.log("recorder userlist: ", state.userlist);
-        console.log("Current player order: ", playerOrder);
+
         getAudioDevice();
 
         setTimeout(function () {
@@ -216,8 +208,6 @@ function Recorder(props) {
         // delay.connect(dest);
         // audioElement.srcObject.addTrack(dest.stream.getAudioTracks()[0]);
 
-        console.log("obj track", obj.track);
-
         //Nick merge code-----------------------------------------------------------------
         //recorderSource = recordContext.createMediaStreamTrackSource(obj.track);
         let test = new MediaStream();
@@ -229,7 +219,6 @@ function Recorder(props) {
         recorderNode.connect(recordContext.destination);
         recorderNode.port.onmessage = (e) => {
             if (e.data.eventType === 'data') {
-                console.log("E buffer", e.data.audioBuffer);
                 const audioData = e.data.audioBuffer;
                 createAudioBufferSource(audioData);
             }
@@ -238,7 +227,6 @@ function Recorder(props) {
             }
         }
         recordContext.resume();
-        console.log("Remote stream acquired.");
 
         //For now nick merge test
         setTimeout(function(){recorderNode.parameters.get('isRecording').setValueAtTime(1, recordContext.currentTime)}, 2000);
@@ -249,8 +237,8 @@ function Recorder(props) {
         //Nick merge code-----------------------------------------------------------------
 
         //if we are the last player, record the audio streams
-        console.log("New stream player order: ", playerOrder);
-        console.log("User List: ", state.userlist.at(-1));
+        // console.log("New stream player order: ", playerOrder);
+        // console.log("User List: ", state.userlist.at(-1));
         if (state.username === state.userlist.at(-1)) {
             recorder = new MediaRecorder(streamOut);
 
@@ -294,7 +282,7 @@ function Recorder(props) {
     //add tracks to the antmedia room
     function addTrackList(streamId, trackList) {
         //addVideoTrack(streamId);
-        console.log("Track list", trackList);
+        // console.log("Track list", trackList);
         trackList.forEach(function (trackId) {
             addVideoTrack(trackId);
         });
@@ -305,8 +293,8 @@ function Recorder(props) {
         var enabledTracks = [];
         //tracks to play if we are player 2
         if (playerOrder === 2) {
-            console.log("Player Order: ", playerOrder);
-            console.log("Tracks Order: ", tracks);
+            // console.log("Player Order: ", playerOrder);
+            // console.log("Tracks Order: ", tracks);
 
             tracks.forEach(function (trackId) {
                 if (trackId === "1") {
@@ -319,7 +307,7 @@ function Recorder(props) {
         }
         //tracks to play if we are player 3 
         else if (playerOrder === 3) {
-            console.log("Player Order: ", playerOrder);
+            // console.log("Player Order: ", playerOrder);
             tracks.forEach(function (trackId) {
                 if (trackId === "1") {
                     enabledTracks.push("1");
@@ -364,10 +352,6 @@ function Recorder(props) {
 
     //connect webrtc adaptor
     async function getAudioDevice() {
-        //get player order from node server
-        socket.emit("player-connected", socket.id);
-        console.log("id", socket.id);
-
         try {
             stream = await navigator.mediaDevices
                 .getUserMedia({
@@ -427,7 +411,6 @@ function Recorder(props) {
 
     //publish the local stream
     function publish(token) {
-        console.log("Publishing");
         let publishStreamName = '' + currentRoom + '-' + playerOrder;
         webRTCAdaptor.publish(publishStreamName, token, "", "", streamName, currentRoom, "{someKey:somveValue}", playerOrder);
     }
@@ -470,7 +453,7 @@ function Recorder(props) {
                 } else if (info === "newStreamAvailable") {
                     let tempOrder = obj.trackId.slice(-1);
                     if (parseInt(tempOrder, 10) < parseInt(playerOrder, 10)) {
-                        console.log("Playing", obj.trackId);
+                        // console.log("Playing", obj.trackId);
                         playAudio(obj);
                     }
                 } else if (info === "ice_connection_state_changed") {
