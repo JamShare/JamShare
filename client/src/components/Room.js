@@ -19,13 +19,12 @@ function Room() {
 
   console.log('room state: ', sessionID, guest, serverUserList);
 
-  socket.on('client-update-userlist', (newusernames) => {
-    console.log('room got user order update', newusernames);
-    setServerUserList(newusernames);
-  });
-
   useEffect(() => {
     window.addEventListener('beforeunload', keepOnPage); //this is fired upon component mounting
+    socket.on('client-update-userlist', (newusernames) => {
+      console.log('room got user order update', newusernames);
+      setServerUserList(newusernames);
+    });
     return () => {
       //things in return of useEffect are ran upon unmounting
       // var data = {sessionID:sessionID, guest:guest}
