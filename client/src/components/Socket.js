@@ -1,4 +1,5 @@
 import io from 'socket.io-client';
+import { getSocketEndpoint } from './componentConfig';
 // import ss from 'socket.io-stream';
 // import path from 'path';//pathDownloadingFile = path.basename(data.name) //from data in stream
 let socket;
@@ -12,13 +13,12 @@ export const streamToServer = () => {
   // };
 };
 
-
+const SERVER = getSocketEndpoint();
 
 //Joining rooms logic 
 //send joinRoom to server
 export const initiateSocket = (username, room) => {
-  //socket = io.connect('http://localhost:3001')
-  socket = io.connect('https://berryhousehold.ddns.net:3001');
+  socket = io.connect(SERVER);
   //const socket = io.connect('http://localhost:3000');
   //console.log(`Connecting socket...`);
   if (socket && room) {

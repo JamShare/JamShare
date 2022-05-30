@@ -10,11 +10,10 @@ import './App.css'
 import './room.css'
 import JamShareLogo from './assets/images/JamShareLogo.jpg'
 import socket from "../index";
+import { getSocketEndpoint } from './componentConfig';
 //import headlong from './assets/musics/headlong70.mp3'
 
-//const SERVER = 'http://localhost:3001';
-const SERVER = "https://berryhousehold.ddns.net:3001";
-
+const SERVER = getSocketEndpoint();
 
 function Room() {
   let { state: { sessionID, guest, usernames }, } = ({} = useLocation()); //gets the variable we passed from navigate

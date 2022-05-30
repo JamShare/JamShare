@@ -2,8 +2,10 @@ import React from 'react';
 import { WebRTCAdaptor } from '../js/webrtc_adaptor.js';
 import { getUrlParameter } from "../js/fetch.stream.js";
 import { saveAs } from 'file-saver';
+import { getSocketEndpoint } from './componentConfig';
 const io = require('socket.io-client');
 const audioWorkletURL = new URL("./RecorderProcessor.js", import.meta.url);
+
 
 // recorder context records incoming audio; playback context plays it back to the user and combines local user audio 
 // with the recording(s) in order to create a new stream
@@ -18,8 +20,7 @@ const playbackContext = new AudioContext();
 
 var sources = [];
 
-//const SERVER = "http://localhost:3001";
-const SERVER = "https://berryhousehold.ddns.net:3001";
+const SERVER = getSocketEndpoint();
 
 function Recorder(props) {
     //audio context sourcesuserlistsessionId

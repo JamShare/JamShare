@@ -10,11 +10,10 @@ import image5 from './assets/images/dragdn.jpg';
 import { Link, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import socket from "../index";
+import { getSocketEndpoint } from './componentConfig';
 // let { state: {sessionID, guest}} = {}  = useLocation(); //gets the variable we passed from navigate
 
-//const SERVER = "http://localhost:3001";
-const SERVER = "https://berryhousehold.ddns.net:3001";
-
+const SERVER = getSocketEndpoint();
 
 // class Participants extends React.Component {
 function Participants(props) {

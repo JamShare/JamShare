@@ -11,11 +11,11 @@ import Modal from 'react-bootstrap/Modal';
 import JamShareLogo from "./assets/images/JamShareLogo.jpg";
 import JoinModal from './JoinModal';
 import socket from "../index";
+import { getSocketEndpoint } from './componentConfig';
 
 // import {Morg_Signup} from "./component_export"
 
-//const SERVER = 'http://localhost:3001';
-const SERVER = "https://berryhousehold.ddns.net:3001";
+const SERVER = getSocketEndpoint();
 
 // Join or create a Jam session room with link ID
 function Join(props) {
