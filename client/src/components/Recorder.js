@@ -389,7 +389,7 @@ function Recorder(props) {
     }
 
     return (
-        <div class="jamblock">
+        <div className="jamblock">
             <button onClick={startTheJam}>
                 Start The Jam!
             </button>
@@ -408,7 +408,7 @@ function Recorder(props) {
                 Local Audio
                 <audio id="local_audio" autoPlay muted playsInline controls={true} />
             </div>
-            <div class="container">
+            <div className="container">
                 <ul id="trackList" name="trackList">
                 </ul>
             </div>
