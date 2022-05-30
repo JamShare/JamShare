@@ -1,3 +1,5 @@
+//Clients manages the list of Client instances.
+
 class Clients {
   constructor() {
     this.clientsMap = new Map();
@@ -24,11 +26,11 @@ class Clients {
   }
 
   removeClient(socketClientID) {
-    let client = clientsMap(socketClientID);
-    this.clients.indexOf(client);
+    let removedClient = this.clientsMap.get(socketClientID);
+    let index = this.clients.indexOf(removedClient);
     this.clients.splice(index, 1);
     this.clientsMap.delete(socketClientID);
-    return true;
+    return removedClient;
   }
 
   findClientByID(socketClientID) {
@@ -70,23 +72,29 @@ class Clients {
   }
 
   updateUsernames(userList) {
-    console.log('Clients updateUsernames', userList);
+    console.log('Clients updateUsernames', this.clients ,userList);
     if (userList) {
-      // for (var i = 0; i < userList.length; i++) {
+  
       for (var i = 0; i < this.clients.length; i++) {//loop server array
         console.log("comparing",this.clients[i].username,":",userList[i]);
+
         if(this.clients[i].getUsername() != userList[i]){//if it doesnt match val at same index
           console.log("to be swapped",this.clients[i].username,":",userList[i]);
-          //loop second array until it does and swap them
-          for (var j = i; j < userList.length; j++) {
+          //loop second array until it does and insert new order, removing old one.
+
+          for (var j = 0; j < userList.length; j++) {
             console.log("seeking index to swap",i,j,this.clients[i].username,":",userList[j]);
+            
             if (this.clients[i].getUsername() == userList[j]) {
               console.log("Swapping",  this.clients[i].username,i, "with",  this.clients[j].username,j );
-              this.swap(i, j);
-              break;
+
+              let a = this.clients[i];
+              let b = this.clients[j];
+
+              this.clients.splice(i, 1, b);
+              this.clients.splice(j, 1, a);
             }
           }
-          break;
         }
       }
 
@@ -95,13 +103,12 @@ class Clients {
         newclientlist.push(this.clients[i].getUsername());
       }
       return newclientlist;
-      //this.clients = userList;
-    } else {
-      console.log('why is the list empty?');
     }
   }
 }
 
+
+//Client instance with data about a single connected client
 class Client {
   constructor(socketID, username, priv) {
     this.socketID = socketID;
