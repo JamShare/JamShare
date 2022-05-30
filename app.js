@@ -27,7 +27,6 @@ app.get('/', function (request, response) {
 
 //Some cors and socket io things to make requests accepted from outsources
 app.post('/chat', function (request, response) {
-  //console.log(request.body);
   response.set('Access-Control-Allow-Origin', '*');
 });
 

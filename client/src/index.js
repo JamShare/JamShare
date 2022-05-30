@@ -15,7 +15,6 @@ import registerServiceWorker from './registerServiceWorker';
 import './fonts/Indie_Flower/IndieFlower-Regular.ttf';
 import './index.css';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-import { Socket } from 'socket.io-client';
 
 const io = require('socket.io-client');
 const SERVER = "https://berryhousehold.ddns.net:3001";
@@ -27,9 +26,9 @@ ReactDOM.render(
   <div>
     <BrowserRouter>
       <Routes>
-        <Route exact path='/' element={<Signup socket={io}/>} />
-        <Route path='/join' element={<Join socket={io}/>} />
-        <Route path='/room' element={<Room socket={io}/>} />
+        <Route exact path='/' element={<Signup />} />
+        <Route path='/join' element={<Join />} />
+        <Route path='/room' element={<Room />} />
         <Route path='/signup2' element={<Morg_Signup />} />
         <Route path='/signin2' element={<Morg_Signin />} />
       </Routes>
