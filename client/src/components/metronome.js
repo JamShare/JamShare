@@ -1,3 +1,5 @@
+// metronome provided by example here: 
+
 class Metronome
 {
     constructor(tempo = 120, audioContext, outputNode)

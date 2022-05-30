@@ -404,7 +404,7 @@ function Recorder(props) {
         var streamIn = playbackContext.createMediaStreamSource(stream); // local stream
         streamOut = playbackContext.createMediaStreamDestination(); // output new combined stream
         streamIn.connect(streamOut); // connect to new combined stream
-        metronome = new Metronome(120, playbackContext, streamOut);
+        metronome = new Metronome(120, playbackContext, playbackContext.destination);
     }
 
     //join the antmedia room with audio only amcu
@@ -455,7 +455,7 @@ function Recorder(props) {
 
                 } else if (info === "newStreamAvailable") {
                     let tempOrder = obj.trackId.slice(-1);
-                    if (parseInt(tempOrder, 10) < parseInt(playerOrder, 10)) {
+                    if (parseInt(tempOrder, 10) === parseInt(playerOrder-1, 10)) {
                         // console.log("Playing", obj.trackId);
                         playAudio(obj);
                     }
