@@ -136,9 +136,11 @@ function Recorder(props) {
 
     //remotely play each antmedia audio stream
     function playAudio(obj) {
+        //get room and trackorder
         let room = currentRoom;
         let trackOrder = obj.trackId.slice(-1);
 
+        //log the new stream
         console.log("new stream available with id: "
             + obj.streamId + "on the room:" + room);
 
@@ -160,9 +162,11 @@ function Recorder(props) {
             audioElement.srcObject = new MediaStream();
         }
 
-        let timeToDelay = 0;
 
+        //set delay based on player
+        let timeToDelay = 0;
         console.log("Track Order: ", trackOrder);
+
         if (playerOrder === 2 && trackOrder === '1') {
             timeToDelay = 0.5;
         } else if (playerOrder === 3 && trackOrder === '1') {
@@ -202,7 +206,8 @@ function Recorder(props) {
             const source = ac.createMediaStreamTrackSource(dest.stream.getAudioTracks()[0]);
             acSources.push(source);
             console.log("Acsource length", acSources.length);
-            //if we have three streams.
+
+            //if we have all of the streams
             if (acSources.length === playerOrder - 1) {
 
                 //connect all of the sources
@@ -218,7 +223,6 @@ function Recorder(props) {
                 // initialize event handlers for recorder
                 recorder.ondataavailable = onDataAvailable;
                 recorder.onstop = onStop;
-
             }
         }
     }
