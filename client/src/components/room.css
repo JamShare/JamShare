@@ -116,7 +116,9 @@ button.rec{
   background-color: rgb(117, 117, 117);
   border: 0px solid #ffffff; 
 }
-
+.RoomComponentListJamImg{
+  height:200px;
+}
 .ViewerComponentList{
   border: 3px solid rgb(216, 216, 216);
   background-image: url('assets/images/wave.png');
@@ -155,6 +157,7 @@ button.rec{
   border-radius: 5px;
   color: rgb(216, 216, 216);
   width:auto;
+  max-width: 440px;
   height: 700px;
   margin-top: 100px;
   margin-bottom: 100px;
@@ -169,7 +172,7 @@ button.rec{
 }
 
 .jamblock{
-  
+  display: block;
   text-align: center;
   background-color: rgb(117, 117, 117);
   border: 3px solid #ffffff;
@@ -179,7 +182,7 @@ button.rec{
   height: 700px;
   font-family: "IndieFlower";
   font-size: 18pt;
- 
+  
   position:absolute;
   overflow:scroll;
     overflow-x:hidden;
@@ -235,12 +238,11 @@ button.rec{
   }
 }
 
-@media (820px<=width<=1275px) {
+@media (820px<=width<=1080px) {
   .RoomComponentList{
     margin-right: 5px; 
   }
   .userblock{
-    
     padding: 0px;
     width: 290px;
     margin: 5px;
@@ -275,7 +277,50 @@ button.rec{
   }
 }
 
-@media (width>=1275px) {
+@media (1080px<=width<=1400px) {
+  .RoomComponentList{
+    margin-right: 5px; 
+  }
+  .userblock{
+    
+    padding: 0px;
+    width: 290px;
+    margin: 5px;
+    top: 120px;
+  }
+  .userblock div img{
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+  .recordblock{
+    padding-top: 0px;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin: 5px;
+    left: 305px;
+    right: 305px;
+    top: 120px;
+  }
+  .recordblock div img{
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+  .ViewerComponentList span{
+    margin-left: -10px;
+    padding-left: 10px;
+  }
+  .jamblock{
+    padding: 0px;
+    margin: 5px;
+    top: 120px;
+    left: 750px;
+    right: 0px;
+    left: 750px;
+    width:auto
+  }
+}
+
+@media (width>=1400px) {
   .userblock{
     padding: 10px;
     width: 300px;
@@ -304,10 +349,15 @@ button.rec{
     margin-right: 10px;
   }
   .jamblock{
+    
+    justify-content: center;
     padding-top: 50px;
     margin: 10px;
     top: 130px;
     right: 10px;
+    left: 830px;
+    width:auto;
+    max-width:800px;
   }
 }
 .list-container {

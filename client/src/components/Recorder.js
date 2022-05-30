@@ -227,10 +227,13 @@ class Recorder extends React.Component {
     render() {
         return (
             <div class="jamblock">
-                <h1>JAM</h1>
+                 <div className='RoomComponentList RoomComponentListAddImg'>
+                    <h1>JAM</h1>
+                </div>
                 {/* <button onClick={buttonclicked()}> */}
+                <div className='RoomComponentList RoomComponentListAddImg RoomComponentListJamImg'>
                     <img class="round" src={this.state.icon} width="200" height="200"alt=" recording "></img>
-                {/* </button> */}
+                </div>
                 <button onClick={this.featureRun}>
                     <image src={this.icon} alt=""></image>
                     {this.text}
