@@ -10,8 +10,6 @@ import {
   Morg_Signin,
 } from './components/component_export';
 
-import registerServiceWorker from './registerServiceWorker';
-
 import './fonts/Indie_Flower/IndieFlower-Regular.ttf';
 import './index.css';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
@@ -47,5 +45,3 @@ ReactDOM.render(
   </div>,
   document.getElementById('root')
 );
-
-registerServiceWorker();
