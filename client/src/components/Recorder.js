@@ -2,10 +2,6 @@ import React from 'react';
 import { WebRTCAdaptor } from '../js/webrtc_adaptor';
 import { getUrlParameter } from "../js/fetch.stream.js";
 import { saveAs } from 'file-saver';
-const io = require('socket.io-client');
-
-//const SERVER = "http://localhost:3001";
-const SERVER = "https://berryhousehold.ddns.net:3001";
 
 function Recorder(props) {
     //audio context sourcesuserlistsessionId
@@ -61,9 +57,6 @@ function Recorder(props) {
 
     //audio tracks
     let tracks = [];
-
-    //socketio
-    let socket = io.connect(SERVER);
 
     //room info
     let currentRoom = '' + state.sessionID + '-';
@@ -308,9 +301,6 @@ function Recorder(props) {
 
     //connect webrtc adaptor
     function getAudioDevicePlayer() {
-        //get player order from node server
-        socket.emit("player-connected", socket.id);
-        console.log("id", socket.id);
         //initiate adaptor
         webRTCAdaptor = initiateWebrtc();
     }
