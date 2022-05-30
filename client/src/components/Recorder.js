@@ -57,10 +57,8 @@ function Recorder(props) {
     let sources = [];
     let chunks = [];
     let recorderNode = null;
-    recordContext.audioWorklet.addModule(audioWorkletURL.href)
-    .then(() => {
-        recorderNode = new AudioWorkletNode(recordContext, 'recorder-worklet');
-    })
+    let recordPromise = recordContext.audioWorklet.addModule(audioWorkletURL.href)
+
     let recorder = null;
     let audio = null;
     let recordIcon = require('./assets/images/record.png')
@@ -224,7 +222,9 @@ function Recorder(props) {
         test.addTrack(obj.track);
         
         recorderSource = recordContext.createMediaStreamSource(test);
-        
+        recordPromise
+        .then(() => {
+        recorderNode = new AudioWorkletNode(recordContext, 'recorder-worklet');
         recorderSource.connect(recorderNode);
         recorderNode.connect(recordContext.destination);
         console.log("Recorder source", recorderSource);
@@ -240,6 +240,7 @@ function Recorder(props) {
             }
         }
         recordContext.resume();
+        })
         console.log("Remote stream acquired.");
 
         //For now nick merge test
