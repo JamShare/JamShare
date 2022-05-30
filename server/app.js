@@ -8,23 +8,26 @@ const Socket = require('socket.io');
 const port = process.env.PORT || 3001;
 const Sessions = require('./Sessions.js');
 const { userJoin, getCurrentUser } = require('./Users');
+
 const { register_new_user, validate_creds } = require('./auth/auth.js');
 
-//node instance
 var app = express();
+
 app.use(bodyParser.json());
 app.use(cors());
+
 //just a response if people access server directly
 app.get('/', function (request, response) {
   response.sendFile(__dirname + '/message.json');
 });
+
 //Some cors and socket io things to make requests accepted from outsources
 app.post('/chat', function (request, response) {
   //console.log(request.body);
   response.set('Access-Control-Allow-Origin', '*');
 });
 
-//auth
+//Auth
 app.post('/auth/signup', async (req, res) => {
   const [username, password] = ['username', 'password'].map((e) => req.body[e]);
   res.send(await register_new_user(username, password));
@@ -34,6 +37,7 @@ app.post('/auth/signin', async (req, res) => {
   const [username, password] = ['username', 'password'].map((e) => req.body[e]);
   res.send(await validate_creds(username, password));
 });
+
 ///// end auth
 
 //Server
@@ -44,84 +48,92 @@ const io = Socket(server, {
   },
 });
 
-//Active sessions manager
+//Active sessions
 var sessions = new Sessions();
 
 // Listening for incoming connections
 io.on('connection', (socket) => {
-  console.log("client connected:",socket.id);
+  console.log('client connected:', socket.id);
   //recieve the data from the user
   clientObject = undefined;
   socket.on('create-session', (data) => {
-    try{
+    try {
       sessions.createSession(data, socket);
-    }catch(error){
-      console.log(error); 
-      socket.emit('error',error);
+    } catch (error) {
+      console.log(error);
+      socket.emit('error', error);
     }
   });
 
   //'join-session' emitted from client when user clicks 'join jam session' in /Join.js modal popup, or when user enters session ID in orange box and presses enter.
   socket.on('join-session', (data) => {
-    try{
+    try {
       sessions.joinSession(data, socket);
-    } catch(error){
+    } catch (error) {
       console.log(error);
-      socket.emit('error',error);
+      socket.emit('error', error);
     }
   });
 
   socket.on('client-stream-out', (data) => {
-    try{
+    try {
       sessions.streamStarting(data, socket);
-    } catch(error){
+    } catch (error) {
       console.log(error);
-      socket.emit('error',error);
-    }
-  });
-  
-  socket.on('chat-message', (data) => {
-    try{sessions.emitChatMessage(data, socket);
-    } catch(error){
-      console.log(error);
-      socket.emit('error',error);
+      socket.emit('error', error);
     }
   });
 
+  socket.on('chat-message', (data) => {
+    try {
+      console.log('chat-message :', data);
+      sessions.emitChatMessage(data, socket);
+    } catch (error) {
+      console.log(error);
+    }
+  });
+  socket.on('chat-message-history', (data) => {
+    try {
+      console.log('chat-message-history :', data);
+      sessions.emitChatHisttory(data, socket);
+    } catch (error) {
+      console.log(error);
+    }
+  });
   //update participants on server and broadcast to client when new user joins or host changes order
   socket.on('participants-order', (data) => {
-    try{
+    try {
       sessions.participantsOrder(data, socket);
-    } catch(error){
+    } catch (error) {
       console.log(error);
-      socket.emit('error',error);
+      socket.emit('error', error);
     }
   });
 
   socket.on('server-update-userlist', (data) => {
-    try{
-      console.log("app updating userlist",data);
+    try {
+      console.log('app updating userlist', data);
       sessions.updateUserList(data.updatedList, data.sessionID, socket);
-    } catch(error){ 
-      console.log(error); 
-      socket.emit('error',error);
+    } catch (error) {
+      console.log(error);
+      socket.emit('error', error);
     }
   });
 
   socket.on('get-userlist', (data) => {
-    try{
+    try {
       let userList = sessions.getUserList();
-    } catch(error){ 
-        console.log(error); 
-        socket.emit('error',error);
+    } catch (error) {
+      console.log(error);
+      socket.emit('error', error);
     }
   });
 
-  socket.on('disconnect', ()=>{
-    try{
-      console.log("socket ID disconnected from server:", socket.id );
+  socket.on('disconnect', () => {
+    try {
+      console.log('socket ID disconnected from server:', socket.id);
       sessions.disconnectUser(socket);
-    } catch(error){
+    } catch (error) {
       console.log(error);
     }
   });
@@ -131,22 +143,102 @@ io.on('connection', (socket) => {
   //   sessions.streamToSession(data, socket);
   // });
 
+  //socket.emit('me', socket.id);
 
-  // socket.on('callUser', (data) => {
-  //   io.to(data.userToCall).emit('callUser', {
-  //     signal: data.signalData,
-  //     from: data.from,
-  //     name: data.name,
-  //   });
+  // socket.on('chat')
+
+  // let socketRoom; //Current room of the socket for chat prototype
+
+  // //Joining a room and sending them chat history
+  // socket.on('joinRoom', (data) => {
+  //   // const user = userJoin(socket.id, username, room);
+  //   socket.join(data.sessionID);
+  //   //sock
+  //   socketRoom = data.sessionID;
+  //   socketMap[socket.id] = data.guest;
+  //   //Send chat history to client
+  //   socket.broadcast
+  //     .to(data.sessionID)
+  //     .emit(
+  //       'message',
+  //       console.log(`${data.guest} has joined the room ${data.sessionID}`)
+  //     );
+  //   socket.emit('joinResponse', socketHistory[socketRoom]);
   // });
 
-  // socket.on('answerCall', (data) => {
-  //   io.to(data.to).emit('callAccepted', data.signal);
+  // socket.on('send_message', (data) => {
+  //   socket.to(data.sessionID).emit('receive_message', data);
+  // });
+
+  //Switch rooms
+  // socket.on('switchRoom', (data) => {
+  //   const { prevRoom, nextRoom } = data;
+  //   const userId = socketMap[socket.id];
+
+  //   if (prevRoom) {
+  //     socket.leave(prevRoom);
+  //   }
+  //   if (nextRoom) {
+  //     socket.join(nextRoom);
+  //     //socketMap[socket.id] = userId;
+
+  //     //send Chat history on room swap
+  //     socket.emit('joinResponse', socketHistory[nextRoom]);
+  //   }
+
+  //   socketRoom = nextRoom;
+  // });
+
+  //Send a msg to the current chat
+  // socket.on('sendChatMessage', (data) => {
+  //   const { message, room, name } = data;
+  //   let newMsg = message;
+  //   if (name) {
+  //     newMsg = `${name}: ${message}`;
+  //   }
+  //   socket.broadcast.to(socketRoom).emit('sendChatMessage', newMsg, name);
+
+  //this can be changed TODO
+
+  //let newMsg = message;
+  //   socketHistory[socketRoom] = socketHistory[socketRoom]
+  //     ? [newMsg, ...socketHistory[socketRoom]]
+  //     : [newMsg];
+  // });
+
+  //Change username of the socket
+  // socket.on('setSocketName', (username) => {
+  //   socketMap[socket.id] = username;
+  // });
+
+  // socket.on('disconnect', () => {
+  //   console.log("Disconnected :",socket.id);
+  //   //socket.broadcast.emit('callEnded');
+  // });
+  /*
+  socket.on('callUser', (data) => {
+    io.to(data.userToCall).emit('callUser', {
+      signal: data.signalData,
+      from: data.from,
+      name: data.name,
+    });
+  });
+
+  socket.on('answerCall', (data) => {
+    io.to(data.to).emit('callAccepted', data.signal);
+  });
+  */
+  // socket.on('SEND_MESSAGE', function (data) {
+  //   io.emit('RECEIVE_MESSAGE', data);
   // });
 
   // socket.on('audio-stream', (data) => {
   //   //console.log("Audio streaming.");
   //   chunks.push(data);
+  // });
+
+  // socket.on('audio-stream-start', () => {
+  //   console.log('Audio streaming started.');
   // });
 
   // socket.on('audio-stream-end', () => {
@@ -165,5 +257,7 @@ io.on('connection', (socket) => {
 });
 
 server.listen(port, () => console.log(`Listening on port ${port}`));
+
 app.use(express.static(path.resolve(__dirname, './client/build')));
+
 module.exports = app;

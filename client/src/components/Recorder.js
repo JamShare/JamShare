@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import socket from "../index";
+import socket from '../index';
 
 var audiocontext = new AudioContext();
+// var audioworkletnode = new AudioWorkletNode(audiocontext, "workletnode");
 var sources = [];
 
 class Recorder extends React.Component {
   constructor(props) {
     super(props);
-    
+
     this.state = {
       isRecording: false,
       isPlaying: false,
@@ -16,9 +17,9 @@ class Recorder extends React.Component {
       //data from Room.js (parent component)
       userlist: props.userlist,
       sessionID: props.sessionID,
-      username: props.guest
+      username: props.guest,
     };
-    console.log("recorder userlist: ", this.state.userlist);
+    console.log('recorder userlist: ', this.state.userlist);
     // const [image, setImage] = useState();
     // this.incomingStream = "";
     // this.outgoingStream = this.session + guestname;
@@ -55,11 +56,26 @@ class Recorder extends React.Component {
       this.audio = new Audio(audioURL);
     });
     socket.on('stream-to-download', (streamName) => {
-        console.log("Listening to stream name: ", streamName);
-        this.incomingStream = streamName;
+      console.log('Listening to stream name: ', streamName);
+      this.incomingStream = streamName;
     });
-    
   }
+
+  // useEffect(unknownParameter = () => {
+  //     const interval = setInterval(() => {
+
+  //         console.log('This will run every second!');
+
+  //         // ss(socket).emit('client-stream', stream, {name: filename});
+  //         // ss(socket).on('stream', function(this.stream) {};
+  //         // this.filestream.pipe(this.chunks);
+
+  //         ss(socket).emit('client-stream', this.stream);
+  //         this.stream.pipe(fs.createWriteStream(this.filename));
+
+  //     }, 1000);
+  //     return () => clearInterval(interval);
+  // },[]);
 
   // event handlers for recorder
   onDataAvailable(e) {
@@ -119,7 +135,7 @@ class Recorder extends React.Component {
     this.setState({ icon: this.playingIcon });
     this.setState({ isRecording: true });
     console.log('Recording started successfully.');
-    
+
     // this.socket.emit('audio-stream-start', this.outgoingStream);
     return;
   }
@@ -137,17 +153,17 @@ class Recorder extends React.Component {
     return;
   }
 
-    playRecording() {
-        if (this.state.isRecording) {
-            this.setState({icon: this.pauseIcon});
-        }
-        if (!this.state.isRecording) {
-            this.setState({icon: this.playingIcon});
-        }
-        // audiocontext.resume();
-        // this.connectMediaStream();
-        // setInterval(this.connectAudioBuffer, 5000);
-        /*
+  playRecording() {
+    if (this.state.isRecording) {
+      this.setState({ icon: this.pauseIcon });
+    }
+    if (!this.state.isRecording) {
+      this.setState({ icon: this.playingIcon });
+    }
+    // audiocontext.resume();
+    // this.connectMediaStream();
+    // setInterval(this.connectAudioBuffer, 5000);
+    /*
         if (!this.audio) {
             return;
         }
@@ -221,90 +237,92 @@ class Recorder extends React.Component {
   //     setImage(this.recordIcon);
   // }
 
-  runGame(){//runs when we click start streaming button. 
+  runGame() {
+    //runs when we click start streaming button.
     //name the stream for this user and send to antmedia server.
     this.streamOut = this.state.username + this.state.sessionID;
-    console.log("stream from this user:", this.streamOut);
+    console.log('stream from this user:', this.streamOut);
 
     //stream to listen to:
     var index = 0;
-    for(var i = 0; i < this.state.userlist; i++){
-      if(this.state.username === this.state.userlist[i])//this is the position we are in. listen to the person prior's stream.
-        if(i===0){
-          this.streamIn = this.state.userlist[this.state.userlist.length-1];
-          index=i;
+    for (var i = 0; i < this.state.userlist; i++) {
+      if (this.state.username === this.state.userlist[i])
+        if (i === 0) {
+          //this is the position we are in. listen to the person prior's stream.
+          this.streamIn = this.state.userlist[this.state.userlist.length - 1];
+          index = i;
+          break;
+        } else {
+          this.streamIn = this.state.userlist[i - 1];
+          index = i;
           break;
         }
-        else{
-          this.streamIn = this.state.userlist[i-1];
-          index=i;
-          break;
-        }     
     }
-    console.log("listening to stream name:",this.streamIn);
+    console.log('listening to stream name:', this.streamIn);
 
     //signal to next players that you are playing so they can begin listening.
-    let data = {index:index, sessionID:this.state.sessionID};
-    socket.emit("client-stream-out", data);
+    let data = { index: index, sessionID: this.state.sessionID };
+    socket.emit('client-stream-out', data);
 
-    //display countdown for player to start playing    
+    //display countdown for player to start playing
     this.countdownTimer();
     //or do this:
     //if(this.countdownTimer()){
-      //begin streaming
+    //begin streaming
     // }
   }
 
-  countdownTimer(){
-    this.startCountdown=true;
-    var myInterval = setInterval(function(){
-      if(this.countdown <= 0){
-        clearInterval(myInterval);//clear counter at 0
+  countdownTimer() {
+    this.startCountdown = true;
+    var myInterval = setInterval(function () {
+      if (this.countdown <= 0) {
+        clearInterval(myInterval); //clear counter at 0
         //BEGIN RECORDING/STREAMING:
         //return true;
-
-
-
+      } else {
+        this.countdown -= 1; //decrement counter
       }
-      else{
-        this.countdown-=1; //decrement counter
-      }
-    return false;
+      return false;
     }, 1000);
   }
 
   render() {
     return (
-        <div class="jamblock">
-            <h1>JAM</h1>
-            {/* <button onClick={buttonclicked()}> */}
-                <img class="round" src={this.state.icon} width="200" height="200"alt=" recording "></img>
-            {this.startCountdown ? <h1> {this.countdown} </h1> : <>{}</>}
+      <div className='jamblock'>
+        <h1>JAM</h1>
+        {/* <button onClick={buttonclicked()}> */}
+        <img
+          className='round'
+          src={this.state.icon}
+          width='200'
+          height='200'
+          alt=' recording '></img>
+        {this.startCountdown ? <h1> {this.countdown} </h1> : <>{}</>}
 
-            {/* </button> */}
-            <button onClick={this.featureRun}>
-                <image src={this.icon} alt=""></image>
-                {this.text}
-            </button>
+        {/* </button> */}
+        <button onClick={this.featureRun}>
+          <img src={this.icon} alt=''></img>
+          {this.text}
+        </button>
 
-            <button className='rec' onClick={this.getAudioDevice}>
-                Choose audio device
-            </button>
+        <button className='rec' onClick={this.getAudioDevice}>
+          Choose audio device
+        </button>
 
-            <button className='rec' onClick={this.startRecording}>
-                Start recording
-            </button>
+        <button className='rec' onClick={this.startRecording}>
+          Start recording
+        </button>
 
-            <button className='rec' onClick={this.stopRecording}>
-                Stop recording
-            </button>
+        <button className='rec' onClick={this.stopRecording}>
+          Stop recording
+        </button>
 
-            <button className='rec' onClick={this.playRecording}>
-                Play/pause recording
-            </button>
-        </div>
+        <button className='rec' onClick={this.playRecording}>
+          Play/pause recording
+        </button>
+      </div>
     );
-}
+  }
 }
 
 export default Recorder;
