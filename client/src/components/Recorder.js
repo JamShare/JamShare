@@ -240,7 +240,7 @@ function Recorder(props) {
         // console.log("New stream player order: ", playerOrder);
         // console.log("User List: ", state.userlist.at(-1));
         if (state.username === state.userlist.at(-1)) {
-            recorder = new MediaRecorder(streamOut);
+            recorder = new MediaRecorder(streamOut.stream);
 
             //initialize event handlers for recorder
             recorder.ondataavailable = onDataAvailable;
