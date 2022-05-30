@@ -54,7 +54,10 @@ function Recorder(props) {
     let recorderNode = null;
 
     const audioWorkletURL = new URL("./RecorderProcessor.js", import.meta.url);
-
+    recordContext.audioWorklet.addModule(audioWorkletURL.href)
+    .then(() => {
+        recorderNode = new AudioWorkletNode(recordContext, 'recorder-worklet');
+    })
     let recorder = null;
     let audio = null;
     let recordIcon = require('./assets/images/record.png')
@@ -87,16 +90,7 @@ function Recorder(props) {
     function startTheJam() {
         getPlayerOrder()
 
-        setTimeout(function () {
-            recordContext.audioWorklet.addModule(audioWorkletURL.href)
-                .then(() => {
-                    recorderNode = new AudioWorkletNode(recordContext, 'recorder-worklet');
-                })
-        }, 1000);
-
-        setTimeout(function () {
-            joinRoom();
-        }, 1000);
+        getAudioDevice();
 
         setTimeout(function () {
             joinRoom();
@@ -219,9 +213,9 @@ function Recorder(props) {
         //recorderSource = recordContext.createMediaStreamTrackSource(obj.track);
         let test = new MediaStream();
         test.addTrack(obj.track);
-
+        
         recorderSource = recordContext.createMediaStreamSource(test);
-
+        
         recorderSource.connect(recorderNode);
         recorderNode.connect(recordContext.destination);
         recorderNode.port.onmessage = (e) => {
@@ -236,7 +230,7 @@ function Recorder(props) {
         recordContext.resume();
 
         //For now nick merge test
-        setTimeout(function () { recorderNode.parameters.get('isRecording').setValueAtTime(1, recordContext.currentTime) }, 2000);
+        setTimeout(function(){recorderNode.parameters.get('isRecording').setValueAtTime(1, recordContext.currentTime)}, 2000);
         intervalReturn = setInterval(connectAudioBuffer, 1000); // connect an audio buffer every 1000ms
         playbackContext.resume();
         audioElement.srcObject.addTrack(streamOut.stream.getAudioTracks()[0]);
