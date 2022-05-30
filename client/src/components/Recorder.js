@@ -222,27 +222,8 @@ function Recorder(props) {
         console.log("obj track", obj.track);
 
         //Nick merge code-----------------------------------------------------------------
-        //recorderSource = recordContext.createMediaStreamTrackSource(obj.track);
-        let test = new MediaStream();
-        test.addTrack(obj.track);
-        
-        recorderSource = recordContext.createMediaStreamSource(test);
-        
+        recorderSource = recordContext.createMediaStreamTrackSource(obj.track);
         recorderSource.connect(recorderNode);
-        recorderNode.connect(recordContext.destination);
-        console.log("Recorder source", recorderSource);
-        console.log("Recorder node", recorderNode);
-        recorderNode.port.onmessage = (e) => {
-            if (e.data.eventType === 'data') {
-                console.log("E buffer", e.data.audioBuffer);
-                const audioData = e.data.audioBuffer;
-                createAudioBufferSource(audioData);
-            }
-            if (e.data.eventType === 'stop') {
-                // recording stopped
-            }
-        }
-        recordContext.resume();
         console.log("Remote stream acquired.");
 
         //For now nick merge test
@@ -391,6 +372,18 @@ function Recorder(props) {
         }
 
         connectMediaStreams();
+        recorderNode.connect(recordContext.destination);
+        recorderNode.port.onmessage = (e) => {
+            if (e.data.eventType === 'data') {
+                console.log("E buffer", e.data.audioBuffer);
+                const audioData = e.data.audioBuffer;
+                createAudioBufferSource(audioData);
+            }
+            if (e.data.eventType === 'stop') {
+                // recording stopped
+            }
+        }
+        recordContext.resume();
 
         //initiate adaptor
         webRTCAdaptor = initiateWebrtc(streamOut);

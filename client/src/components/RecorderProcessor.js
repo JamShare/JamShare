@@ -59,23 +59,25 @@ class RecorderWorkletProcessor extends AudioWorkletProcessor { // this worklet i
         });
     }
 
-    process(inputs, outputs, parameters) {
+    process(inputs, outputs, parameters) { // processes audio data
         const isRecordingValues = parameters.isRecording;
 
-        for (
-            let dataIndex = 0;
-            dataIndex < isRecordingValues.length;
-            dataIndex++
-        ) {
-            const shouldRecord = isRecordingValues[dataIndex] === 1;
-            if (!shouldRecord && !this._isBufferEmpty()) {
-                this._flush();
-                this._recordingStopped();
-            }
+        console.log(inputs[0]);
+        if (inputs[0]) {
+            for (
+                let dataIndex = 0;
+                dataIndex < isRecordingValues.length;
+                dataIndex++
+            ) {
+                const shouldRecord = isRecordingValues[dataIndex] === 1;
+                if (!shouldRecord && !this._isBufferEmpty()) {
+                    this._flush(); // clear buffer
+                    this._recordingStopped();
+                }
 
-            if (shouldRecord) {
-                console.log("Recorder node", inputs);
-                this._appendToBuffer(inputs[0][0][dataIndex]);
+                if (shouldRecord) {
+                    this._appendToBuffer(inputs[0][0][dataIndex]);
+                }
             }
         }
 
