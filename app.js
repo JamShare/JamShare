@@ -46,8 +46,8 @@ app.post('/auth/signin', async (req, res) => {
 
 //Server
 const tls = {
-  cert: fs.readFileSync("../fullchain.pem"),
-  key: fs.readFileSync("../privkey.pem"),
+  cert: fs.readFileSync("./fullchain.pem"),
+  key: fs.readFileSync("./privkey.pem"),
 };
 
 //Server
@@ -232,7 +232,7 @@ function assignPlayer(id) {
   }
 }
 
-server.listen(port, "berryhousehold.ddns.net", () => console.log(`Listening on port ${port}`));
+server.listen(port, () => console.log(`Listening on port ${port}`));
 
 app.use(express.static(path.resolve(__dirname, './client/build')));
 
