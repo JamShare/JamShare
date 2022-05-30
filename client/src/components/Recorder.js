@@ -2,10 +2,7 @@ import React from 'react';
 import { WebRTCAdaptor } from '../js/webrtc_adaptor.js';
 import { getUrlParameter } from "../js/fetch.stream.js";
 import { saveAs } from 'file-saver';
-import { getSocketEndpoint } from './componentConfig';
-const io = require('socket.io-client');
 const audioWorkletURL = new URL("./RecorderProcessor.js", import.meta.url);
-
 
 // recorder context records incoming audio; playback context plays it back to the user and combines local user audio 
 // with the recording(s) in order to create a new stream
@@ -19,8 +16,6 @@ recordContext.audioWorklet.addModule(audioWorkletURL.href)
 const playbackContext = new AudioContext();
 
 var sources = [];
-
-const SERVER = getSocketEndpoint();
 
 function Recorder(props) {
     //audio context sourcesuserlistsessionId
@@ -77,9 +72,6 @@ function Recorder(props) {
 
     //audio tracks
     let tracks = [];
-
-    //socketio
-    let socket = io.connect(SERVER);
 
     //room info
     let currentRoom = '' + state.sessionID + '-';
@@ -373,8 +365,6 @@ function Recorder(props) {
     //connect webrtc adaptor
     async function getAudioDevice() {
         //get player order from node server
-        socket.emit("player-connected", socket.id);
-        console.log("id", socket.id);
 
         try {
             stream = await navigator.mediaDevices
