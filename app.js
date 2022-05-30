@@ -21,9 +21,11 @@ app.use(bodyParser.json());
 app.use(cors());
 
 //just a response if people access server directly
+/*
 app.get('/', function (request, response) {
   response.sendFile(__dirname + '/message.json');
 });
+*/
 
 //Some cors and socket io things to make requests accepted from outsources
 app.post('/chat', function (request, response) {

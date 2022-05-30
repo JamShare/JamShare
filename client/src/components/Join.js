@@ -17,9 +17,6 @@ import socket from "../index";
 //const SERVER = 'http://localhost:3001';
 const SERVER = "https://berryhousehold.ddns.net:3001";
 
-
-
-
 // Join or create a Jam session room with link ID
 function Join(props) {
 
