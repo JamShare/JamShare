@@ -2,32 +2,21 @@ import React, { useEffect, useState, useRef } from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-// import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-// import FormLabel from "react-bootstrap/esm/FormLabel";
 import { Link, Navigate, useNavigate, useLocation } from "react-router-dom";
-// import { Socket } from 'socket.io-client';
 import Modal from 'react-bootstrap/Modal';
 import JamShareLogo from "./assets/images/JamShareLogo.jpg";
-
-
-// import {Morg_Signup} from "./component_export"
-
 import JoinModal from './JoinModal';
-// const io = require('socket.io-client');
-// const SERVER = "http://localhost:3001";
 import socket from "../index";
 
 
 // Join or create a Jam session room with link ID
 function Join(props) {
-
   const [sessionID, setSessionID] = useState("");
   const [showModal, setModal] = useState(false);
   const handleClose = () => setModal(false);
   const handleShow = () => setModal(true);
   const [copied, setCopied] = useState(false);
-//   const [joinSuccess, setJoinSuccess] = useState(false);
   const inputArea = useRef(null);
   const navigate = useNavigate();
   //state passed in from Signup.js
@@ -41,9 +30,9 @@ function Join(props) {
     // console.log(sessionID);//should have session_ID value in state sessionID but doesnt because its async
     handleShow();
   }); 
+
   useEffect(() => {
     console.log("session ID updated:",sessionID);
-    // setSessionID(sessionID)
   },[sessionID]);
 
   useEffect(() => {
@@ -57,9 +46,6 @@ function Join(props) {
   socket.on('join-session-failed', ()=>{
     alert(`Session ID: ${sessionID} does not exist.`)
   });
-
-
-  // }, [])
 
   const createSession = (room) => {
     room.preventDefault();

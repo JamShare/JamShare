@@ -1,18 +1,15 @@
-//Communicates with Room.js primarily.
-const socket = require('socket.io');
-// const { default: Participants } = require('../client/src/components/Participants.js');
-
 // server components:
 const Clients = require('./Clients.js');
 const Streams = require('./Stream.js');
 
+
+//Sessions manages instances of Session  
 class Sessions {
   constructor() {
-    //sessions indexed by sessionID containing clients
+    //sessions is indexed by sessionID
     this.sessions = new Map();
   }
 
-  // disconnectUser=(socket, sessionID, guest)=>{
   disconnectUser(socket){
     // try{
       const currentSID = this.findSessionIDFromSocketID(socket.id)
@@ -125,7 +122,6 @@ class Sessions {
     currentSession.sessionEmitChatmessage(data, socket);
   }
 
-
   // participantsOrder(data, socketID) {
   //   let session = this.findSessionIDFromSocketID(socketID);
   //   session.updateParticipants(data);
@@ -141,7 +137,7 @@ class Sessions {
 
 
 
-
+//Session: instance contains information about an active session.
 class Session {
   constructor(sessionID) {
     this.clients = new Clients();
@@ -179,9 +175,9 @@ class Session {
   //   socket.brodcast.to(sessionID).emit('participants-order', data);
   // }
 
-  notifyStreamStart(index, socket){
+  // notifyStreamStart(index, socket){
 
-  }
+  // }
 
   joinSession(socket, username) {
     try {

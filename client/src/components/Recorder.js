@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
-// import image1 from './assets/images/playing.png';
-// const io = require('socket.io-client');
-// const SERVER = 'http://localhost:3001';
 import socket from "../index";
 
 var audiocontext = new AudioContext();
-// var audioworkletnode = new AudioWorkletNode(audiocontext, "workletnode");
 var sources = [];
 
 class Recorder extends React.Component {
@@ -64,22 +60,6 @@ class Recorder extends React.Component {
     });
     
   }
-
-  // useEffect(unknownParameter = () => {
-  //     const interval = setInterval(() => {
-
-  //         console.log('This will run every second!');
-
-  //         // ss(socket).emit('client-stream', stream, {name: filename});
-  //         // ss(socket).on('stream', function(this.stream) {};
-  //         // this.filestream.pipe(this.chunks);
-
-  //         ss(socket).emit('client-stream', this.stream);
-  //         this.stream.pipe(fs.createWriteStream(this.filename));
-
-  //     }, 1000);
-  //     return () => clearInterval(interval);
-  // },[]);
 
   // event handlers for recorder
   onDataAvailable(e) {
