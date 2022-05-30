@@ -2,6 +2,7 @@ import React from 'react';
 import { WebRTCAdaptor } from '../js/webrtc_adaptor.js';
 import { getUrlParameter } from "../js/fetch.stream.js";
 import { saveAs } from 'file-saver';
+import Metronome from './metronome.js';
 
 function Recorder(props) {
     //audio context sourcesuserlistsessionId
@@ -9,10 +10,7 @@ function Recorder(props) {
     // with the recording(s) in order to create a new stream
     const recordContext = new AudioContext();
     const playbackContext = new AudioContext();
-    let acSources = [];
     let playerOrder = 0;
-    let ac = new AudioContext();
-    let acDest = ac.createMediaStreamDestination();
 
     let state = {
         isRecording: false,
@@ -56,6 +54,7 @@ function Recorder(props) {
     .then(() => {
         recorderNode = new AudioWorkletNode(recordContext, 'recorder-worklet');
     })
+    let metronome = null;
     let recorder = null;
     let audio = null;
     let recordIcon = require('./assets/images/record.png')
@@ -147,6 +146,7 @@ function Recorder(props) {
         return;
     }
 
+
     //remotely play each audio stream
     function playAudio(obj, trackPlayerId) {
         tracks.push(obj.trackId);
@@ -228,7 +228,10 @@ function Recorder(props) {
         recordContext.resume();
 
         //For now nick merge test
-        setTimeout(function(){recorderNode.parameters.get('isRecording').setValueAtTime(1, recordContext.currentTime)}, 2000);
+        setTimeout(function(){
+        recorderNode.parameters.get('isRecording').setValueAtTime(1, recordContext.currentTime);
+        metronome.startStop();
+        }, 2000);
         intervalReturn = setInterval(connectAudioBuffer, 1000); // connect an audio buffer every 1000ms
         playbackContext.resume();
         audioElement.srcObject.addTrack(streamOut.stream.getAudioTracks()[0]);
@@ -401,6 +404,7 @@ function Recorder(props) {
         var streamIn = playbackContext.createMediaStreamSource(stream); // local stream
         streamOut = playbackContext.createMediaStreamDestination(); // output new combined stream
         streamIn.connect(streamOut); // connect to new combined stream
+        metronome = new Metronome(120, playbackContext, streamOut);
     }
 
     //join the antmedia room with audio only amcu
