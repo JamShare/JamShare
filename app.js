@@ -40,12 +40,6 @@ app.post('/auth/signin', async (req, res) => {
 ///// end auth
 
 //Server
-const tls = {
-  cert: fs.readFileSync("./fullchain.pem"),
-  key: fs.readFileSync("./privkey.pem"),
-};
-
-//Server
 const server = http.createServer(app);
 const io = Socket(server, {
   cors: {
