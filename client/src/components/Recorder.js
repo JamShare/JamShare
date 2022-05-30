@@ -54,8 +54,6 @@ function Recorder(props) {
     //antmedia variables
     let webRTCAdaptor = null;
     let streamName = getUrlParameter("streamName");
-    //audio tracks
-    let tracks = [];
 
     //room info
     let currentRoom = '' + state.sessionID + '-';
@@ -74,16 +72,19 @@ function Recorder(props) {
         //get the current players order
         getPlayerOrder()
 
+        //we delay due to webRTCAdaptor needing init time per function
+
         //init the webrtc adaptor
         webRTCAdaptor = initiateWebrtc();
 
-        //join the room after a delay due to adaptor
+        //join the room
         setTimeout(function () {
-            joinRoom();
+            webRTCAdaptor.joinRoom(currentRoom, state.streamName, "multitrack", "amcu");
         }, 1000);
 
+        //init play
         setTimeout(function () {
-            startPlaying();
+            webRTCAdaptor.play(currentRoom, state.token, "");
         }, 1000);
     }
 
@@ -133,9 +134,8 @@ function Recorder(props) {
         return;
     }
 
-    //remotely play each audio stream
-    function playAudio(obj, trackPlayerId) {
-        tracks.push(obj.trackId);
+    //remotely play each antmedia audio stream
+    function playAudio(obj) {
         let room = currentRoom;
         let trackOrder = obj.trackId.slice(-1);
 
@@ -223,68 +223,6 @@ function Recorder(props) {
         }
     }
 
-    //add tracks to the antmedia room
-    function addTrackList(streamId, trackList) {
-        //addVideoTrack(streamId);
-        console.log("Track list", trackList);
-        trackList.forEach(function (trackId) {
-            addVideoTrack(trackId);
-        });
-    }
-
-    //play the enabled antmedia room tracks
-    function startPlaying() {
-        var enabledTracks = [];
-        //tracks to play if we are player 2
-        if (playerOrder === 2) {
-            console.log("Player Order: ", playerOrder);
-            console.log("Tracks Order: ", tracks);
-
-            tracks.forEach(function (trackId) {
-                if (trackId === "1") {
-                    enabledTracks.push("1");
-                }
-                else {
-                    enabledTracks.push(("!") + trackId);
-                }
-            });
-        }
-        //tracks to play if we are player 3 
-        else if (playerOrder === 3) {
-            console.log("Player Order: ", playerOrder);
-            tracks.forEach(function (trackId) {
-                if (trackId === "1") {
-                    enabledTracks.push("1");
-                }
-                else if (trackId === "2") {
-                    enabledTracks.push("2");
-                }
-                else {
-                    enabledTracks.push(("!") + trackId);
-                }
-            });
-        }
-        //if not player 2 or 3 mute all tracks
-        else {
-            tracks.forEach(function (trackId) {
-                enabledTracks.push(("!") + trackId);
-            });
-        }
-        //play the room tracks
-        //streamId = "room1";
-        webRTCAdaptor.play(currentRoom, state.token, "");
-    }
-
-    //add antmedia stream to track list
-    function addVideoTrack(trackId) {
-        tracks.push(trackId);
-    }
-
-    //enable checked track
-    // function enableTrack(trackId, isEnabled) {
-    //     webRTCAdaptor.enableTrack(currentRoom, trackId, isEnabled);
-    // }
-
     //create antmedia remote audio player
     function createRemoteAudio(streamId, playerName) {
         var player = document.createElement("div");
@@ -292,11 +230,6 @@ function Recorder(props) {
         player.id = '' + playerName;
         player.innerHTML = '<video id="remoteVideo' + streamId + '"controls autoplay playsinline></video>' + playerName;
         document.getElementById("players").appendChild(player);
-    }
-
-    //join the antmedia room with audio only amcu
-    function joinRoom() {
-        webRTCAdaptor.joinRoom(currentRoom, state.streamName, "multitrack", "amcu");
     }
 
     //publish the local stream
@@ -329,7 +262,6 @@ function Recorder(props) {
                     console.log("publish finished");
                 } else if (info === "trackList") {
                     console.log("trackList", obj.streamId);
-                    addTrackList(obj.streamId, obj.trackList);
                 } else if (info === "joinedTheRoom") {
                     console.log("Object ID", obj.streamId);
                     publish(obj.streamId, state.token);
