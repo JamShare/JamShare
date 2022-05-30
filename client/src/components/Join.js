@@ -157,8 +157,8 @@ function Join(props) {
             </div>
         </div>
         <div class="jybannerb">
-      Portland State University - JamShare - 2022
-      </div>
+          Portland State University - JamShare - 2022
+        </div>
         </>
     );
 }

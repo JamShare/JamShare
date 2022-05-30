@@ -146,11 +146,10 @@ function Signup(props) {
         <div className="banner">
           <img className="jamshare-logo" src={JamShareLogo} alt="logo" />
         </div>
+        <br></br>
+        <h1 className={'gentext orange'}>Let's get Jammin'</h1>
         <div className='childbox'>
           <br></br>
-          <h1 className={'gentext orange'}>Let's get Jammin'</h1>
-          <br></br>
-
           <div className="signupbox">
             <div className="childbox-signups">
               <h2>Sign In</h2>
@@ -172,14 +171,16 @@ function Signup(props) {
                 />
                 <br></br>
                 <Button variant="primary" type="submit" color="orange">
-                  Sign Up and Jam!
+                  Sign In and Jam!
                 </Button>
+                {/* <br></br> */}
               </form>
             </div>
 
             <div className="childbox-signups">
               <h2>Sign Up</h2>
               <form onSubmit={handleSignup}>
+              <br></br>
                 <FormLabel className={"purple"}>Username </FormLabel>
                 <Form.Control
                   type="username"
@@ -198,6 +199,7 @@ function Signup(props) {
                 <Button variant="primary" type="submit" color="orange">
                   Sign Up and Jam!
                 </Button>
+                {/* <br></br> */}
               </form>
             </div>
           </div>
@@ -224,6 +226,9 @@ function Signup(props) {
             </Form>
           </div>
         </div>
+      </div>
+      <div class="jybannerb">
+        Portland State University - JamShare - 2022
       </div>
     </>
   );
