@@ -11,7 +11,6 @@ const { userJoin, getCurrentUser } = require('./Users');
 const fs = require("fs");
 
 const {register_new_user, validate_creds} = require("./auth/auth.js")
-let players = [];
 
 var app = express();
 
