@@ -54,8 +54,6 @@ var sessions = new Sessions();
 // Listening for incoming connections
 io.on('connection', (socket) => {
   console.log('client connected:', socket.id);
-  //recieve the data from the user
-  clientObject = undefined;
   socket.on('create-session', (data) => {
     try {
       sessions.createSession(data, socket);
@@ -100,6 +98,7 @@ io.on('connection', (socket) => {
       console.log(error);
     }
   });
+
   //update participants on server and broadcast to client when new user joins or host changes order
   socket.on('participants-order', (data) => {
     try {
@@ -138,105 +137,6 @@ io.on('connection', (socket) => {
     }
   });
 
-  //broadcast incoming stream to all clients in session
-  // socket.on('client-audio-stream', (data) => {
-  //   sessions.streamToSession(data, socket);
-  // });
-
-  //socket.emit('me', socket.id);
-
-  // socket.on('chat')
-
-  // let socketRoom; //Current room of the socket for chat prototype
-
-  // //Joining a room and sending them chat history
-  // socket.on('joinRoom', (data) => {
-  //   // const user = userJoin(socket.id, username, room);
-  //   socket.join(data.sessionID);
-  //   //sock
-  //   socketRoom = data.sessionID;
-  //   socketMap[socket.id] = data.guest;
-  //   //Send chat history to client
-  //   socket.broadcast
-  //     .to(data.sessionID)
-  //     .emit(
-  //       'message',
-  //       console.log(`${data.guest} has joined the room ${data.sessionID}`)
-  //     );
-  //   socket.emit('joinResponse', socketHistory[socketRoom]);
-  // });
-
-  // socket.on('send_message', (data) => {
-  //   socket.to(data.sessionID).emit('receive_message', data);
-  // });
-
-  //Switch rooms
-  // socket.on('switchRoom', (data) => {
-  //   const { prevRoom, nextRoom } = data;
-  //   const userId = socketMap[socket.id];
-
-  //   if (prevRoom) {
-  //     socket.leave(prevRoom);
-  //   }
-  //   if (nextRoom) {
-  //     socket.join(nextRoom);
-  //     //socketMap[socket.id] = userId;
-
-  //     //send Chat history on room swap
-  //     socket.emit('joinResponse', socketHistory[nextRoom]);
-  //   }
-
-  //   socketRoom = nextRoom;
-  // });
-
-  //Send a msg to the current chat
-  // socket.on('sendChatMessage', (data) => {
-  //   const { message, room, name } = data;
-  //   let newMsg = message;
-  //   if (name) {
-  //     newMsg = `${name}: ${message}`;
-  //   }
-  //   socket.broadcast.to(socketRoom).emit('sendChatMessage', newMsg, name);
-
-  //this can be changed TODO
-
-  //let newMsg = message;
-  //   socketHistory[socketRoom] = socketHistory[socketRoom]
-  //     ? [newMsg, ...socketHistory[socketRoom]]
-  //     : [newMsg];
-  // });
-
-  //Change username of the socket
-  // socket.on('setSocketName', (username) => {
-  //   socketMap[socket.id] = username;
-  // });
-
-  // socket.on('disconnect', () => {
-  //   console.log("Disconnected :",socket.id);
-  //   //socket.broadcast.emit('callEnded');
-  // });
-  /*
-  socket.on('callUser', (data) => {
-    io.to(data.userToCall).emit('callUser', {
-      signal: data.signalData,
-      from: data.from,
-      name: data.name,
-    });
-  });
-
-  socket.on('answerCall', (data) => {
-    io.to(data.to).emit('callAccepted', data.signal);
-  });
-  */
-  // socket.on('SEND_MESSAGE', function (data) {
-  //   io.emit('RECEIVE_MESSAGE', data);
-  // });
-
-  // socket.on('audio-stream', (data) => {
-  //   //console.log("Audio streaming.");
-  //   chunks.push(data);
-  // });
-
   // socket.on('audio-stream-start', () => {
   //   console.log('Audio streaming started.');
   // });
@@ -257,7 +157,5 @@ io.on('connection', (socket) => {
 });
 
 server.listen(port, () => console.log(`Listening on port ${port}`));
-
 app.use(express.static(path.resolve(__dirname, './client/build')));
-
 module.exports = app;

@@ -61,22 +61,6 @@ class Recorder extends React.Component {
     });
   }
 
-  // useEffect(unknownParameter = () => {
-  //     const interval = setInterval(() => {
-
-  //         console.log('This will run every second!');
-
-  //         // ss(socket).emit('client-stream', stream, {name: filename});
-  //         // ss(socket).on('stream', function(this.stream) {};
-  //         // this.filestream.pipe(this.chunks);
-
-  //         ss(socket).emit('client-stream', this.stream);
-  //         this.stream.pipe(fs.createWriteStream(this.filename));
-
-  //     }, 1000);
-  //     return () => clearInterval(interval);
-  // },[]);
-
   // event handlers for recorder
   onDataAvailable(e) {
     console.log(e.data);

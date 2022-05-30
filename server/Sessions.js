@@ -2,6 +2,7 @@
 const Clients = require('./Clients.js');
 const Streams = require('./Stream.js');
 
+//Sessions manages instances of Session
 class Sessions {
   constructor() {
     //sessions indexed by sessionID containing clients
@@ -155,6 +156,8 @@ class Sessions {
   }
 }
 
+
+//Session manages instances of Clients in session connected to give SessionID
 class Session {
   constructor(sessionID) {
     this.clients = new Clients();
