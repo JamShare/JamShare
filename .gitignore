@@ -1,0 +1,14 @@
+node_modules/
+client/node_modules/
+server/node_modules/
+Junk
+package-lock.json
+client/package-lock.json
+server/package-lock.json
+my-app/build/static/css/main.31d6cfe0.css
+my-app/build/static/js/main.f76dcc65.js
+my-app/build/asset-manifest.json
+my-app/build/index.html
+my-app/build/robots.txt
+my-app/build/static/js/main.f76dcc65.js.LICENSE.txt
+my-app/build/static/js/main.f76dcc65.js.map

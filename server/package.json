@@ -1,0 +1,31 @@
+{
+  "name": "bandtmp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js",
+    "heroku-postbuild": "cd client && npm install && npm run build"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.2",
+    "client-sessions": "^0.8.0",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "debug": "~4.3.4",
+    "express": "^4.17.3",
+    "heroku": "^7.2.0",
+    "http-errors": "^2.0.0",
+    "morgan": "~1.10.0",
+    "node-blob": "^0.0.2",
+    "path": "^0.12.7",
+    "pg": "^8.7.3",
+    "pug": "^3.0.2",
+    "request": "^2.88.2",
+    "socket.io": "^4.4.1",
+    "socket.io-stream": "^0.5.3"
+  },
+  "author": "",
+  "license": "ISC"
+}
