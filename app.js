@@ -58,7 +58,8 @@ io.on('connection', (socket) => {
   socket.on('create-session', (data) => {
     try{
       sessions.createSession(data, socket);
-    }catch(error){console.log(error); 
+    }catch(error){
+      console.log(error); 
       socket.emit('error',error);
     }
   });
@@ -66,35 +67,57 @@ io.on('connection', (socket) => {
   //'join-session' emitted from client when user clicks 'join jam session' in /Join.js modal popup, or when user enters session ID in orange box and presses enter.
   socket.on('join-session', (data) => {
     try{
-    sessions.joinSession(data, socket);
+      sessions.joinSession(data, socket);
     } catch(error){
       console.log(error);
+      socket.emit('error',error);
     }
   });
 
   socket.on('client-stream-out', (data) => {
-    sessions.streamStarting(data, socket);
+    try{
+      sessions.streamStarting(data, socket);
+    } catch(error){
+      console.log(error);
+      socket.emit('error',error);
+    }
   });
   
   socket.on('chat-message', (data) => {
     try{sessions.emitChatMessage(data, socket);
-    } catch(error){console.log(error);}
+    } catch(error){
+      console.log(error);
+      socket.emit('error',error);
+    }
   });
 
   //update participants on server and broadcast to client when new user joins or host changes order
   socket.on('participants-order', (data) => {
-    sessions.participantsOrder(data, socket);
+    try{
+      sessions.participantsOrder(data, socket);
+    } catch(error){
+      console.log(error);
+      socket.emit('error',error);
+    }
   });
 
   socket.on('server-update-userlist', (data) => {
     try{
-    console.log("app updating userlist",data);
-    sessions.updateUserList(data.updatedList, data.sessionID, socket);
-    } catch(error){ console.log(error); }
+      console.log("app updating userlist",data);
+      sessions.updateUserList(data.updatedList, data.sessionID, socket);
+    } catch(error){ 
+      console.log(error); 
+      socket.emit('error',error);
+    }
   });
 
   socket.on('get-userlist', (data) => {
-    let userList = sessions.getUserList();
+    try{
+      let userList = sessions.getUserList();
+    } catch(error){ 
+        console.log(error); 
+        socket.emit('error',error);
+    }
   });
 
   socket.on('disconnect', ()=>{
