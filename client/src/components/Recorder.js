@@ -99,9 +99,6 @@ function Recorder(props) {
         }, 1000);
 
         setTimeout(function () {
-            joinRoom();
-        }, 1000);
-        setTimeout(function () {
             getTracks();
         }, 1000);
         setTimeout(function () {
