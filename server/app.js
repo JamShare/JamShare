@@ -8,6 +8,7 @@ const Socket = require('socket.io');
 const port = process.env.PORT || 3001;
 const Sessions = require('./Sessions.js');
 const { userJoin, getCurrentUser } = require('./Users');
+const fs = require("fs");
 
 const {register_new_user, validate_creds} = require("./auth/auth.js")
 let players = [];
