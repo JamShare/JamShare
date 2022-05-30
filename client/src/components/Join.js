@@ -48,6 +48,7 @@ function Join(props) {
   });
 
   const createSession = (room) => {
+    console.log('Creating session BUTTON CLICK');
     room.preventDefault();
     socket.emit('create-session', guest);
   };
@@ -71,29 +72,33 @@ function Join(props) {
     );
   }
 
+  function copyLink() {
+    console.log('CopyLink', sessionID);
+    updateClipboard(sessionID);
+  }
+  /*
   function copyLink(event) {
+    
     inputArea.current?.select();
-    document.execCommand("copy");
-    event.target.focus();
-    navigator.permissions
-      .query({ name: "clipboard-write" })
-      .then((result) => {
-        if (result.state === "granted" || result.state === "prompt") {
-          updateClipboard(inputArea.current?.innerText);
-        }
-      });
-    }
+    document.execCommand('copy');
 
+    event.target.focus();
+    navigator.permissions.query({ name: 'clipboard-write' }).then((result) => {
+      if (result.state === 'granted' || result.state === 'prompt') {
+        updateClipboard(inputArea.current?.innerText);
+      }
+    });
+  }
+*/
   return (
     <>
       <Modal
+        {...props}
         aria-labelledby='contained-modal-title-vcenter'
         show={showModal}
         title={guest}
         data={sessionID}
         onHide={handleClose}
-        {...props}
-        socket='value'
         centered
         size='xl'>
         <Modal.Header closeButton className='purplebg'>
@@ -102,15 +107,15 @@ function Join(props) {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body className='show-grid purplebg'>
-        <Container>
+          <Container>
             <Row>
               <Col lg={4}></Col>
-                <Col lg={4} id="a" >
+              <Col lg={4} id='a'>
                 <input
                   ref={inputArea}
-                  value={sessionID}
-                  ></input>
-                </Col>
+                  onChange={(e) => setSessionID(e.target.value)}
+                  value={sessionID}></input>
+              </Col>
               <Col lg={4}></Col>
             </Row>
           </Container>
@@ -150,6 +155,8 @@ function Join(props) {
             <Col></Col>
             <Col>
               <h2>Create New Jam Session</h2>
+              {/* <div className='purple-new-id'> */}
+              {/* <br></br> */}
               <Button
                 variant='flat'
                 className='purple-new-id'
@@ -157,10 +164,14 @@ function Join(props) {
                 onClick={createSession}>
                 <h2>Create New ID</h2>
               </Button>
+              {/* </div> */}
             </Col>
             <Col></Col>
           </Row>
         </div>
+      </div>
+      <div className='jybannerb'>
+        Portland State University - JamShare - 2022
       </div>
     </>
   );
