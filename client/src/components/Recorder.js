@@ -4,11 +4,6 @@ import { getUrlParameter } from "../js/fetch.stream.js";
 import { saveAs } from 'file-saver';
 
 function Recorder(props) {
-    //audio context sourcesuserlistsessionId
-    let acSources = [];
-    let playerOrder = 0;
-    let ac = new AudioContext();
-    let acDest = ac.createMediaStreamDestination();
 
     let state = {
         isRecording: false,
@@ -45,22 +40,27 @@ function Recorder(props) {
         isShow: false
     };
 
+    //audio context variables
+    let acSources = [];
+    let playerOrder = 0;
+    let ac = new AudioContext();
+    let acDest = ac.createMediaStreamDestination();
+
+    //recorder variables
     let chunks = [];
     let recorder = null;
     let audio = null;
-    let recordIcon = require('./assets/images/record.png')
-    let playingIcon = require('./assets/images/playing.png')
 
     //antmedia variables
     let webRTCAdaptor = null;
     let streamName = getUrlParameter("streamName");
-
     //audio tracks
     let tracks = [];
 
     //room info
     let currentRoom = '' + state.sessionID + '-';
 
+    //gets the player order in the jam
     function getPlayerOrder() {
         for (let i = 0; i < state.userlist.length; i++) {
             if (state.username === state.userlist[i]) {
@@ -69,18 +69,19 @@ function Recorder(props) {
         }
     }
 
+    //start the jam
     function startTheJam() {
+        //get the current players order
         getPlayerOrder()
-        console.log("recorder userlist: ", state.userlist);
-        console.log("Current player order: ", playerOrder);
-        getAudioDevicePlayer();
 
+        //init the webrtc adaptor
+        webRTCAdaptor = initiateWebrtc();
+
+        //join the room after a delay due to adaptor
         setTimeout(function () {
             joinRoom();
         }, 1000);
-        setTimeout(function () {
-            getTracks();
-        }, 1000);
+
         setTimeout(function () {
             startPlaying();
         }, 1000);
@@ -222,12 +223,6 @@ function Recorder(props) {
         }
     }
 
-    //get the tracks in the antmedia room
-    function getTracks() {
-        //streamId = "room1";
-        webRTCAdaptor.getTracks(currentRoom, state.token);
-    }
-
     //add tracks to the antmedia room
     function addTrackList(streamId, trackList) {
         //addVideoTrack(streamId);
@@ -297,12 +292,6 @@ function Recorder(props) {
         player.id = '' + playerName;
         player.innerHTML = '<video id="remoteVideo' + streamId + '"controls autoplay playsinline></video>' + playerName;
         document.getElementById("players").appendChild(player);
-    }
-
-    //connect webrtc adaptor
-    function getAudioDevicePlayer() {
-        //initiate adaptor
-        webRTCAdaptor = initiateWebrtc();
     }
 
     //join the antmedia room with audio only amcu
