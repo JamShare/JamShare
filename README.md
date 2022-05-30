@@ -21,3 +21,5 @@ go to localhost:3000 in FireFox only.
 
 # Sponsor
 * Dave Howell
+
+#[MIT Liscence](https://github.com/JamShare/JamShare/blob/main/LICENSE)
