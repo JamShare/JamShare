@@ -71,7 +71,10 @@ function Join(props) {
       );
     }
     
-  function copyLink() {
+  function copyLink(event) {
+    inputArea.current?.select();
+    document.execCommand("copy");
+    event.target.focus();
     navigator.permissions
       .query({ name: "clipboard-write" })
       .then((result) => {
@@ -101,8 +104,11 @@ function Join(props) {
           <Container>
             <Row>
               <Col lg={4}></Col>
-                <Col lg={4} id="a" ref={inputArea} className='purple' >
-                  {sessionID}
+                <Col lg={4} id="a" >
+                <input
+                  ref={inputArea}
+                  value={sessionID}
+                  ></input>
                 </Col>
               <Col lg={4}></Col>
             </Row>
@@ -150,6 +156,9 @@ function Join(props) {
                 </Row>
             </div>
         </div>
+        <div class="jybannerb">
+      Portland State University - JamShare - 2022
+      </div>
         </>
     );
 }
