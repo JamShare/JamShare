@@ -1,14 +1,13 @@
 import React from 'react';
 import image1 from './assets/images/playing.png';
 // audioworklet workaround?
-const audioWorkletURL = new URL("./RecorderProcessor.js", import.meta.url);
 
 // recorder context records incoming audio; playback context plays it back to the user and combines local user audio 
 // with the recording(s) in order to create a new stream
 const recordContext = new AudioContext();
 var recorderNode = null;
 
-recordContext.audioWorklet.addModule(audioWorkletURL.href)
+recordContext.audioWorklet.addModule("RecorderProcessor.js")
 .then(() => {
     recorderNode = new AudioWorkletNode(recordContext, 'recorder-worklet');
 })
