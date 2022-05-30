@@ -7,27 +7,14 @@ import image2 from './assets/images/user.jpg';
 import image4 from './assets/images/dragup.jpg';
 import image3 from './assets/images/add.jpg';
 import image5 from './assets/images/dragdn.jpg';
-import { Link, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import socket from "../index";
-import { getSocketEndpoint } from './componentConfig';
-// let { state: {sessionID, guest}} = {}  = useLocation(); //gets the variable we passed from navigate
-
-const SERVER = getSocketEndpoint();
-
 // class Participants extends React.Component {
 function Participants(props) {
-
-  // React state to track order of items
-    // const [users, setUsers] = useState([]);
-  // const socket = props.socket;
-  
-
-    // const [sessionID, setSessionID] = useState(props.seshID);
     console.log("participants sessionID", props.sessionID);
     console.log("participants userlist:", props.userlist);
 
-  // Function to update list on drop
+    // Function to update list on drop
   const handleDrop = (droppedItem) => {
     // Ignore drop outside droppable container
     if (!droppedItem.destination) return;
@@ -42,48 +29,6 @@ function Participants(props) {
     console.log('Sending updated order to server',data);
     socket.emit('server-update-userlist', data);
   };
-    //happens in room.js
-//   socket.on('client-update-userlist', (usernames) => {
-    // console.log('user order update');
-    // setUsers(props.userlist); //this is where it actually gets updated
-//   });
-
-
-
-//   socket.on('participants', (usernames) => {
-//     console.log('user order update');
-//     this.setState({ participants: usernames }); //this is where it actually gets updated
-//     if (this.socket.id == usernames[0].socketID) setHost({ host: true });
-//     else setHost({ host: false });
-//   });
-
-  
-  // const[index, setIndex] = useState(0);
-  // this.state={
-  //     users: [guest, "test0", "test1"],
-  // }
-
-  // console.log(users);
-  // let temparray = users;
-  // temp.splice(0,5,"zach");
-  // console.log(temp);
-
-  //for component extending react
-  // setUsers({temp});
-  // constructor(props) {
-  //     super(props);
-
-  //     this.state = {
-  //         participants: ['jammer1', 'jammer2', 'jammer3', 'jammer4', 'jammer5'],
-  //         host: true,
-  //     };
-
-  // this.participants = ['jammer1', 'jammer2', 'jammer3', 'jammer4', 'jammer5'];
-  //     this.socket = io.connect(SERVER);
-  // socket.on('client-update-userlist', (usernames) => {
-  //   console.log('user order update');
-  //   setUsers(usernames); //this is where it actually gets updated
-  // });
 
   return (
     <div className='userblock'>
@@ -117,8 +62,6 @@ function Participants(props) {
       </div>      
     </div>
   );
-
-  // }
 }
 
 export default Participants;

@@ -2,30 +2,20 @@ import React, { useEffect, useState, useRef } from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-// import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-// import FormLabel from "react-bootstrap/esm/FormLabel";
 import { Link, Navigate, useNavigate, useLocation } from "react-router-dom";
-// import { Socket } from 'socket.io-client';
 import Modal from 'react-bootstrap/Modal';
 import JamShareLogo from "./assets/images/JamShareLogo.jpg";
 import JoinModal from './JoinModal';
 import socket from "../index";
-import { getSocketEndpoint } from './componentConfig';
-
-// import {Morg_Signup} from "./component_export"
-
-const SERVER = getSocketEndpoint();
 
 // Join or create a Jam session room with link ID
 function Join(props) {
-
   const [sessionID, setSessionID] = useState("");
   const [showModal, setModal] = useState(false);
   const handleClose = () => setModal(false);
   const handleShow = () => setModal(true);
   const [copied, setCopied] = useState(false);
-//   const [joinSuccess, setJoinSuccess] = useState(false);
   const inputArea = useRef(null);
   const navigate = useNavigate();
   //state passed in from Signup.js
@@ -39,9 +29,9 @@ function Join(props) {
     // console.log(sessionID);//should have session_ID value in state sessionID but doesnt because its async
     handleShow();
   }); 
+
   useEffect(() => {
     console.log("session ID updated:",sessionID);
-    // setSessionID(sessionID)
   },[sessionID]);
 
   useEffect(() => {
@@ -55,9 +45,6 @@ function Join(props) {
   socket.on('join-session-failed', ()=>{
     alert(`Session ID: ${sessionID} does not exist.`)
   });
-
-
-  // }, [])
 
   const createSession = (room) => {
     room.preventDefault();
@@ -83,7 +70,10 @@ function Join(props) {
       );
     }
     
-  function copyLink() {
+  function copyLink(event) {
+    inputArea.current?.select();
+    document.execCommand("copy");
+    event.target.focus();
     navigator.permissions
       .query({ name: "clipboard-write" })
       .then((result) => {
@@ -102,24 +92,28 @@ function Join(props) {
         onHide={handleClose}
         centered
         size="xl"
+        
       >
-        <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-vcenter">
+        <Modal.Header closeButton className='purplebg'>
+          <Modal.Title id="contained-modal-title-vcenter" className='orange'>
               {guest}, Share this link with your fellow Jammers!
           </Modal.Title>
         </Modal.Header>
-        <Modal.Body className="show-grid">
+        <Modal.Body className="show-grid purplebg">
           <Container>
             <Row>
               <Col lg={4}></Col>
-                <Col lg={4} id="a" ref={inputArea} >
-                  {sessionID}
+                <Col lg={4} id="a" >
+                <input
+                  ref={inputArea}
+                  value={sessionID}
+                  ></input>
                 </Col>
               <Col lg={4}></Col>
             </Row>
           </Container>
         </Modal.Body>
-        <Modal.Footer>
+        <Modal.Footer className='purplebg'>
             <Button onClick={copyLink}>Copy to Clipboard</Button>
             <Button onClick={joinSession} >Join Session</Button>
             <Button onClick={handleClose}>Close</Button>
@@ -161,6 +155,9 @@ function Join(props) {
                 </Row>
             </div>
         </div>
+        <div class="jybannerb">
+      Portland State University - JamShare - 2022
+      </div>
         </>
     );
 }

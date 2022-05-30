@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { render } from 'react-dom';
-import { getSocketEndpoint } from './components/componentConfig';
 
 import {
   Signup,
@@ -18,18 +17,22 @@ import './index.css';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 
 const io = require('socket.io-client');
-const SERVER = getSocketEndpoint();
+const SERVER = "https://gentle-lake-00593.herokuapp.com";
+
 let socket = io(SERVER);
 export default socket; //https://stackoverflow.com/questions/48794919/reactjs-socket-io-best-way-to-handle-socket-connection
 
+socket.on('error', error=>{
+  console.log("server error", error);
+});
 
 ReactDOM.render(
   <div>
     <BrowserRouter>
       <Routes>
-        <Route exact path='/' element={<Signup />} />
-        <Route path='/join' element={<Join />} />
-        <Route path='/room' element={<Room />} />
+        <Route exact path='/' element={<Signup/>} />
+        <Route path='/join' element={<Join/>} />
+        <Route path='/room' element={<Room/>} />
         <Route path='/signup2' element={<Morg_Signup />} />
         <Route path='/signin2' element={<Morg_Signin />} />
       </Routes>

@@ -142,17 +142,17 @@ function Signup(props) {
         </Modal.Footer>
       </Modal>
 
-      <div class="Signup" className={"bgcolor"}>
-        <div class="banner">
-          <img class="jamshare-logo" src={JamShareLogo} alt="logo" />
+      <div className="Signup bgcolor">
+        <div className="banner">
+          <img className="jamshare-logo" src={JamShareLogo} alt="logo" />
         </div>
         <div className='childbox'>
           <br></br>
           <h1 className={'gentext orange'}>Let's get Jammin'</h1>
           <br></br>
 
-          <div class="signupbox">
-            <div class="childbox-signups">
+          <div className="signupbox">
+            <div className="childbox-signups">
               <h2>Sign In</h2>
               <form onSubmit={handleSignin}>
                 <br></br>
@@ -177,7 +177,7 @@ function Signup(props) {
               </form>
             </div>
 
-            <div class="childbox-signups">
+            <div className="childbox-signups">
               <h2>Sign Up</h2>
               <form onSubmit={handleSignup}>
                 <FormLabel className={"purple"}>Username </FormLabel>
@@ -202,7 +202,7 @@ function Signup(props) {
             </div>
           </div>
 
-          <div class="childbox-guest">
+          <div className="childbox-guest">
             <h2>Continue as Guest</h2>
             <Form onSubmit={handleGuest}>
               <Form.Group className="mb-3" controlID="formBasicUsername">
