@@ -227,8 +227,6 @@ function Recorder(props) {
         
         recorderSource.connect(recorderNode);
         recorderNode.connect(recordContext.destination);
-        console.log("Recorder source", recorderSource);
-        console.log("Recorder node", recorderNode);
         recorderNode.port.onmessage = (e) => {
             if (e.data.eventType === 'data') {
                 console.log("E buffer", e.data.audioBuffer);
