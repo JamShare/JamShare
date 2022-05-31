@@ -5,6 +5,8 @@ import { saveAs } from 'file-saver';
 
 function Recorder(props) {
 
+    const [isShowRecordButton, setIsShowRecordButton] = React.useState(false);
+
     let state = {
         isRecording: false,
         isPlaying: false,
@@ -37,7 +39,6 @@ function Recorder(props) {
         },
         //URL to antmedia server
         websocketURL: "wss://berryhousehold.ddns.net:5443/WebRTCAppEE/websocket",
-        isShow: false
     };
 
     //audio context variables
@@ -102,6 +103,7 @@ function Recorder(props) {
     }
 
     function startRecording() {
+        console.log("attempt to record", recorder);
         if (!recorder) {
             return;
         }
@@ -203,11 +205,11 @@ function Recorder(props) {
             //Push ac sources
             const source = ac.createMediaStreamTrackSource(dest.stream.getAudioTracks()[0]);
             acSources.push(source);
-            console.log("Acsource length", acSources.length);
 
             //if we have all of the streams
             if (acSources.length === playerOrder - 1) {
 
+                console.log("mediarecord init", acSources.length);
                 //connect all of the sources
                 for (let i = 0; i < acSources.length; i++) {
                     console.log("i acDest: ", acSources[i]);
@@ -216,11 +218,15 @@ function Recorder(props) {
 
                 //create the media recorder for the last player
                 console.log("acDest: ", acDest);
-                recorder = new MediaRecorder(acDest.stream)
+                recorder = new MediaRecorder(acDest.stream);
+
+                console.log("Recorder", recorder);
 
                 // initialize event handlers for recorder
                 recorder.ondataavailable = onDataAvailable;
                 recorder.onstop = onStop;
+
+                setIsShowRecordButton(!isShowRecordButton);
             }
         }
     }
@@ -317,16 +323,27 @@ function Recorder(props) {
                 Start The Jam!
             </button>
 
-            <button onClick={startRecording}>
-                Start recording
-            </button>
+            <>
+                {isShowRecordButton ?
 
-            <button onClick={stopRecording}>
-                Stop recording
-            </button>
-            <button onClick={playRecording}>
-                Play recording
-            </button>
+                    <div id="record-buttons">
+                        <button onClick={startRecording}>
+                            Start recording
+                        </button>
+
+                        <button onClick={stopRecording}>
+                            Stop recording
+                        </button>
+
+                        <button onClick={playRecording}>
+                            Play recording
+                        </button>
+                    </div>
+                    :
+                    <></>
+                }
+            </>
+
             <div>
                 Local Audio
                 <audio id="local_audio" autoPlay muted playsInline controls={true} />
