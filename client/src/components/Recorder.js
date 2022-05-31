@@ -45,9 +45,8 @@ function Recorder(props) {
         //URL to antmedia server
         websocketURL: "wss://berryhousehold.ddns.net:5443/WebRTCAppEE/websocket",
         isShow: false,
-        delay: .25,
     };
-
+    const [delay, setDelay] = useState(0);
     let sources = [];
     let chunks = [];
     let recorderNode = null;
@@ -403,7 +402,7 @@ function Recorder(props) {
 
     function connectMediaStreams() {
         var streamIn = playbackContext.createMediaStreamSource(stream); // local stream
-        delayNode = playbackContext.createDelay(this.state.delay);
+        delayNode = playbackContext.createDelay(delay);
         streamOut = playbackContext.createMediaStreamDestination(); // output new combined stream
         streamIn.connect(streamOut); // connect to new combined stream
         delayNode.connect(streamOut);
@@ -522,7 +521,7 @@ function Recorder(props) {
             <input
                     type='text'
                     name='session'
-                    onChange={(e) => this.setState({ delay: e.target.value })}
+                    onChange={(e) => setDelay(e.target.value)}
             />
             <input type='submit' value='Submit' />
         </div>
