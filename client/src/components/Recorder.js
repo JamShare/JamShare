@@ -372,7 +372,7 @@ function Recorder(props) {
         connectMediaStreams();
 
         //initiate adaptor
-        webRTCAdaptor = initiateWebrtc(streamOut);
+        setTimeout(function() {webRTCAdaptor = initiateWebrtc(streamOut)}, 500);
         return;
     }
 
@@ -459,7 +459,9 @@ function Recorder(props) {
 
                 } else if (info === "newStreamAvailable") {
                     let tempOrder = obj.trackId.slice(-1);
-                    if (parseInt(tempOrder, 10) < parseInt(playerOrder, 10)) {
+                    if (parseInt(tempOrder, 10) === parseInt(playerOrder-1, 10)) {
+                        console.log("Player Order: ", playerOrder);
+                        console.log("Temp order: ", tempOrder);
                         // console.log("Playing", obj.trackId);
                         playAudio(obj);
                     }
