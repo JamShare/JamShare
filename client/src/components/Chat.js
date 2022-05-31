@@ -1,39 +1,64 @@
 import React, { useEffect, useState, useRef } from 'react';
 import socket from '../index';
 function Chat(props) {
+  const initialValues = {
+    // type all the fields you need
+    username: '',
+    justMsg: '',
+    msg: '',
+  };
   const [message, setMessage] = useState('');
-  const [chat, setChat] = useState([]);
+  const [chat, setChat] = useState([initialValues]);
+  const [chatHistory, setChatHistory] = useState([]);
 
   useEffect(() => {
+    //console.log('new-chat-history BEFORE CHAT:', chat);
     setChat([]);
+    //console.log('new-chat-history after CHAT:', chat);
     socket.on('new-chat-history', (msg) => {
       console.log('new-chat-history:', msg);
+      //console.log('new-chat-history CHAT:', chat);
       if (!msg) {
         setChat([]);
+        //console.log('new-chat-history CHAT EMPTY:', chat);
       } else {
         setChat(msg);
+        //console.log('new-chat-history CHAT FOUN:', chat);
       }
     });
 
-    socket.on('new-chat-message', (msg) => {
-      console.log('new-chat-messaged:', msg);
-      if (msg) {
-        setChat((oldChats) => [msg, ...oldChats]);
+    socket.on('new-chat-message', (data) => {
+      console.log('new-chat-messaged:', data);
+      //console.log('current chat ', chat);
+      setChat((oldChats) => [data, ...oldChats]);
+      if (chat[0].justMsg === 'empty') {
+        //chat.pop();
+        //console.log('current EMPTY chat ', chat);
+        //chat.push(data);
       } else {
-        setChat(msg);
+        //chat.push(data);
+        //console.log('current chatPUSH  ', chat);
       }
     });
+
     console.log('SOCKET DONE');
   }, []);
 
   const sendMessage = (e) => {
     e.preventDefault();
     if (message == '') return;
-
     let newMsg = `${props.guest}: ${message}`;
-    setChat((oldChats) => [newMsg, ...oldChats]);
+    var msgValues = {
+      // type all the fields you need
+      username: props.guest,
+      justMsg: message,
+      msg: newMsg,
+    };
+    //chat.push(msgValues);
+    setChat((oldChats) => [msgValues, ...oldChats]);
     var data = {
       username: props.guest,
+      justMsg: message,
       msg: newMsg,
       sessionID: props.sessionID,
     };
@@ -64,7 +89,12 @@ function Chat(props) {
         <button className='a2' onClick={sendMessage}>
           Send
         </button>
-        {chat && chat.map((m, i) => <p key={i}>{m}</p>)}
+        {chat &&
+          chat.map((m, i) => (
+            <p key={i}>
+              {m.username}:{m.justMsg}
+            </p>
+          ))}
       </div>
     </div>
   );
