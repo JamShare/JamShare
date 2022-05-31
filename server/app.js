@@ -144,33 +144,7 @@ io.on('connection', (socket) => {
     }
   });
 
-  // socket.on('audio-stream-start', () => {
-  //   console.log('Audio streaming started.');
-  // });
-
-  // socket.on('audio-stream-end', () => {
-  //   console.log('Audio streaming ended.');
-  //   // emits to all connected clients
-  //   // TODO change this when we establish multiple rooms
-  //   io.emit('audio-blob', chunks);
-  //   chunks = [];
-  // });
-
-  // socket.on('create-audio-file', function(data)  {
-  //   let blob = new Blob(this.chunks, {'type': 'audio/ogg; codecs=opus'})
-  //   let audioURL = URL.createObjectURL(blob);
-  //   this.audio = new Audio(audioURL);
-  // });
 });
-
-function assignPlayer(id) {
-  if (players.includes(id)) {
-    return players.length;
-  } else {
-    players.push(id);
-    return players.length;
-  }
-}
 
 server.listen(port, "berryhousehold.ddns.net", () => console.log(`Listening on port ${port}`));
 

@@ -1,15 +1,10 @@
-import React, { useEffect, useState, useRef } from 'react';
-// import Container from 'react-bootstrap/Container';
-// import Row from 'react-bootstrap/Row';
-// import Col from 'react-bootstrap/Col';
-import Button from 'react-bootstrap/Button';
 import image2 from './assets/images/user.jpg';
 import image4 from './assets/images/dragup.jpg';
 import image3 from './assets/images/add.jpg';
 import image5 from './assets/images/dragdn.jpg';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import socket from "../index";
-// class Participants extends React.Component {
+
 function Participants(props) {
     console.log("participants sessionID", props.sessionID);
     console.log("participants userlist:", props.userlist);
