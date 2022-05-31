@@ -97,7 +97,7 @@ function Join(props) {
       >
         <Modal.Header closeButton className='purplebg'>
           <Modal.Title id="contained-modal-title-vcenter" className='orange'>
-              {guest}, Share this link with your fellow Jammers!
+              {guest}, share this link with your fellow Jammers!
           </Modal.Title>
         </Modal.Header>
         <Modal.Body className="show-grid purplebg">
@@ -121,34 +121,35 @@ function Join(props) {
         </Modal.Footer>
       </Modal>
         <div id="container"  className={'bgcolor'} >
-            <div class="banner">
+            <div class="banner" aria-label="pageBanner">
                 <img class="jamshare-logo" src={JamShareLogo} alt="logo" />
             </div>
             <br></br>
             <br></br>
             <h1 className={'gentext orange'}>Let's get Jammin'</h1>
-            <div className='joinbox'>
+            <div className='joinbox' aria-label="joinOrCreateBox">
                 <Row>    
                     <Col></Col>
                     <Col> 
-                        <h2>Join Existing Jam Session</h2>
+                        <h2 className="orange-text">Join Existing Jam Session</h2>
                         <div className='orange-session-id'>
                             <br></br>
                             <br></br>
-                            <h2>Enter ID:</h2>
-                            <form onSubmit={joinSession} >
-                                <input type="text" name="session" onChange={e => setSessionID(e.target.value)}  />
-                                <input type="submit" value="Submit"/> 
+                            <h2 className="white-text">Enter ID:</h2>
+                            <form onSubmit={joinSession} aria-label="sessionIdInput">
+                                <label id="sessionIdInputLabel" for="sessionIdInput"></label>
+                                <input id="sessionIdInput" type="text" name="session" onChange={e => setSessionID(e.target.value)}  />
+                                <input className="join-submit-btn" type="submit" value="Join"/> 
                             </form>
                         </div>
                     </Col>
                     <Col></Col>
                     <Col>
-                        <h2>Create New Jam Session</h2>
+                        <h2 className="orange-text">Create New Jam Session</h2>
                         {/* <div className='purple-new-id'> */}
                             {/* <br></br> */}
-                            <Button variant="flat" className='purple-new-id' flex style={{backgroundColor: "purple"}} onClick={createSession}>
-                                <h2>Create New ID</h2>
+                            <Button variant="flat" className='purple-new-id' flex style={{backgroundColor: "purple"}} onClick={createSession} aria-label="newIdButton">
+                                <h2 className="orange-text">Create New ID</h2>
                             </Button>
                         {/* </div> */}
                     </Col>
@@ -157,7 +158,8 @@ function Join(props) {
             </div>
         </div>
         <div class="jybannerb">
-          Portland State University - JamShare - 2022
+          Portland State University - JamShare - 2022 -&nbsp;
+          <a className="about-us" href="https://github.com/JamShare">About Us</a>
         </div>
         </>
     );

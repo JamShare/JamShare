@@ -143,77 +143,81 @@ function Signup(props) {
       </Modal>
 
       <div className="Signup bgcolor">
-        <div className="banner">
+        <div className="banner" aria-label="pageBanner">
           <img className="jamshare-logo" src={JamShareLogo} alt="logo" />
         </div>
         <br></br>
         <h1 className={'gentext orange'}>Let's get Jammin'</h1>
         <div className='childbox'>
           <br></br>
-          <div className="signupbox">
-            <div className="childbox-signups">
-              <h2>Sign In</h2>
+          <div className="signupbox" aria-label="signInOrUpCredentialBoxes">
+            <div className="childbox-signups" aria-label="signInWithExistingAccount">
+              <h2 className="purple-text">Sign In</h2>
               <form onSubmit={handleSignin}>
                 <br></br>
-                <FormLabel className={"purple"}>Username </FormLabel>
+                <FormLabel id="signinUsernameLabel" for="signinUsername" className={"purple"}>Username </FormLabel>
                 <Form.Control
                   type="username"
                   placeholder="Enter Username"
                   onChange={(e) => set_signin_usn(e.target.value)}
                   value={signin_usn}
+                  id="signinUsername"
                 />
-                <FormLabel className={"purple"}>Password </FormLabel>
+                
+                <FormLabel id="signinPasswordLabel" for="signinPassword" className={"purple"}>Password </FormLabel>
                 <Form.Control
                   type="password"
                   placeholder="Enter Password"
                   onChange={(e) => set_signin_psw(e.target.value)}
                   value={signin_psw}
+                  id="signinPassword"
                 />
                 <br></br>
                 <Button variant="primary" type="submit" color="orange">
                   Sign In and Jam!
                 </Button>
-                {/* <br></br> */}
               </form>
             </div>
 
-            <div className="childbox-signups">
-              <h2>Sign Up</h2>
+            <div className="childbox-signups" aria-label="signUpWithNewAccount">
+              <h2 className="purple-text">Sign Up</h2>
               <form onSubmit={handleSignup}>
               <br></br>
-                <FormLabel className={"purple"}>Username </FormLabel>
+                <FormLabel id="signupUsernameLabel" for="signupUsername" className={"purple"}>Username </FormLabel>
                 <Form.Control
                   type="username"
                   placeholder="Enter Username"
                   onChange={(e) => set_signup_usn(e.target.value)}
                   value={signup_usn}
+                  id="signupUsername"
                 />
-                <FormLabel className={"purple"}>Password </FormLabel>
+                <FormLabel id="signupPasswordLabel" for="signupPassword" className={"purple"}>Password </FormLabel>
                 <Form.Control
                   type="password"
                   placeholder="Enter Password"
                   onChange={(e) => set_signup_psw(e.target.value)}
                   value={signup_psw}
+                  id="signupPassword"
                 />{" "}
                 <br></br>
                 <Button variant="primary" type="submit" color="orange">
                   Sign Up and Jam!
                 </Button>
-                {/* <br></br> */}
               </form>
             </div>
           </div>
 
-          <div className="childbox-guest">
-            <h2>Continue as Guest</h2>
+          <div className="childbox-guest" aria-label="signInAsGuest">
+            <h2 className="purple-text">Continue as Guest</h2>
             <Form onSubmit={handleGuest}>
               <Form.Group className="mb-3" controlID="formBasicUsername">
-                <FormLabel className={"purple"}> Username </FormLabel>
+                <FormLabel id="guestUsernameLabel" for="guestUsername" className={"purple"}> Username </FormLabel>
                 <Form.Control
                   type="username"
                   name="guest"
                   placeholder="Enter Username"
                   onChange={(e) => setGuest(e.target.value)}
+                  id="guestUsername"
                 />
               </Form.Group>
               {/* can't get button to fit styling (purple color) without changing to Link type */}
@@ -228,7 +232,8 @@ function Signup(props) {
         </div>
       </div>
       <div class="jybannerb">
-        Portland State University - JamShare - 2022
+        Portland State University - JamShare - 2022 -&nbsp;
+        <a className="about-us" href="https://github.com/JamShare">About Us</a>
       </div>
     </>
   );
