@@ -112,7 +112,7 @@ function Recorder(props) {
         setTimeout(function () {
             joinRoom();
         }, 1000);
-        } catch {
+        } catch (error) {
             console.log('Error in joinRoom:', error);
         }
 
@@ -120,7 +120,7 @@ function Recorder(props) {
         setTimeout(function () {
             getTracks();
         }, 1000);
-        } catch {
+        } catch (error) {
             console.log('Error in getTracks:', error);
         }
 
@@ -128,7 +128,7 @@ function Recorder(props) {
         setTimeout(function () {
             startPlaying();
         }, 1000);
-        } catch {
+        } catch (error) {
             console.log('Error in startPlaying:', error);
         }
     }
