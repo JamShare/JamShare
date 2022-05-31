@@ -4,7 +4,6 @@ const path = require('path');
 const bodyParser = require('body-parser');
 var cors = require('cors');
 const https = require('https');
-const http = require('http');
 const Socket = require('socket.io');
 const port = process.env.PORT || 3001;
 const Sessions = require('./Sessions.js');
@@ -41,7 +40,7 @@ app.post('/auth/signin', async (req, res) => {
 });
 
 ///// end auth
-/*
+
 //Server
 const tls = {
   cert: fs.readFileSync("../fullchain.pem"),
@@ -50,16 +49,6 @@ const tls = {
 
 //Server
 const server = https.createServer(tls, app);
-const io = Socket(server, {
-  cors: {
-    methods: ['GET', 'POST'],
-  },
-});
-
-*/
-
-//Server
-const server = http.createServer(app);
 const io = Socket(server, {
   cors: {
     methods: ['GET', 'POST'],
