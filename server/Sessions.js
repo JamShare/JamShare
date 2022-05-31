@@ -1,11 +1,8 @@
-//Communicates with Room.js primarily.
-const socket = require('socket.io');
-// const { default: Participants } = require('../client/src/components/Participants.js');
-
 // server components:
 const Clients = require('./Clients.js');
 const Streams = require('./Stream.js');
 
+//Sessions manages instances of Session
 class Sessions {
   constructor() {
     //sessions indexed by sessionID containing clients
@@ -138,8 +135,13 @@ class Sessions {
   }
 
   emitChatMessage(data, socket) {
+    let newData = {
+      username: data.username,
+      justMsg: data.justMsg,
+      msg: data.msg,
+    };
     var currentSession = this.sessions.get(data.sessionID);
-    currentSession.sessionEmitChatmessage(data, socket);
+    currentSession.sessionEmitChatmessage(newData, socket);
   }
   emitChatHistory(data, socket) {
     var currentSession = this.sessions.get(data.sessionID);
@@ -159,6 +161,7 @@ class Sessions {
   }
 }
 
+//Session manages instances of Clients in session connected to give SessionID
 class Session {
   constructor(sessionID) {
     this.clients = new Clients();
@@ -173,21 +176,25 @@ class Session {
   // }
 
   sessionEmitChatmessage(data, socket) {
-    let newdata = { newMsg: data.msg };
+    let newdata = {
+      username: data.username,
+      justMsg: data.justMsg,
+      msg: data.msg,
+    };
 
     //socket.emit('new-chat-message', newdata);
-    socket.to(this.sessionID).emit('new-chat-message', data.msg); //sends to everyone else in the session
+    socket.to(this.sessionID).emit('new-chat-message', newdata); //sends to everyone else in the session
     //socket.emit('new-chat-message', newdata); //required to send back to client that sent the update
     //socket.broadcast.to(this.sessionID).emit('new-chat-message', newdata);
     this.sessionChatHistory[this.sessionID] = this.sessionChatHistory[
       this.sessionID
     ]
-      ? [data.msg, ...this.sessionChatHistory[this.sessionID]]
-      : [data.msg];
+      ? [newdata, ...this.sessionChatHistory[this.sessionID]]
+      : [newdata];
     console.log(
       'sesssion emit message:',
       this.sessionID,
-      data.msg,
+      newdata,
       this.sessionChatHistory
     );
   }
@@ -214,7 +221,7 @@ class Session {
   //   socket.brodcast.to(sessionID).emit('participants-order', data);
   // }
 
-  notifyStreamStart(index, socket) {}
+  //notifyStreamStart(index, socket) {}
 
   joinSession(socket, username) {
     try {

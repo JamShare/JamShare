@@ -1,54 +1,64 @@
 import React, { useEffect, useState, useRef } from 'react';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
-import FormLabel from 'react-bootstrap/esm/FormLabel';
 import socket from '../index';
-var num = 0;
 function Chat(props) {
+  const initialValues = {
+    // type all the fields you need
+    username: '',
+    justMsg: '',
+    msg: '',
+  };
   const [message, setMessage] = useState('');
-  const [chat, setChat] = useState([]);
+  const [chat, setChat] = useState([initialValues]);
+  const [chatHistory, setChatHistory] = useState([]);
 
-  // export const joinChatRoom = (cb) => {
-  //   if (!socket) {
-  //     return true;
-  //   }
-  //   socket.on('sendChatMessage', (msg, name) => {
-  //     return cb(null, msg);
-  //   });
   useEffect(() => {
-    console.log('use effect ');
+    //console.log('new-chat-history BEFORE CHAT:', chat);
     setChat([]);
+    //console.log('new-chat-history after CHAT:', chat);
     socket.on('new-chat-history', (msg) => {
       console.log('new-chat-history:', msg);
+      //console.log('new-chat-history CHAT:', chat);
       if (!msg) {
         setChat([]);
+        //console.log('new-chat-history CHAT EMPTY:', chat);
       } else {
         setChat(msg);
+        //console.log('new-chat-history CHAT FOUN:', chat);
       }
     });
 
-    socket.on('new-chat-message', (msg) => {
-      console.log('new-chat-messaged:', msg);
-      if (msg) {
-        setChat((oldChats) => [msg, ...oldChats]);
+    socket.on('new-chat-message', (data) => {
+      console.log('new-chat-messaged:', data);
+      //console.log('current chat ', chat);
+      setChat((oldChats) => [data, ...oldChats]);
+      if (chat[0].justMsg === 'empty') {
+        //chat.pop();
+        //console.log('current EMPTY chat ', chat);
+        //chat.push(data);
       } else {
-        setChat(msg);
+        //chat.push(data);
+        //console.log('current chatPUSH  ', chat);
       }
     });
+
     console.log('SOCKET DONE');
   }, []);
 
   const sendMessage = (e) => {
     e.preventDefault();
     if (message == '') return;
-
     let newMsg = `${props.guest}: ${message}`;
-    setChat((oldChats) => [newMsg, ...oldChats]);
+    var msgValues = {
+      // type all the fields you need
+      username: props.guest,
+      justMsg: message,
+      msg: newMsg,
+    };
+    //chat.push(msgValues);
+    setChat((oldChats) => [msgValues, ...oldChats]);
     var data = {
       username: props.guest,
+      justMsg: message,
       msg: newMsg,
       sessionID: props.sessionID,
     };
@@ -79,91 +89,15 @@ function Chat(props) {
         <button className='a2' onClick={sendMessage}>
           Send
         </button>
-        {chat && chat.map((m, i) => <p key={i}>{m}</p>)}
+        {chat &&
+          chat.map((m, i) => (
+            <p key={i}>
+              {m.username}:{m.justMsg}
+            </p>
+          ))}
       </div>
     </div>
   );
 }
 
 export default Chat;
-
-// class Chat extends React.Component {
-//   constructor(props) {
-//     super(props);
-
-//     this.state = {
-//       username: '',
-//       message: '',
-//       messages: [],
-//     };
-//     this.socket = io();
-//     this.socket.on('RECEIVE_MESSAGE', function (data) {
-//       addMessage(data);
-//     });
-
-//     const addMessage = (data) => {
-//       console.log(data);
-//       this.setState({ messages: [...this.state.messages, data] });
-//       console.log(this.state.messages);
-//     };
-
-//     this.sendMessage = (ev) => {
-//       ev.preventDefault();
-//       this.socket.emit('SEND_MESSAGE', {
-//         author: this.state.username,
-//         message: this.state.message,
-//       });
-//       this.setState({ message: '' });
-//     };
-//   render() {
-//     return (
-//       <div class="chatblock"></div>
-//     );
-//   }
-// }
-
-//   render() {
-//     return (
-//       <div className='chat'>
-//         <div className='chat-container'>
-//           <div className='chat-body'>
-//             <div className='chat-title'>Live Chat</div>
-//             <hr />
-//             <div className='messages'>
-//               {this.state.messages.map((message) => {
-//                 return (
-//                   <div>
-//                     {message.author}: {message.message}
-//                   </div>
-//                 );
-//               })}
-//             </div>
-//           </div>
-//           <div className='chat-elements'>
-//             <input
-//               type='text'
-//               placeholder='Username'
-//               value={this.state.username}
-//               onChange={(ev) => this.setState({ username: ev.target.value })}
-//               className='form-control'
-//             />
-//             <br />
-//             <input
-//               type='text'
-//               placeholder='Message'
-//               className='form-control'
-//               value={this.state.message}
-//               onChange={(ev) => this.setState({ message: ev.target.value })}
-//             />
-//             <br />
-//             <button
-//               onClick={this.sendMessage}
-//               className='btn btn-primary form-control'>
-//               Send
-//             </button>
-//           </div>
-//         </div>
-//       </div>
-//     );
-//   }
-// }

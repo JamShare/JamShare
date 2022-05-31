@@ -1,331 +1,362 @@
-import React, { useState } from 'react';
-// import image1 from './assets/images/playing.png';
-// const io = require('socket.io-client');
-// const SERVER = 'http://localhost:3001';
-import socket from '../index';
+import React from 'react';
+import { WebRTCAdaptor } from '../js/webrtc_adaptor';
+import { getUrlParameter } from '../js/fetch.stream.js';
+import { saveAs } from 'file-saver';
 
-var audiocontext = new AudioContext();
-// var audioworkletnode = new AudioWorkletNode(audiocontext, "workletnode");
-var sources = [];
+function Recorder(props) {
+  let state = {
+    isRecording: false,
+    isPlaying: false,
+    icon: '',
+    text: 'Jam!',
+    userlist: props.userlist,
+    sessionID: props.sessionID,
+    username: props.guest,
 
-class Recorder extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      isRecording: false,
-      isPlaying: false,
-      icon: require('./assets/images/record.png'),
-      text: 'Jam!',
-      //data from Room.js (parent component)
-      userlist: props.userlist,
-      sessionID: props.sessionID,
-      username: props.guest,
-    };
-    console.log('recorder userlist: ', this.state.userlist);
-    // const [image, setImage] = useState();
-    // this.incomingStream = "";
-    // this.outgoingStream = this.session + guestname;
-    this.countdown = 3;
-    this.startCountdown = false;
-
-    this.streamOut = null;
-    this.stream = null;
-    this.recorder = null;
-    this.audio = null;
-    this.recordIcon = require('./assets/images/stop.jpg');
-    this.playingIcon = require('./assets/images/play.jpg');
-    this.pauseIcon = require('./assets/images/paus.jpg');
-
-    //bind functions to instance
-    this.onDataAvailable = this.onDataAvailable.bind(this);
-    this.onStop = this.onStop.bind(this);
-    this.getAudioDevice = this.getAudioDevice.bind(this);
-    this.startRecording = this.startRecording.bind(this);
-    this.stopRecording = this.stopRecording.bind(this);
-    this.playRecording = this.playRecording.bind(this);
-    this.createAudioSource = this.createAudioSource.bind(this);
-    this.connectMediaStream = this.connectMediaStream.bind(this);
-    this.connectAudioBuffer = this.connectAudioBuffer.bind(this);
-    this.countdownTimer = this.countdownTimer(this);
-
-    // this.socket = io.connect(SERVER);
-    // this.socket = props.socket;
-
-    socket.on('audio-blob', (chunks) => {
-      console.log('Audio blob recieved.');
-      let blob = new Blob(chunks, { type: 'audio/ogg; codecs=opus' });
-      let audioURL = URL.createObjectURL(blob);
-      this.audio = new Audio(audioURL);
-    });
-    socket.on('stream-to-download', (streamName) => {
-      console.log('Listening to stream name: ', streamName);
-      this.incomingStream = streamName;
-    });
-  }
-
-  // useEffect(unknownParameter = () => {
-  //     const interval = setInterval(() => {
-
-  //         console.log('This will run every second!');
-
-  //         // ss(socket).emit('client-stream', stream, {name: filename});
-  //         // ss(socket).on('stream', function(this.stream) {};
-  //         // this.filestream.pipe(this.chunks);
-
-  //         ss(socket).emit('client-stream', this.stream);
-  //         this.stream.pipe(fs.createWriteStream(this.filename));
-
-  //     }, 1000);
-  //     return () => clearInterval(interval);
-  // },[]);
-
-  // event handlers for recorder
-  onDataAvailable(e) {
-    console.log(e.data);
-
-    e.data.arrayBuffer().then((arraybuffer) => {
-      console.log(arraybuffer);
-      this.createAudioSource(arraybuffer);
-    });
-    // this.socket.emit("audio-stream", e.data);
-  }
-
-  onStop(e) {
-    console.log('Recording stopped successfully.');
-    // this.socket.emit("audio-stream-end");
-  }
-
-  // asks for permission to use audio device from user
-  // if declined or error, returns a null stream
-  async getAudioDevice() {
-    this.stream = null;
-    try {
-      this.stream = await navigator.mediaDevices.getUserMedia({
-        audio: {
-          echoCancellation: false,
-          autoGainControl: false,
-          noiseSuppression: false,
-          latency: 0,
+    //the following constraints allow the best for music
+    mediaConstraints: {
+      audio: {
+        echoCancellation: false,
+        autoGainControl: false,
+        noiseSuppression: false,
+        latency: 0,
+      },
+    },
+    streamName: getUrlParameter('streamName'),
+    token: getUrlParameter('token'),
+    pc_config: {
+      iceServers: [
+        {
+          urls: 'stun:stun.l.google.com:19302',
         },
-      });
-    } catch (err) {
-      console.error(err);
-      this.stream = null;
-    }
+      ],
+      sdpSemantics: 'unified-plan',
+    },
+    sdpConstraints: {
+      OfferToReceiveAudio: false,
+      OfferToReceiveVideo: false,
+    },
+    //URL to antmedia server
+    websocketURL: 'wss://berryhousehold.ddns.net:5443/WebRTCAppEE/websocket',
+    isShow: false,
+  };
 
-    this.recorder = null;
-    if (this.stream) {
-      this.recorder = new MediaRecorder(this.stream);
+  //audio context variables
+  let acSources = [];
+  let playerOrder = 0;
+  let ac = new AudioContext();
+  let acDest = ac.createMediaStreamDestination();
 
-      // initialize event handlers for recorder
-      this.recorder.ondataavailable = this.onDataAvailable;
-      this.recorder.onstop = this.onStop;
+  //recorder variables
+  let chunks = [];
+  let recorder = null;
+  let audio = null;
 
-      console.log('Recording device acquired successfully.');
-    }
-    return;
-  }
+  //antmedia variables
+  let webRTCAdaptor = null;
+  let streamName = getUrlParameter('streamName');
 
-  startRecording() {
-    if (!this.recorder) {
-      return;
-    }
-    if (this.state.isRecording) {
-      return;
-    }
-    this.recorder.start(5000);
-    this.setState({ icon: this.playingIcon });
-    this.setState({ isRecording: true });
-    console.log('Recording started successfully.');
+  //room info
+  let currentRoom = '' + state.sessionID + '-';
 
-    // this.socket.emit('audio-stream-start', this.outgoingStream);
-    return;
-  }
-
-  stopRecording() {
-    if (!this.recorder) {
-      return;
-    }
-    if (!this.state.isRecording) {
-      return;
-    }
-    this.setState({ icon: this.recordIcon });
-    this.recorder.stop();
-    this.setState({ isRecording: false });
-    return;
-  }
-
-  playRecording() {
-    if (this.state.isRecording) {
-      this.setState({ icon: this.pauseIcon });
-    }
-    if (!this.state.isRecording) {
-      this.setState({ icon: this.playingIcon });
-    }
-    // audiocontext.resume();
-    // this.connectMediaStream();
-    // setInterval(this.connectAudioBuffer, 5000);
-    /*
-        if (!this.audio) {
-            return;
-        }
-        this.audio.play();
-        return;
-        */
-  }
-
-  // settimeout to start the function
-  // setinterval to repeat
-
-  // takes recorded audio data and creates an audio source from it
-  createAudioSource(audioData) {
-    console.log('Creation Started');
-    audiocontext
-      .decodeAudioData(audioData)
-      .then((buffer) => {
-        let bufferIn = audiocontext.createBufferSource(); //creates audio input into audio graph that utilizes audio buffers.
-        bufferIn.buffer = buffer;
-        bufferIn.onended = (bufferIn) => {
-          bufferIn.disconnect();
-        };
-        sources.push(bufferIn);
-        console.log('Creation Completed');
-      })
-      .catch((err) => {
-        console.log('Error: Failed to create audio buffer.');
-        console.error(err);
-      });
-  }
-
-  connectAudioBuffer() {
-    let audioBuffer = sources.splice(0, 1);
-    // audioBuffer.connect(audiocontext.destination);
-    // audioBuffer.connect(this.streamOut);
-    audioBuffer.start(1000);
-  }
-
-  connectMediaStream() {
-    var streamIn = audiocontext.createMediaStreamSource(this.stream); // local stream
-    this.streamOut = audiocontext.createMediaStreamDestination(); // output new combined stream
-
-    // bufferIn.connect(streamOut); // connect to new combined stream
-    streamIn.connect(this.streamOut); // connect to new combined stream
-    // bufferIn.connect(audiocontext.destination); // connect to hardware
-    // streamIn.connect(audiocontext.destination);
-    // bufferIn.start(); // start buffer input
-    // audiocontext.resume(); // start audio context
-  }
-
-  featureRun() {
-    if (!this.recorder) {
-      this.getAudioDevice();
-    }
-
-    if (this.state.isRecording) {
-      this.stopRecording();
-      this.setState({ icon: this.playingIcon });
-      this.setState({ text: 'Recording' });
-    }
-
-    if (!this.state.isRecording) {
-      this.startRecording();
-      this.setState({ icon: this.recordIcon });
-      this.setState({ text: 'stopped' });
-    }
-  }
-
-  // buttonclicked(){
-  //     // console.log("buttonclicked");
-  //     setImage(this.recordIcon);
-  // }
-
-  runGame() {
-    //runs when we click start streaming button.
-    //name the stream for this user and send to antmedia server.
-    this.streamOut = this.state.username + this.state.sessionID;
-    console.log('stream from this user:', this.streamOut);
-
-    //stream to listen to:
-    var index = 0;
-    for (var i = 0; i < this.state.userlist; i++) {
-      if (this.state.username === this.state.userlist[i])
-        if (i === 0) {
-          //this is the position we are in. listen to the person prior's stream.
-          this.streamIn = this.state.userlist[this.state.userlist.length - 1];
-          index = i;
-          break;
-        } else {
-          this.streamIn = this.state.userlist[i - 1];
-          index = i;
-          break;
-        }
-    }
-    console.log('listening to stream name:', this.streamIn);
-
-    //signal to next players that you are playing so they can begin listening.
-    let data = { index: index, sessionID: this.state.sessionID };
-    socket.emit('client-stream-out', data);
-
-    //display countdown for player to start playing
-    this.countdownTimer();
-    //or do this:
-    //if(this.countdownTimer()){
-    //begin streaming
-    // }
-  }
-
-  countdownTimer() {
-    this.startCountdown = true;
-    var myInterval = setInterval(function () {
-      if (this.countdown <= 0) {
-        clearInterval(myInterval); //clear counter at 0
-        //BEGIN RECORDING/STREAMING:
-        //return true;
-      } else {
-        this.countdown -= 1; //decrement counter
+  //gets the player order in the jam
+  function getPlayerOrder() {
+    for (let i = 0; i < state.userlist.length; i++) {
+      if (state.username === state.userlist[i]) {
+        playerOrder = i + 1;
       }
-      return false;
+    }
+  }
+
+  //start the jam
+  function startTheJam() {
+    //get the current players order
+    getPlayerOrder();
+
+    //we delay due to webRTCAdaptor needing init time per function
+
+    //init the webrtc adaptor
+    webRTCAdaptor = initiateWebrtc();
+
+    //join the room
+    setTimeout(function () {
+      webRTCAdaptor.joinRoom(
+        currentRoom,
+        state.streamName,
+        'multitrack',
+        'amcu'
+      );
+    }, 1000);
+
+    //init play
+    setTimeout(function () {
+      webRTCAdaptor.play(currentRoom, state.token, '');
     }, 1000);
   }
 
-  render() {
-    return (
-      <div className='jamblock'>
-        <h1>JAM</h1>
-        {/* <button onClick={buttonclicked()}> */}
-        <img
-          className='round'
-          src={this.state.icon}
-          width='200'
-          height='200'
-          alt=' recording '></img>
-        {this.startCountdown ? <h1> {this.countdown} </h1> : <>{}</>}
+  // event handlers for recorder
+  function onDataAvailable(e) {
+    chunks.push(e.data);
+  }
 
-        {/* </button> */}
-        <button onClick={this.featureRun}>
-          <img src={this.icon} alt=''></img>
-          {this.text}
-        </button>
+  function onStop() {
+    console.log('Recording stopped successfully.');
+    let blob = new Blob(chunks, { type: 'audio/wav; codecs=opus' });
+    let audioURL = URL.createObjectURL(blob);
+    audio = new Audio(audioURL);
+    saveAs(blob, 'audioTest.wav');
+  }
 
-        <button className='rec' onClick={this.getAudioDevice}>
-          Choose audio device
-        </button>
+  function startRecording() {
+    if (!recorder) {
+      return;
+    }
+    if (state.isRecording) {
+      return;
+    }
+    recorder.start();
+    state.isRecording = true;
+    console.log('Recording started successfully.');
+    return;
+  }
 
-        <button className='rec' onClick={this.startRecording}>
-          Start recording
-        </button>
+  function stopRecording() {
+    if (!recorder) {
+      return;
+    }
+    if (!state.isRecording) {
+      return;
+    }
+    recorder.stop();
+    state.isRecording = false;
+    return;
+  }
 
-        <button className='rec' onClick={this.stopRecording}>
-          Stop recording
-        </button>
+  function playRecording() {
+    if (!audio) {
+      return;
+    }
+    audio.play();
+    return;
+  }
 
-        <button className='rec' onClick={this.playRecording}>
-          Play/pause recording
-        </button>
-      </div>
+  //remotely play each antmedia audio stream
+  function playAudio(obj) {
+    //get room and trackorder
+    let room = currentRoom;
+    let trackOrder = obj.trackId.slice(-1);
+
+    //log the new stream
+    console.log(
+      'new stream available with id: ' + obj.streamId + 'on the room:' + room
+    );
+
+    var index;
+    if (obj.track.kind === 'audio') {
+      index = obj.track.id.replace('ARDAMSa', '');
+    }
+
+    if (index === room) {
+      return;
+    }
+
+    //create the audio element
+    var audioElement = document.getElementById('remoteVideo' + index);
+
+    if (audioElement == null) {
+      createRemoteAudio(index, trackOrder);
+      audioElement = document.getElementById('remoteVideo' + index);
+      audioElement.srcObject = new MediaStream();
+    }
+
+    //set delay based on player
+    let timeToDelay = 0;
+    console.log('Track Order: ', trackOrder);
+
+    if (playerOrder === 2 && trackOrder === '1') {
+      timeToDelay = 0.5;
+    } else if (playerOrder === 3 && trackOrder === '1') {
+      timeToDelay = 1;
+    } else if (playerOrder === 3 && trackOrder === '2') {
+      timeToDelay = 0.5;
+    } else if (playerOrder === 4 && trackOrder === '1') {
+      timeToDelay = 1.5;
+    } else if (playerOrder === 4 && trackOrder === '2') {
+      timeToDelay = 1;
+    } else if (playerOrder === 4 && trackOrder === '3') {
+      timeToDelay = 0.5;
+    }
+
+    //audio context delay code
+    let audioCtx = new AudioContext();
+    const delay = new DelayNode(audioCtx, {
+      delayTime: timeToDelay,
+    });
+
+    var source = audioCtx.createMediaStreamTrackSource(obj.track);
+    source.connect(delay);
+    var dest = audioCtx.createMediaStreamDestination();
+    delay.connect(dest);
+    audioElement.srcObject.addTrack(dest.stream.getAudioTracks()[0]);
+
+    //if we are the last player, record the audio streams
+    console.log('New stream player order: ', playerOrder);
+    console.log('User List: ', state.userlist.at(-1));
+    if (state.username === state.userlist.at(-1)) {
+      //Push ac sources
+      const source = ac.createMediaStreamTrackSource(
+        dest.stream.getAudioTracks()[0]
+      );
+      acSources.push(source);
+      console.log('Acsource length', acSources.length);
+
+      //if we have all of the streams
+      if (acSources.length === playerOrder - 1) {
+        //connect all of the sources
+        for (let i = 0; i < acSources.length; i++) {
+          console.log('i acDest: ', acSources[i]);
+          acSources[i].connect(acDest);
+        }
+
+        //create the media recorder for the last player
+        console.log('acDest: ', acDest);
+        recorder = new MediaRecorder(acDest.stream);
+
+        // initialize event handlers for recorder
+        recorder.ondataavailable = onDataAvailable;
+        recorder.onstop = onStop;
+      }
+    }
+  }
+
+  //create antmedia remote audio player
+  function createRemoteAudio(streamId, playerName) {
+    var player = document.createElement('div');
+    player.className = 'col-sm-3';
+    player.id = '' + playerName;
+    player.innerHTML =
+      '<video id="remoteVideo' +
+      streamId +
+      '"controls autoplay playsinline></video>' +
+      playerName;
+    document.getElementById('players').appendChild(player);
+  }
+
+  //publish the local stream
+  function publish(token) {
+    console.log('Publishing');
+    let publishStreamName = '' + currentRoom + '-' + playerOrder;
+    webRTCAdaptor.publish(
+      publishStreamName,
+      token,
+      '',
+      '',
+      streamName,
+      currentRoom,
+      '{someKey:somveValue}',
+      playerOrder
     );
   }
+
+  function initiateWebrtc() {
+    return new WebRTCAdaptor({
+      websocket_url: state.websocketURL,
+      mediaConstraints: state.mediaConstraints,
+      peerconnection_config: state.pc_config,
+      sdp_constraints: state.sdpConstraints,
+      localVideoId: 'local_audio',
+      isPlayMode: true,
+      debug: true,
+      bandwidth: 900,
+      callback: function (info, obj) {
+        if (info === 'initialized') {
+          console.log('initialized');
+        } else if (info === 'publish_started') {
+          //stream is being published
+          console.log('publish started');
+          alert('publish started');
+        } else if (info === 'publish_finished') {
+          //stream is being finished
+          console.log('publish finished');
+        } else if (info === 'trackList') {
+          console.log('trackList', obj.streamId);
+        } else if (info === 'joinedTheRoom') {
+          console.log('Object ID', obj.streamId);
+          publish(obj.streamId, state.token);
+        } else if (info === 'closed') {
+          if (typeof obj != 'undefined') {
+            console.log('Connecton closed: ' + JSON.stringify(obj));
+          }
+        } else if (info === 'streamInformation') {
+        } else if (info === 'newStreamAvailable') {
+          //get every stream behind you
+          let tempOrder = obj.trackId.slice(-1);
+          if (parseInt(tempOrder, 10) < parseInt(playerOrder, 10)) {
+            console.log('Playing', obj.trackId);
+            playAudio(obj);
+          }
+        } else if (info === 'ice_connection_state_changed') {
+          console.log('iceConnectionState Changed: ', JSON.stringify(obj));
+        } else if (info === 'updated_stats') {
+          //obj is the PeerStats which has fields
+          //averageIncomingBitrate - kbits/sec
+          //currentIncomingBitrate - kbits/sec
+          //packetsLost - total number of packet lost
+          //fractionLost - fraction of packet lost
+          console.log(
+            'Average incoming kbits/sec: ' +
+              obj.averageIncomingBitrate +
+              ' Current incoming kbits/sec: ' +
+              obj.currentIncomingBitrate +
+              ' packetLost: ' +
+              obj.packetsLost +
+              ' fractionLost: ' +
+              obj.fractionLost +
+              ' audio level: ' +
+              obj.audioLevel
+          );
+        } else if (info === 'data_received') {
+          console.log(
+            'Data received: ' +
+              obj.event.data +
+              ' type: ' +
+              obj.event.type +
+              ' for stream: ' +
+              obj.streamId
+          );
+        } else if (info === 'bitrateMeasurement') {
+          console.log(info + ' notification received');
+          console.log(obj);
+        } else {
+          console.log(info + ' notification received');
+        }
+      },
+      callbackError: function (error) {
+        //some of the possible errors, NotFoundError, SecurityError,PermissionDeniedError
+        console.log('error callback: ' + JSON.stringify(error));
+        alert(JSON.stringify(error));
+      },
+    });
+  }
+
+  return (
+    <div className='jamblock'>
+      <button onClick={startTheJam}>Start The Jam!</button>
+
+      <button onClick={startRecording}>Start recording</button>
+
+      <button onClick={stopRecording}>Stop recording</button>
+      <button onClick={playRecording}>Play recording</button>
+      <div>
+        Local Audio
+        <audio id='local_audio' autoPlay muted playsInline controls={true} />
+      </div>
+      <div className='container'>
+        <ul id='trackList' name='trackList'></ul>
+      </div>
+      <div id='players'></div>
+    </div>
+  );
 }
 
 export default Recorder;

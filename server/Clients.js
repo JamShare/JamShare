@@ -1,3 +1,5 @@
+//Clients manages the list of Client instances.
+
 class Clients {
   constructor() {
     this.clientsMap = new Map();
@@ -72,19 +74,7 @@ class Clients {
   updateUsernames(userList) {
     console.log('Clients updateUsernames', this.clients ,userList);
     if (userList) {
-      
-      // this.clients.sort(function(a,b){
-      //   if(userList.indexOf(a) != this.clients.indexOf(this.clients[a]).username){
-      //     return -1;//sorts b before a in calling array. 
-      //   }
-      //   if(userList.indexOf(b) > this.clients.indexOf(this.clients[b]).username){
-      //     return 1;
-      //   }
-      //   return 0; //order remains same
-      // });
-      // this.clients.groupBy((element,index)=>{userlist[index]});
-      // for (var i = 0; i < userList.length; i++) {
-      
+  
       for (var i = 0; i < this.clients.length; i++) {//loop server array
         console.log("comparing",this.clients[i].username,":",userList[i]);
 
@@ -96,20 +86,15 @@ class Clients {
             console.log("seeking index to swap",i,j,this.clients[i].username,":",userList[j]);
             
             if (this.clients[i].getUsername() == userList[j]) {
-              
               console.log("Swapping",  this.clients[i].username,i, "with",  this.clients[j].username,j );
-              // this.swap(i, j);
+
               let a = this.clients[i];
               let b = this.clients[j];
 
               this.clients.splice(i, 1, b);
-              
               this.clients.splice(j, 1, a);
-
-              // break;
             }
           }
-          // break;
         }
       }
 
@@ -118,13 +103,12 @@ class Clients {
         newclientlist.push(this.clients[i].getUsername());
       }
       return newclientlist;
-      //this.clients = userList;
-    // } else {
-    //   console.log('why is the list empty?');
     }
   }
 }
 
+
+//Client instance with data about a single connected client
 class Client {
   constructor(socketID, username, priv) {
     this.socketID = socketID;

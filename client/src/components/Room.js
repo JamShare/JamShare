@@ -1,6 +1,4 @@
 import React, { useEffect, useState, useRef } from 'react';
-
-// import io, { Socket } from 'socket.io-client';
 import Chat from './Chat';
 import Recorder from './Recorder';
 import Viewer from './Viewer';
@@ -9,30 +7,24 @@ import { Link, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import './App.css';
 import './room.css';
 import JamShareLogo from './assets/images/JamShareLogo.jpg';
-//import headlong from './assets/musics/headlong70.mp3'
-
-// const SERVER = "http://localhost:3001";
-// const socket = io.connect(SERVER);
 import socket from '../index';
+//import headlong from './assets/musics/headlong70.mp3'
 
 function Room() {
   let {
     state: { sessionID, guest, usernames },
   } = ({} = useLocation()); //gets the variable we passed from navigate
-  // const sID = useLocation().state.sessionID;
 
   const [serverUserList, setServerUserList] = useState(usernames);
-  // const [roomSessionID, setRoomSessionID]=useState(sessionID);//initial state was not working
 
   console.log('room state: ', sessionID, guest, serverUserList);
 
-  socket.on('client-update-userlist', (newusernames) => {
-    console.log('room got user order update', newusernames);
-    setServerUserList(newusernames);
-  });
-
   useEffect(() => {
     window.addEventListener('beforeunload', keepOnPage); //this is fired upon component mounting
+    socket.on('client-update-userlist', (newusernames) => {
+      console.log('room got user order update', newusernames);
+      setServerUserList(newusernames);
+    });
     return () => {
       //things in return of useEffect are ran upon unmounting
       // var data = {sessionID:sessionID, guest:guest}
@@ -51,36 +43,8 @@ function Room() {
     return message;
   };
 
-  //const navigate = useNavigate();
-  //navigate('/Chat', {state:{sessionID, guest}});
-
-  // const location = useLocation();
-  // const { state: { guest, sessionID } = {} } = useLocation();
-  // socket.on('message', (message) => {
-  //   alert(message);
-  // })
-
-  // const sendMessage = () =>{
-  //   console.log(message)
-  //   socket.emit('send_message', {message, sessionID});
-  // }
-  // useEffect(() => {
-  //   socket.emit('joinRoom', {guest, sessionID})
-  //   socket.on("receive_message", (data)=>{
-  //     if(data.message)
-  //       alert(data.message);
-  //     setMessageReceived(data.message);
-  //   })
-  // }, [socket])
-
   return (
     <div className='ProjectSectionContent'>
-      {/* <audio src={headlong} autoPlay></audio> */}
-      {/* <input placeholder='message' onChange={(e) =>{setMessage(e.target.value)}} /> 
-       <button onClick={sendMessage}>send message</button> 
-      <h1>Welcome {guest}</h1>
-      <h2>Session ID: {sessionID}</h2>
-       {messageReceived} */}
       <div className='jybanner'>
         <img className='jam-logo' src={JamShareLogo} alt='logo' />
       </div>
@@ -89,7 +53,6 @@ function Room() {
         userlist={serverUserList}
         sessionID={sessionID}
         guest={guest}></Participants>
-
       <Chat
         userlist={serverUserList}
         sessionID={sessionID}

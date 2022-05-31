@@ -2,19 +2,13 @@ import React, { useEffect, useState, useRef } from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-// import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-// import FormLabel from "react-bootstrap/esm/FormLabel";
 import { Link, Navigate, useNavigate, useLocation } from 'react-router-dom';
-// import { Socket } from 'socket.io-client';
 import Modal from 'react-bootstrap/Modal';
 import JamShareLogo from './assets/images/JamShareLogo.jpg';
-
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 // import {Morg_Signup} from "./component_export"
-
 import JoinModal from './JoinModal';
-// const io = require('socket.io-client');
-// const SERVER = "http://localhost:3001";
 import socket from '../index';
 
 // Join or create a Jam session room with link ID
@@ -24,7 +18,6 @@ function Join(props) {
   const handleClose = () => setModal(false);
   const handleShow = () => setModal(true);
   const [copied, setCopied] = useState(false);
-  //   const [joinSuccess, setJoinSuccess] = useState(false);
   const inputArea = useRef(null);
   const navigate = useNavigate();
   //state passed in from Signup.js
@@ -40,7 +33,6 @@ function Join(props) {
   });
   useEffect(() => {
     console.log('session ID updated:', sessionID);
-    // setSessionID(sessionID)
   }, [sessionID]);
 
   useEffect(() => {
@@ -54,10 +46,13 @@ function Join(props) {
   socket.on('join-session-failed', () => {
     alert(`Session ID: ${sessionID} does not exist.`);
   });
-
-  // }, [])
+  useEffect(() => {
+    console.log('session ID updated:', sessionID);
+    // setSessionID(sessionID)
+  }, [sessionID]);
 
   const createSession = (room) => {
+    console.log('Creating session BUTTON CLICK');
     room.preventDefault();
     socket.emit('create-session', guest);
   };
@@ -80,18 +75,33 @@ function Join(props) {
       }
     );
   }
+  function onCopy() {
+    console.log('CopyLink', sessionID);
+    setCopied(true);
+  }
 
   function copyLink() {
+    console.log('Copied Link', sessionID);
+    //updateClipboard(sessionID);
+  }
+  /*
+  function copyLink(event) {
+    
+    inputArea.current?.select();
+    document.execCommand('copy');
+
+    event.target.focus();
     navigator.permissions.query({ name: 'clipboard-write' }).then((result) => {
       if (result.state === 'granted' || result.state === 'prompt') {
         updateClipboard(inputArea.current?.innerText);
       }
     });
   }
-
+*/
   return (
     <>
       <Modal
+        {...props}
         aria-labelledby='contained-modal-title-vcenter'
         show={showModal}
         title={guest}
@@ -110,15 +120,20 @@ function Join(props) {
           <Container>
             <Row>
               <Col lg={4}></Col>
-              <Col lg={4} id='a' ref={inputArea} className='purple'>
-                {sessionID}
+              <Col lg={4} id='a'>
+                <input
+                  ref={inputArea}
+                  onChange={(e) => setSessionID(e.target.value)}
+                  value={sessionID}></input>
               </Col>
               <Col lg={4}></Col>
             </Row>
           </Container>
         </Modal.Body>
         <Modal.Footer className='purplebg'>
-          <Button onClick={copyLink}>Copy to Clipboard</Button>
+          <CopyToClipboard onCopy={onCopy} text={sessionID}>
+            <Button onClick={copyLink}>Copy to clipboard</Button>
+          </CopyToClipboard>
           <Button onClick={joinSession}>Join Session</Button>
           <Button onClick={handleClose}>Close</Button>
         </Modal.Footer>
@@ -166,6 +181,10 @@ function Join(props) {
             <Col></Col>
           </Row>
         </div>
+      </div>
+
+      <div className='jybannerb'>
+        Portland State University - JamShare - 2022
       </div>
     </>
   );
