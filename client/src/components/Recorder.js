@@ -107,30 +107,18 @@ function Recorder(props) {
         } catch(error) {
             console.log('Error in getAudioDevice:', error);
         }
+        waitForWebRTC();
+    }
 
-        setTimeout(function () {
-            try {
-            joinRoom();
-            } catch (error) {
-            console.log('Error in joinRoom:', error, webRTCAdaptor);
-            }
-        }, 1000);
-
-        setTimeout(function () {
-            try {
-            getTracks();
-            } catch (error) {
-            console.log('Error in getTracks:', error, webRTCAdaptor);
-            }
-        }, 1000);
-
-        setTimeout(function () {
-            try {
-            startPlaying();
-            } catch (error) {
-            console.log('Error in startPlaying:', error, webRTCAdaptor);
-            }
-        }, 1000);
+    function waitForWebRTC() {
+        // if webrtc is null, delay execution by a second
+        // switch to promise based method in the future
+        if (!webRTCAdaptor) {
+            setTimeout(waitForWebRTC(), 1000);
+        }
+        joinRoom();
+        getTracks();
+        startPlaying();
     }
 
     // event handlers for recorder
