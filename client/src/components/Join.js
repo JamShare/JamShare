@@ -46,6 +46,10 @@ function Join(props) {
   socket.on('join-session-failed', () => {
     alert(`Session ID: ${sessionID} does not exist.`);
   });
+  useEffect(() => {
+    console.log('session ID updated:', sessionID);
+    // setSessionID(sessionID)
+  }, [sessionID]);
 
   const createSession = (room) => {
     console.log('Creating session BUTTON CLICK');
@@ -103,6 +107,8 @@ function Join(props) {
         title={guest}
         data={sessionID}
         onHide={handleClose}
+        {...props}
+        socket='value'
         centered
         size='xl'>
         <Modal.Header closeButton className='purplebg'>

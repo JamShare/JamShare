@@ -8,9 +8,9 @@ const Socket = require('socket.io');
 const port = process.env.PORT || 3001;
 const Sessions = require('./Sessions.js');
 const { userJoin, getCurrentUser } = require('./Users');
-const fs = require("fs");
+const fs = require('fs');
 
-const {register_new_user, validate_creds} = require("./auth/auth.js")
+const { register_new_user, validate_creds } = require('./auth/auth.js');
 
 var app = express();
 
@@ -166,8 +166,7 @@ io.on('connection', (socket) => {
 function assignPlayer(id) {
   if (players.includes(id)) {
     return players.length;
-  }
-  else {
+  } else {
     players.push(id);
     return players.length;
   }
