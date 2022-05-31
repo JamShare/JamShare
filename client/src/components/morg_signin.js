@@ -80,4 +80,4 @@ export class Morg_Signin extends React.Component {
     }
 }
 
-export default Morg_Signin
+export default Morg_Signin;
