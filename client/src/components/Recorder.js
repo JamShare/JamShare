@@ -53,7 +53,8 @@ function Recorder(props) {
     recordContext.audioWorklet.addModule("RecorderProcessor.js")
     .then(() => {
         recorderNode = new AudioWorkletNode(recordContext, 'recorder-worklet');
-    })
+    });
+    let delayNode = null;
     let metronome = null;
     let recorder = null;
     let audio = null;
@@ -230,11 +231,10 @@ function Recorder(props) {
         //For now nick merge test
         setTimeout(function(){
         recorderNode.parameters.get('isRecording').setValueAtTime(1, recordContext.currentTime);
-        metronome.startStop();
+        // metronome.startStop();
         }, 2000);
         intervalReturn = setInterval(connectAudioBuffer, 1000); // connect an audio buffer every 1000ms
         playbackContext.resume();
-        audioElement.srcObject.addTrack(streamOut.stream.getAudioTracks()[0]);
 
         //Nick merge code-----------------------------------------------------------------
 
@@ -392,7 +392,7 @@ function Recorder(props) {
         let audioBuffer = sources.splice(0, 1)[0];
         if (audioBuffer) {
             audioBuffer.connect(playbackContext.destination);
-            audioBuffer.connect(streamOut);
+            audioBuffer.connect(delayNode);
             audioBuffer.start();
             console.log("audio buffer connected");
         } else {
@@ -402,8 +402,11 @@ function Recorder(props) {
 
     function connectMediaStreams() {
         var streamIn = playbackContext.createMediaStreamSource(stream); // local stream
+        delayNode = playbackContext.createDelay();
+        delayNode.delayTime = 0.25;
         streamOut = playbackContext.createMediaStreamDestination(); // output new combined stream
         streamIn.connect(streamOut); // connect to new combined stream
+        delayNode.connect(streamOut);
         metronome = new Metronome(120, playbackContext, playbackContext.destination);
     }
 
