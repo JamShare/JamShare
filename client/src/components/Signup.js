@@ -24,8 +24,6 @@ function Signup(props) {
       Cookies.get('username')
     );
 
-    console.log(username, guest_username);
-
     if (username) navToJoin(username);
     else if (guest_username) navToJoin(guest_username);
   });
