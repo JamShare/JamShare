@@ -108,29 +108,29 @@ function Recorder(props) {
             console.log('Error in getAudioDevice:', error);
         }
 
-        try {
         setTimeout(function () {
+            try {
             joinRoom();
+            } catch (error) {
+            console.log('Error in joinRoom:', error, webRTCAdaptor);
+            }
         }, 1000);
-        } catch (error) {
-            console.log('Error in joinRoom:', error);
-        }
 
-        try {
         setTimeout(function () {
+            try {
             getTracks();
+            } catch (error) {
+            console.log('Error in getTracks:', error, webRTCAdaptor);
+            }
         }, 1000);
-        } catch (error) {
-            console.log('Error in getTracks:', error);
-        }
 
-        try {
         setTimeout(function () {
+            try {
             startPlaying();
+            } catch (error) {
+            console.log('Error in startPlaying:', error, webRTCAdaptor);
+            }
         }, 1000);
-        } catch (error) {
-            console.log('Error in startPlaying:', error);
-        }
     }
 
     // event handlers for recorder
