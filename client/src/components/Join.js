@@ -37,7 +37,8 @@ function Join(props) {
       let path = '/Room';
       navigate(path, { state: { sessionID, guest, usernames } });
     });
-  }, [guest, navigate, sessionID]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sessionID]);
 
   socket.on('join-session-failed', () => {
     alert(`Session ID: ${sessionID} does not exist.`);
