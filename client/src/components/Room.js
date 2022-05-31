@@ -7,6 +7,9 @@ import { Link, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import './App.css';
 import './room.css';
 import JamShareLogo from './assets/images/JamShareLogo.jpg';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 //import headlong from './assets/musics/headlong70.mp3'
 
 import socket from '../index';
@@ -46,10 +49,17 @@ function Room() {
 
   return (
     <div className='ProjectSectionContent'>
-      <div className='jybanner'>
-        <img className='jam-logo' src={JamShareLogo} alt='logo' />
-      </div>
-
+          <Container fluid style={{backgorundColor: "black"}} className='headerContainer'>
+            <Row>
+              <Col > <h1>{guest}</h1> </Col>
+              <Col xs lg="2" >
+              <img className='jam-logo' src={JamShareLogo} alt='logo' />
+              </Col>
+              <Col>
+              <h2> Session ID: {sessionID} </h2>
+              </Col>
+            </Row>
+          </Container>
       <Participants
         userlist={serverUserList}
         sessionID={sessionID}
@@ -63,7 +73,7 @@ function Room() {
         sessionID={sessionID}
         guest={guest}></Recorder>
       <div className='jybannerb'>
-        Session ID: {sessionID} - Portland State University - JamShare - 2022
+        Portland State University - JamShare - 2022
       </div>
     </div>
   );
