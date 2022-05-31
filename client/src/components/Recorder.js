@@ -125,6 +125,7 @@ function Recorder(props) {
             resolve('WebRTCAdaptor acquisition successful.');
             return;
         } catch (error) {
+            console.error(error);
             reject('WebRTCAdaptor acquisition failed.');
         }
         return;
