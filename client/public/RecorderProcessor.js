@@ -59,6 +59,13 @@ class RecorderWorkletProcessor extends AudioWorkletProcessor { // this worklet i
         });
     }
 
+    _reportError(err) {
+        this.port.postMessage({
+            eventType: 'error',
+            error: err
+        });
+    }
+
     process(inputs, outputs, parameters) {
         const isRecordingValues = parameters.isRecording;
 
@@ -74,7 +81,11 @@ class RecorderWorkletProcessor extends AudioWorkletProcessor { // this worklet i
             }
 
             if (shouldRecord) {
+                try {
                 this._appendToBuffer(inputs[0][0][dataIndex]);
+                } catch (err) {
+                    this._reportError(err);
+                }
             }
         }
 

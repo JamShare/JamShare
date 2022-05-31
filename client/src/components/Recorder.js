@@ -9,6 +9,7 @@ function Recorder(props) {
     // recorder context records incoming audio; playback context plays it back to the user and combines local user audio 
     // with the recording(s) in order to create a new stream
     const recordContext = new AudioContext();
+    recordContext.resume();
     const playbackContext = new AudioContext();
     let playerOrder = 0;
 
@@ -61,6 +62,10 @@ function Recorder(props) {
             }
             if (e.data.eventType === 'stop') {
                 // recording stopped
+            }
+            if (e.data.eventType === 'error') {
+                console.error('Error in recorder node.');
+                // recorderSource.connect(streamOut);
             }
         }
     });
@@ -229,8 +234,7 @@ function Recorder(props) {
         test.addTrack(obj.track);
         
         recorderSource = recordContext.createMediaStreamSource(test);
-        recorderSource.connect(recorderNode);
-        recordContext.resume();
+        recorderSource.connect(recorderNode); // potentially failing?
 
         //For now nick merge test
         // setTimeout(function(){
