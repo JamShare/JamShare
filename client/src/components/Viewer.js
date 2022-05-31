@@ -1,7 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
-// import { io, Socket } from 'socket.io-client';
-import socket from "../index";
-
+import React from 'react'
 import image1 from './assets/images/record.jpg'
 import image3 from './assets/images/add.jpg';
 
@@ -14,22 +11,8 @@ class Viewer extends React.Component {
       isRecording: false, //if true, display new audio item in list
       isDownloading: false, //if true, animate or highlight incoming stream list item
     };
-
-    // this.socket = props.socket;
     this.files = [];
-    //     this.stream = ss.createStream();
-    // this.middleBuffer = [];
-    // this.filestream = fs.createReadStream(filename);
   }
-
-  //socket.io events
-  // useEffect(incomingStream = ( )=>{
-  //     io.on('server-audio-stream', (audio)=>{
-  //         console.log('recieving audio from server');
-  //         if(audio!== undefined)
-  //             this.files[audio.name].push(audio.data);
-  //     });
-  // },[]);
 
   render() {
     return (

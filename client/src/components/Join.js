@@ -3,12 +3,10 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
-import { Link, Navigate, useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Modal from 'react-bootstrap/Modal';
 import JamShareLogo from './assets/images/JamShareLogo.jpg';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-// import {Morg_Signup} from "./component_export"
-import JoinModal from './JoinModal';
 import socket from '../index';
 
 // Join or create a Jam session room with link ID
@@ -17,7 +15,6 @@ function Join(props) {
   const [showModal, setModal] = useState(false);
   const handleClose = () => setModal(false);
   const handleShow = () => setModal(true);
-  const [copied, setCopied] = useState(false);
   const inputArea = useRef(null);
   const navigate = useNavigate();
   //state passed in from Signup.js
@@ -28,7 +25,6 @@ function Join(props) {
   socket.on('create-session-response', (session_ID) => {
     console.log('create session response from server', session_ID);
     setSessionID(session_ID); //doesnt seem to actually work
-    // console.log(sessionID);//should have session_ID value in state sessionID but doesnt because its async
     handleShow();
   });
   useEffect(() => {
@@ -41,7 +37,7 @@ function Join(props) {
       let path = '/Room';
       navigate(path, { state: { sessionID, guest, usernames } });
     });
-  }, [sessionID]);
+  }, [guest, navigate, sessionID]);
 
   socket.on('join-session-failed', () => {
     alert(`Session ID: ${sessionID} does not exist.`);
@@ -65,39 +61,14 @@ function Join(props) {
     socket.emit('join-session', data);
   };
 
-  function updateClipboard(newClip) {
-    navigator.clipboard.writeText(newClip).then(
-      () => {
-        setCopied('Copied!');
-      },
-      () => {
-        setCopied('Copy failed!');
-      }
-    );
-  }
   function onCopy() {
     console.log('CopyLink', sessionID);
-    setCopied(true);
   }
 
   function copyLink() {
     console.log('Copied Link', sessionID);
-    //updateClipboard(sessionID);
   }
-  /*
-  function copyLink(event) {
-    
-    inputArea.current?.select();
-    document.execCommand('copy');
 
-    event.target.focus();
-    navigator.permissions.query({ name: 'clipboard-write' }).then((result) => {
-      if (result.state === 'granted' || result.state === 'prompt') {
-        updateClipboard(inputArea.current?.innerText);
-      }
-    });
-  }
-*/
   return (
     <>
       <Modal

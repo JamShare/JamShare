@@ -1,39 +1,22 @@
 import React, { Fragment, useState, useEffect } from 'react';
-// import Container from 'react-bootstrap/Container';
-// import Row from 'react-bootstrap/Row';
-// import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import FormLabel from 'react-bootstrap/esm/FormLabel';
-// import { Link, Navigate, useNavigate } from "react-router-dom";
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Modal from 'react-bootstrap/Modal';
 import JamShareLogo from './assets/images/JamShareLogo.jpg';
-
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
 function Signup(props) {
   const [guest, setGuest] = useState('');
   const [showModal, setModal] = useState(false);
-
-  // const redirect = useState(false);
   const navigate = useNavigate();
-
-  // let data = localStorage.getItem('guest');
-  // const [isOpen, setIsOpen] = useState(false);
   const handleClose = () => setModal(false);
-  const handleShow = () => setModal(true);
-  const regex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/;
-
   const [signup_usn, set_signup_usn] = React.useState('');
   const [signup_psw, set_signup_psw] = React.useState('');
   const [signin_usn, set_signin_usn] = React.useState('');
   const [signin_psw, set_signin_psw] = React.useState('');
-
-  const checkPassword = (p) => {
-    if (!regex.test(p) && p.length <= 30) handleShow();
-  };
 
   //Redirect if cookie exists
   useEffect(() => {
@@ -41,11 +24,9 @@ function Signup(props) {
       Cookies.get('username')
     );
 
-    console.log(username, guest_username);
-
     if (username) navToJoin(username);
     else if (guest_username) navToJoin(guest_username);
-  }, []);
+  });
 
   const handleGuest = (e) => {
     e.preventDefault();
@@ -74,7 +55,7 @@ function Signup(props) {
         password: signup_psw,
       })
       .then((res) => {
-        if (res.data == true) {
+        if (res.data === true) {
           alert(`Thanks for signing in ${signup_usn}`);
           Cookies.set('username', signup_usn, {
             expires: 1,
@@ -99,7 +80,7 @@ function Signup(props) {
         password: signin_psw,
       })
       .then((res) => {
-        if (res.data == true) {
+        if (res.data === true) {
           alert(`Thanks for signing in ${signin_usn}`);
           Cookies.set('username', signin_usn, {
             expires: 1,

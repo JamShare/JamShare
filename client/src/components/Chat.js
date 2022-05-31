@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState} from 'react';
 import socket from '../index';
 function Chat(props) {
   const initialValues = {
@@ -9,7 +9,7 @@ function Chat(props) {
   };
   const [message, setMessage] = useState('');
   const [chat, setChat] = useState([initialValues]);
-  const [chatHistory, setChatHistory] = useState([]);
+  //const [chatHistory, setChatHistory] = useState([]);
 
   useEffect(() => {
     //console.log('new-chat-history BEFORE CHAT:', chat);
@@ -42,11 +42,12 @@ function Chat(props) {
     });
 
     console.log('SOCKET DONE');
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const sendMessage = (e) => {
     e.preventDefault();
-    if (message == '') return;
+    if (message === '') return;
     let newMsg = `${props.guest}: ${message}`;
     var msgValues = {
       // type all the fields you need

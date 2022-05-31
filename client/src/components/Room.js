@@ -1,19 +1,17 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import Chat from './Chat';
 import Recorder from './Recorder';
-import Viewer from './Viewer';
 import Participants from './Participants';
-import { Link, Navigate, useNavigate, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import './App.css';
 import './room.css';
 import JamShareLogo from './assets/images/JamShareLogo.jpg';
 import socket from '../index';
-//import headlong from './assets/musics/headlong70.mp3'
 
 function Room() {
   let {
     state: { sessionID, guest, usernames },
-  } = ({} = useLocation()); //gets the variable we passed from navigate
+  } = (useLocation()); //gets the variable we passed from navigate
 
   const [serverUserList, setServerUserList] = useState(usernames);
 
@@ -27,10 +25,6 @@ function Room() {
     });
     return () => {
       //things in return of useEffect are ran upon unmounting
-      // var data = {sessionID:sessionID, guest:guest}
-      // socket.emit('disconnect');//do not send data: server only recieved undefined.
-
-      // socket.disconnect();//client wont try to reconnect.
       console.log('component unmounting');
       window.removeEventListener('beforeunload', keepOnPage);
     };
