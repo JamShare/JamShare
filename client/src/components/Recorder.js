@@ -216,7 +216,7 @@ function Recorder(props) {
 
                 //create the media recorder for the last player
                 console.log("acDest: ", acDest);
-                recorder = new MediaRecorder(acDest.stream)
+                recorder = new MediaRecorder(acDest.stream);
 
                 // initialize event handlers for recorder
                 recorder.ondataavailable = onDataAvailable;
