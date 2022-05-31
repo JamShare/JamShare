@@ -12,3 +12,4 @@ my-app/build/index.html
 my-app/build/robots.txt
 my-app/build/static/js/main.f76dcc65.js.LICENSE.txt
 my-app/build/static/js/main.f76dcc65.js.map
+client/.env
