@@ -1,4 +1,5 @@
-import React, {Link} from "react";
+import React from "react";
+import { Link } from "react-router-dom"
 import axios from 'axios';
 import Cookies from "js-cookie";
 import {
@@ -10,7 +11,7 @@ import {
 
 const LINK_TO_SIGNUP = "/signup2"
 
-export class Morg_Signin extends React.Component {
+export class MorgSignin extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -80,4 +81,4 @@ export class Morg_Signin extends React.Component {
     }
 }
 
-export default Morg_Signin;
+export default MorgSignin;

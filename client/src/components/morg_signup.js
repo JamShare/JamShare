@@ -1,11 +1,12 @@
-import React, { Link } from "react";
+import React from "react";
+import {Link} from "react-router-dom"
 import axios from 'axios';
 import Cookies from "js-cookie";
 import { Card, Form, Input, Button } from "./styled_components";
 
 const LINK_TO_SIGNIN = "/signin2"
 
-export class Morg_Signup extends React.Component {
+export class MorgSignup extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -30,7 +31,7 @@ export class Morg_Signup extends React.Component {
             username: this.state.username,
             password: this.state.password,
         }).then(res => {
-            if (res.data == true) {
+            if (res.data === true) {
                 alert(`Thanks for signing in ${this.state.username}`)
                 Cookies.set('username', this.state.username, {
                     expires: 1
@@ -74,4 +75,4 @@ export class Morg_Signup extends React.Component {
     }
 }
 
-export default Morg_Signup;
+export default MorgSignup;

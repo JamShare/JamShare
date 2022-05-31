@@ -1,20 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { render } from 'react-dom';
-
-import {
-  Signup,
-  Room,
-  Join,
-  Morg_Signup,
-  Morg_Signin,
-} from './components/component_export';
-
+import { Signup, Room, Join, MorgSignup, MorgSignin, } from './components/component_export';
 import registerServiceWorker from './registerServiceWorker';
-
 import './fonts/Indie_Flower/IndieFlower-Regular.ttf';
 import './index.css';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 const io = require('socket.io-client');
 const SERVER = 'http://localhost:3001';
@@ -32,8 +22,8 @@ ReactDOM.render(
         <Route exact path='/' element={<Signup />} />
         <Route path='/join' element={<Join />} />
         <Route path='/room' element={<Room />} />
-        <Route path='/signup2' element={<Morg_Signup />} />
-        <Route path='/signin2' element={<Morg_Signin />} />
+        <Route path='/signup2' element={<MorgSignup />} />
+        <Route path='/signin2' element={<MorgSignin />} />
       </Routes>
       <link
         rel='stylesheet'
