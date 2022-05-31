@@ -364,14 +364,19 @@ function Recorder(props) {
                     }
                 });
         } catch (err) {
-            console.error(err)
+            console.error(err);
             stream = null;
         }
 
         connectMediaStreams();
 
+        try {
         //initiate adaptor
-        setTimeout(function() {webRTCAdaptor = initiateWebrtc(streamOut)}, 500);
+        webRTCAdaptor = initiateWebrtc(streamOut);
+        } catch (err) {
+            console.error(err);
+            console.error("WebRTCAdaptor failed to initialize");
+        }
         return;
     }
 
