@@ -108,28 +108,12 @@ function Recorder(props) {
             console.log('Error in getAudioDevice:', error);
         }
 
-        let webRTCPromise = new Promise(initiateWebRTC);
-
-        webRTCPromise
-        .then((text) => {
-            console.log(text);
-            joinRoom();
-            getTracks();
-            startPlaying();
-        })
+        joinRoom();
+        getTracks();
+        startPlaying();
     }
 
-    function initiateWebRTC(resolve, reject) {
-        try {
-            webRTCAdaptor = initiateWebrtc(streamOut);
-            resolve('WebRTCAdaptor acquisition successful.');
-            return;
-        } catch (error) {
-            console.error(error);
-            reject('WebRTCAdaptor acquisition failed.');
-        }
-        return;
-    }
+   
 
     // event handlers for recorder
     function onDataAvailable(e) {
@@ -426,6 +410,7 @@ function Recorder(props) {
         streamIn.connect(streamOut); // connect to new combined stream
         delayNode.connect(streamOut);
         metronome = new Metronome(120, playbackContext, playbackContext.destination);
+        webRTCAdaptor = initiateWebrtc(streamOut);
     }
 
     //join the antmedia room with audio only amcu
