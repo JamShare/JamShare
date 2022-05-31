@@ -96,19 +96,41 @@ function Recorder(props) {
     }
 
     function startTheJam() {
-        getPlayerOrder()
+        try {
+        getPlayerOrder();
+        } catch (error) {
+            console.log('Error in playerOrder:', error);
+        }
 
+        try {
         getAudioDevice();
+        } catch(error) {
+            console.log('Error in getAudioDevice:', error);
+        }
 
+        try {
         setTimeout(function () {
             joinRoom();
         }, 1000);
+        } catch {
+            console.log('Error in joinRoom:', error);
+        }
+
+        try {
         setTimeout(function () {
             getTracks();
         }, 1000);
+        } catch {
+            console.log('Error in getTracks:', error);
+        }
+
+        try {
         setTimeout(function () {
             startPlaying();
         }, 1000);
+        } catch {
+            console.log('Error in startPlaying:', error);
+        }
     }
 
     // event handlers for recorder
@@ -370,13 +392,9 @@ function Recorder(props) {
 
         connectMediaStreams();
 
-        try {
         //initiate adaptor
         webRTCAdaptor = initiateWebrtc(streamOut);
-        } catch (err) {
-            console.error(err);
-            console.error("WebRTCAdaptor failed to initialize");
-        }
+
         return;
     }
 
