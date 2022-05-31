@@ -89,7 +89,7 @@ function Recorder(props) {
 
     //Merge variables
     let stream = null;
-    let recorderSource = null;
+    var recorderSource = null;
     let intervalReturn = null;
 
     function getPlayerOrder() {

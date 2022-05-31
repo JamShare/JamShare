@@ -62,7 +62,6 @@ class RecorderWorkletProcessor extends AudioWorkletProcessor { // this worklet i
     _reportError(err) {
         this.port.postMessage({
             eventType: 'error',
-            error: err
         });
     }
 
