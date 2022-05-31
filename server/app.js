@@ -172,8 +172,7 @@ function assignPlayer(id) {
   }
 }
 
-//server.listen(port, "berryhousehold.ddns.net", () => console.log(`Listening on port ${port}`));
+server.listen(port, "berryhousehold.ddns.net", () => console.log(`Listening on port ${port}`));
 
-server.listen(port, () => console.log(`Listening on port ${port}`));
 app.use(express.static(path.resolve(__dirname, './client/build')));
 module.exports = app;
