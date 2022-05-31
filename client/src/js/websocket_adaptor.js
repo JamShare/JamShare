@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 export class WebSocketAdaptor {
   constructor(initialValues) {
     this.debug = false;

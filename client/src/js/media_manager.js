@@ -1,6 +1,8 @@
 import { SoundMeter } from "./soundmeter.js"
 import adapter from 'webrtc-adapter';
 
+/* eslint-disable */
+
 /** 
  * Media management class is responsible to manage audio and video 
  * sources and tracks management for the local stream. 
