@@ -402,8 +402,7 @@ function Recorder(props) {
 
     function connectMediaStreams() {
         var streamIn = playbackContext.createMediaStreamSource(stream); // local stream
-        delayNode = playbackContext.createDelay();
-        delayNode.delayTime = 0.25;
+        delayNode = playbackContext.createDelay(0.25);
         streamOut = playbackContext.createMediaStreamDestination(); // output new combined stream
         streamIn.connect(streamOut); // connect to new combined stream
         delayNode.connect(streamOut);
