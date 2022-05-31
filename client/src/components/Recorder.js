@@ -108,7 +108,7 @@ function Recorder(props) {
             console.log('Error in getAudioDevice:', error);
         }
 
-        webRTCPromise = new Promise(initiateWebRTC);
+        let webRTCPromise = new Promise(initiateWebRTC);
 
         webRTCPromise
         .then((text) => {
