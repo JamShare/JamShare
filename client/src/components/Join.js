@@ -72,10 +72,14 @@ function Join(props) {
       }
     );
   }
+  function onCopy() {
+    console.log('CopyLink', sessionID);
+    setCopied(true);
+  }
 
   function copyLink() {
-    console.log('CopyLink', sessionID);
-    updateClipboard(sessionID);
+    console.log('Copied Link', sessionID);
+    //updateClipboard(sessionID);
   }
   /*
   function copyLink(event) {
@@ -122,7 +126,9 @@ function Join(props) {
           </Container>
         </Modal.Body>
         <Modal.Footer className='purplebg'>
-          <Button onClick={copyLink}>Copy to Clipboard</Button>
+          <CopyToClipboard onCopy={onCopy} text={sessionID}>
+            <Button onClick={copyLink}>Copy to clipboard</Button>
+          </CopyToClipboard>
           <Button onClick={joinSession}>Join Session</Button>
           <Button onClick={handleClose}>Close</Button>
         </Modal.Footer>
@@ -173,19 +179,6 @@ function Join(props) {
       </div>
 
       <div className='jybannerb'>
-        <div>
-          <input value={copied} onChange={(e) => setCopied(copied)} />
-
-          <CopyToClipboard text={copied} onCopy={() => setCopied(copied)}>
-            <span>Copy to clipboard with span</span>
-          </CopyToClipboard>
-
-          <CopyToClipboard text={copied} onCopy={() => setCopied(copied)}>
-            <button>Copy to clipboard with button</button>
-          </CopyToClipboard>
-
-          {copied ? <span style={{ color: 'red' }}>Copied.</span> : null}
-        </div>
         Portland State University - JamShare - 2022
       </div>
     </>
