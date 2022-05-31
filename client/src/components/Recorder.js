@@ -53,6 +53,16 @@ function Recorder(props) {
     recordContext.audioWorklet.addModule("RecorderProcessor.js")
     .then(() => {
         recorderNode = new AudioWorkletNode(recordContext, 'recorder-worklet');
+        recorderNode.connect(recordContext.destination);
+        recorderNode.port.onmessage = (e) => {
+            if (e.data.eventType === 'data') {
+                const audioData = e.data.audioBuffer;
+                createAudioBufferSource(audioData);
+            }
+            if (e.data.eventType === 'stop') {
+                // recording stopped
+            }
+        }
     });
     let delayNode = null;
     let metronome = null;
@@ -214,25 +224,14 @@ function Recorder(props) {
         test.addTrack(obj.track);
         
         recorderSource = recordContext.createMediaStreamSource(test);
-        
         recorderSource.connect(recorderNode);
-        recorderNode.connect(recordContext.destination);
-        recorderNode.port.onmessage = (e) => {
-            if (e.data.eventType === 'data') {
-                const audioData = e.data.audioBuffer;
-                createAudioBufferSource(audioData);
-            }
-            if (e.data.eventType === 'stop') {
-                // recording stopped
-            }
-        }
         recordContext.resume();
 
         //For now nick merge test
-        setTimeout(function(){
+        // setTimeout(function(){
         recorderNode.parameters.get('isRecording').setValueAtTime(1, recordContext.currentTime);
         // metronome.startStop();
-        }, 2000);
+        // }, 2000);
         intervalReturn = setInterval(connectAudioBuffer, 1000); // connect an audio buffer every 1000ms
         playbackContext.resume();
 
@@ -460,8 +459,6 @@ function Recorder(props) {
                 } else if (info === "newStreamAvailable") {
                     let tempOrder = obj.trackId.slice(-1);
                     if (parseInt(tempOrder, 10) === parseInt(playerOrder-1, 10)) {
-                        console.log("Player Order: ", playerOrder);
-                        console.log("Temp order: ", tempOrder);
                         // console.log("Playing", obj.trackId);
                         playAudio(obj);
                     }
