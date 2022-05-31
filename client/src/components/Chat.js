@@ -42,7 +42,8 @@ function Chat(props) {
     });
 
     console.log('SOCKET DONE');
-  }, [chat]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const sendMessage = (e) => {
     e.preventDefault();
