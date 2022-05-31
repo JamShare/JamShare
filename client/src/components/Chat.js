@@ -92,7 +92,7 @@ function Chat(props) {
         {chat &&
           chat.map((m, i) => (
             <p key={i}>
-              {m.username}:{m.justMsg}
+              <b>{m.username}</b>: {m.justMsg}
             </p>
           ))}
       </div>
