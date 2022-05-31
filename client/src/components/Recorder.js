@@ -107,18 +107,27 @@ function Recorder(props) {
         } catch(error) {
             console.log('Error in getAudioDevice:', error);
         }
-        waitForWebRTC();
+
+        webRTCPromise = new Promise(initiateWebRTC);
+
+        webRTCPromise
+        .then((text) => {
+            console.log(text);
+            joinRoom();
+            getTracks();
+            startPlaying();
+        })
     }
 
-    function waitForWebRTC() {
-        // if webrtc is null, delay execution by a second
-        // switch to promise based method in the future
-        if (!webRTCAdaptor) {
-            setTimeout(waitForWebRTC(), 1000);
+    function initiateWebRTC(resolve, reject) {
+        try {
+            webRTCAdaptor = initiateWebrtc(streamOut);
+            resolve('WebRTCAdaptor acquisition successful.');
+            return;
+        } catch (error) {
+            reject('WebRTCAdaptor acquisition failed.');
         }
-        joinRoom();
-        getTracks();
-        startPlaying();
+        return;
     }
 
     // event handlers for recorder
@@ -380,10 +389,7 @@ function Recorder(props) {
 
         connectMediaStreams();
 
-        //initiate adaptor
-        webRTCAdaptor = initiateWebrtc(streamOut);
-
-        return;
+         return;
     }
 
     // takes recorded audio data and creates an audio source from it
