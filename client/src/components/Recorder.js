@@ -410,7 +410,7 @@ function Recorder(props) {
         streamIn.connect(streamOut); // connect to new combined stream
         delayNode.connect(streamOut);
         metronome = new Metronome(120, playbackContext, playbackContext.destination);
-        webRTCAdaptor = initiateWebrtc(streamOut);
+        webRTCAdaptor = initiateWebrtc(streamOut.stream);
     }
 
     //join the antmedia room with audio only amcu
@@ -426,7 +426,7 @@ function Recorder(props) {
 
     function initiateWebrtc(streamOut) {
         return new WebRTCAdaptor({
-            stream_out: streamOut.stream,
+            stream_out: streamOut,
             websocket_url: state.websocketURL,
             mediaConstraints: state.mediaConstraints,
             peerconnection_config: state.pc_config,
