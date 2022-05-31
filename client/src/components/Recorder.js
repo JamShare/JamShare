@@ -107,12 +107,13 @@ function Recorder(props) {
         } catch(error) {
             console.log('Error in getAudioDevice:', error);
         }
+    }
 
+    function initAntMedia() {
         joinRoom();
         getTracks();
         startPlaying();
-    }
-
+    };
    
 
     // event handlers for recorder
@@ -438,7 +439,7 @@ function Recorder(props) {
             callback: function (info, obj) {
                 if (info === "initialized") {
                     console.log("initialized");
-
+                    initAntMedia();
                 } else if (info === "publish_started") {
                     //stream is being published
                     console.log("publish started");
