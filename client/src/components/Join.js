@@ -6,6 +6,7 @@ import Button from 'react-bootstrap/Button';
 import { Link, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import Modal from 'react-bootstrap/Modal';
 import JamShareLogo from './assets/images/JamShareLogo.jpg';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 // import {Morg_Signup} from "./component_export"
 import JoinModal from './JoinModal';
 import socket from '../index';
@@ -45,6 +46,10 @@ function Join(props) {
   socket.on('join-session-failed', () => {
     alert(`Session ID: ${sessionID} does not exist.`);
   });
+  useEffect(() => {
+    console.log('session ID updated:', sessionID);
+    // setSessionID(sessionID)
+  }, [sessionID]);
 
   const createSession = (room) => {
     console.log('Creating session BUTTON CLICK');
@@ -70,10 +75,14 @@ function Join(props) {
       }
     );
   }
+  function onCopy() {
+    console.log('CopyLink', sessionID);
+    setCopied(true);
+  }
 
   function copyLink() {
-    console.log('CopyLink', sessionID);
-    updateClipboard(sessionID);
+    console.log('Copied Link', sessionID);
+    //updateClipboard(sessionID);
   }
   /*
   function copyLink(event) {
@@ -98,6 +107,8 @@ function Join(props) {
         title={guest}
         data={sessionID}
         onHide={handleClose}
+        {...props}
+        socket='value'
         centered
         size='xl'>
         <Modal.Header closeButton className='purplebg'>
@@ -120,7 +131,9 @@ function Join(props) {
           </Container>
         </Modal.Body>
         <Modal.Footer className='purplebg'>
-          <Button onClick={copyLink}>Copy to Clipboard</Button>
+          <CopyToClipboard onCopy={onCopy} text={sessionID}>
+            <Button onClick={copyLink}>Copy to clipboard</Button>
+          </CopyToClipboard>
           <Button onClick={joinSession}>Join Session</Button>
           <Button onClick={handleClose}>Close</Button>
         </Modal.Footer>
@@ -169,6 +182,7 @@ function Join(props) {
           </Row>
         </div>
       </div>
+
       <div className='jybannerb'>
         Portland State University - JamShare - 2022
       </div>

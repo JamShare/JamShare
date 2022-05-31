@@ -4,13 +4,14 @@ const path = require('path');
 const bodyParser = require('body-parser');
 var cors = require('cors');
 const https = require('https');
+const http = require('http');
 const Socket = require('socket.io');
 const port = process.env.PORT || 3001;
 const Sessions = require('./Sessions.js');
 const { userJoin, getCurrentUser } = require('./Users');
-const fs = require("fs");
+const fs = require('fs');
 
-const {register_new_user, validate_creds} = require("./auth/auth.js")
+const { register_new_user, validate_creds } = require('./auth/auth.js');
 
 var app = express();
 
@@ -40,7 +41,7 @@ app.post('/auth/signin', async (req, res) => {
 });
 
 ///// end auth
-
+/*
 //Server
 const tls = {
   cert: fs.readFileSync("../fullchain.pem"),
@@ -49,6 +50,16 @@ const tls = {
 
 //Server
 const server = https.createServer(tls, app);
+const io = Socket(server, {
+  cors: {
+    methods: ['GET', 'POST'],
+  },
+});
+
+*/
+
+//Server
+const server = http.createServer(app);
 const io = Socket(server, {
   cors: {
     methods: ['GET', 'POST'],
@@ -166,14 +177,14 @@ io.on('connection', (socket) => {
 function assignPlayer(id) {
   if (players.includes(id)) {
     return players.length;
-  }
-  else {
+  } else {
     players.push(id);
     return players.length;
   }
 }
 
-server.listen(port, "berryhousehold.ddns.net", () => console.log(`Listening on port ${port}`));
+//server.listen(port, "berryhousehold.ddns.net", () => console.log(`Listening on port ${port}`));
 
+server.listen(port, () => console.log(`Listening on port ${port}`));
 app.use(express.static(path.resolve(__dirname, './client/build')));
 module.exports = app;
