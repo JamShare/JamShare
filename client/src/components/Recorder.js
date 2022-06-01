@@ -167,8 +167,7 @@ function Recorder(props) {
 
 
     //remotely play each audio stream
-    function playAudio(obj, trackPlayerId) {
-        tracks.push(obj.trackId);
+    function playAudio(obj) {
         let room = currentRoom;
         let trackOrder = obj.trackId.slice(-1);
 
@@ -287,7 +286,6 @@ function Recorder(props) {
                     console.log("publish finished");
                 } else if (info === "trackList") {
                     console.log("trackList", obj.streamId);
-                    addTrackList(obj.streamId, obj.trackList);
                 } else if (info === "joinedTheRoom") {
                     console.log("Object ID", obj.streamId);
                     publish(obj.streamId, state.token);
