@@ -2,22 +2,39 @@ import React, { useEffect, useState } from 'react';
 import Chat from './Chat';
 import Recorder from './Recorder';
 import Participants from './Participants';
-import { useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './App.css';
 import './room.css';
 import JamShareLogo from './assets/images/JamShareLogo.jpg';
 import socket from '../index';
 
 function Room() {
-  let {
-    state: { sessionID, guest, usernames },
-  } = (useLocation()); //gets the variable we passed from navigate
+  console.log('inside room');
 
+  const useLoca = useLocation();
+  const navigate = useNavigate();
+  console.log(useLoca.state);
+  console.log('navcigae');
+  var sessionID = `useLocation();`;
+  var guest = `useLocation();`;
+  var usernames = `useLocation();`;
+  if (useLoca.state !== null) {
+    sessionID = useLoca.state.sessionID;
+    guest = useLoca.state.guest;
+    usernames = useLoca.state.usernames;
+  }
   const [serverUserList, setServerUserList] = useState(usernames);
 
-  console.log('room state: ', sessionID, guest, serverUserList);
-
   useEffect(() => {
+    console.log('room props: ');
+    if (useLoca.state === null) {
+      let path = '/';
+      navigate(path, { state: {} });
+    } else {
+      sessionID = useLoca.state.sessionID;
+      guest = useLoca.state.guest;
+      setServerUserList(useLoca.state.usernames);
+    }
     window.addEventListener('beforeunload', keepOnPage); //this is fired upon component mounting
     socket.on('client-update-userlist', (newusernames) => {
       console.log('room got user order update', newusernames);
@@ -36,29 +53,40 @@ function Room() {
     e.returnValue = message;
     return message;
   };
-
-  return (
-    <div className='ProjectSectionContent'>
-      <div className='jybanner'>
-        <img className='jam-logo' src={JamShareLogo} alt='logo' />
+  if (useLoca.state !== null) {
+    return (
+      <div className='ProjectSectionContent'>
+        <div className='jybanner'>
+          <img className='jam-logo' src={JamShareLogo} alt='logo' />
+        </div>
+        <Participants
+          userlist={serverUserList}
+          sessionID={sessionID}
+          guest={guest}></Participants>
+        <Chat
+          userlist={serverUserList}
+          sessionID={sessionID}
+          guest={guest}></Chat>
+        <Recorder
+          userlist={serverUserList}
+          sessionID={sessionID}
+          guest={guest}></Recorder>
+        <div className='jybannerb'>
+          Session ID: {sessionID} - Portland State University - JamShare - 2022
+        </div>
       </div>
-
-      <Participants
-        userlist={serverUserList}
-        sessionID={sessionID}
-        guest={guest}></Participants>
-      <Chat
-        userlist={serverUserList}
-        sessionID={sessionID}
-        guest={guest}></Chat>
-      <Recorder
-        userlist={serverUserList}
-        sessionID={sessionID}
-        guest={guest}></Recorder>
-      <div className='jybannerb'>
-        Session ID: {sessionID} - Portland State University - JamShare - 2022
+    );
+  } else {
+    return (
+      <div className='ProjectSectionContent'>
+        <div className='jybanner'>
+          <img className='jam-logo' src={JamShareLogo} alt='logo' />
+        </div>
+        <div className='jybannerb'>
+          Session ID: {sessionID} - Portland State University - JamShare - 2022
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
 }
 export default Room;

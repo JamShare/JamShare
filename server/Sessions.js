@@ -12,12 +12,21 @@ class Sessions {
   // disconnectUser=(socket, sessionID, guest)=>{
   disconnectUser(socket) {
     // try{
+    console.log('disconnectUser socket');
+    //console.log(socket);
     const currentSID = this.findSessionIDFromSocketID(socket.id);
-    console.log('currentSID', currentSID);
+    console.log('currentSID');
 
+    console.log('currentSID2');
     const currentSession = this.sessions.get(currentSID);
+    if (currentSession === 'undefined');
+    {
+      console.log('undefinied session');
+      return;
+    }
+
     console.log(
-      'client',
+      'clien',
       socket.id,
       'disconnecting from session:',
       currentSession
@@ -99,6 +108,8 @@ class Sessions {
 
   findSessionIDFromSocketID = (socketID) => {
     var seshID = '';
+    console.log('finding session');
+    console.log(socketID);
     this.sessions.forEach(function (valuesess, keysess) {
       console.log('findsesh', keysess, valuesess);
       valuesess.clients.clients.forEach(function (valueclient, keyclient) {

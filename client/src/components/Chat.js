@@ -1,4 +1,4 @@
-import React, { useEffect, useState} from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import socket from '../index';
 function Chat(props) {
   const initialValues = {
@@ -8,70 +8,59 @@ function Chat(props) {
     msg: '',
   };
   const [message, setMessage] = useState('');
+  const [currID, setID] = useState(props.sessionID);
   const [chat, setChat] = useState([initialValues]);
-  //const [chatHistory, setChatHistory] = useState([]);
+
+  useEffect(() => {
+    setID(props.sessionID);
+  }, [props.sessionID]);
 
   useEffect(() => {
     //console.log('new-chat-history BEFORE CHAT:', chat);
+
+    console.log(props);
     setChat([]);
-    //console.log('new-chat-history after CHAT:', chat);
+
     socket.on('new-chat-history', (msg) => {
       console.log('new-chat-history:', msg);
-      //console.log('new-chat-history CHAT:', chat);
+
       if (!msg) {
         setChat([]);
-        //console.log('new-chat-history CHAT EMPTY:', chat);
       } else {
         setChat(msg);
-        //console.log('new-chat-history CHAT FOUN:', chat);
       }
     });
 
     socket.on('new-chat-message', (data) => {
       console.log('new-chat-messaged:', data);
-      //console.log('current chat ', chat);
-      setChat((oldChats) => [data, ...oldChats]);
-      if (chat[0].justMsg === 'empty') {
-        //chat.pop();
-        //console.log('current EMPTY chat ', chat);
-        //chat.push(data);
-      } else {
-        //chat.push(data);
-        //console.log('current chatPUSH  ', chat);
-      }
-    });
 
-    console.log('SOCKET DONE');
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+      setChat((oldChats) => [data, ...oldChats]);
+    });
   }, []);
 
-  const sendMessage = (e) => {
-    e.preventDefault();
-    if (message === '') return;
-    let newMsg = `${props.guest}: ${message}`;
-    var msgValues = {
-      // type all the fields you need
-      username: props.guest,
-      justMsg: message,
-      msg: newMsg,
-    };
-    //chat.push(msgValues);
-    setChat((oldChats) => [msgValues, ...oldChats]);
-    var data = {
-      username: props.guest,
-      justMsg: message,
-      msg: newMsg,
-      sessionID: props.sessionID,
-    };
-    socket.emit('chat-message', data);
-    setMessage(''); //clear input box. (value={message})
-  };
-
-  const handleKeypress = (e) => {
-    //
-    if (e.keyCode === 13) {
-      //key code 13 is 'enter' key
-      sendMessage();
+  const sendMessage = (event) => {
+    if (event.keyCode === 13 || event.type === 'click') {
+      if (message === '') {
+        console.log('empty chat msg');
+        return;
+      }
+      let newMsg = `${props.guest}: ${message}`;
+      var msgValues = {
+        // type all the fields you need
+        username: props.guest,
+        justMsg: message,
+        msg: newMsg,
+      };
+      //chat.push(msgValues);
+      setChat((oldChats) => [msgValues, ...oldChats]);
+      var data = {
+        username: props.guest,
+        justMsg: message,
+        msg: newMsg,
+        sessionID: currID,
+      };
+      socket.emit('chat-message', data);
+      setMessage(''); //clear input box. (value={message})
     }
   };
 
@@ -83,19 +72,31 @@ function Chat(props) {
           type='text'
           name='message'
           id='messageinput'
+          onChange={(e) => {
+            setMessage(e.target.value);
+          }}
           value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          onKeyPress={(e) => handleKeypress(e.target.value)}
+          onKeyDown={sendMessage}
         />
         <button className='a2' onClick={sendMessage}>
           Send
         </button>
         {chat &&
-          chat.map((m, i) => (
-            <p key={i}>
-              <b>{m.username}</b>: {m.justMsg}
-            </p>
-          ))}
+          chat.map((m, i) => {
+            if (m.username === 'badeed') {
+              return (
+                <p key={i}>
+                  <b style={{ color: 'red' }}>{m.username}</b>: {m.justMsg}
+                </p>
+              );
+            } else {
+              return (
+                <p key={i}>
+                  <b style={{ color: 'blue' }}>{m.username}</b>: {m.justMsg}
+                </p>
+              );
+            }
+          })}
       </div>
     </div>
   );
