@@ -4,6 +4,7 @@ import { getUrlParameter } from "../js/fetch.stream.js";
 import { saveAs } from 'file-saver';
 
 function Recorder(props) {
+    // state variables
     let state = {
         isRecording: false,
         isPlaying: false,
@@ -37,7 +38,7 @@ function Recorder(props) {
         //URL to antmedia server
         websocketURL: "wss://berryhousehold.ddns.net:5443/WebRTCAppEE/websocket",
         isShow: false,
-        delay: .25,
+        delay: .25, // delay timer for delayNode (in seconds)
     };
 
     // audiocontext variables
@@ -47,14 +48,14 @@ function Recorder(props) {
     recordContext.resume();
     const playbackContext = new AudioContext();
     let playerOrder = 0;
-    let sources = [];
+    let sources = []; // holds audiobuffer sources
     let recorderNode = null;
-    recordContext.audioWorklet.addModule("RecorderProcessor.js")
+    recordContext.audioWorklet.addModule("RecorderProcessor.js") // enables audioworklet module
     .then(() => {
         recorderNode = new AudioWorkletNode(recordContext, 'recorder-worklet');
         recorderNode.connect(recordContext.destination);
-        recorderNode.port.onmessage = (e) => {
-            if (e.data.eventType === 'data') {
+        recorderNode.port.onmessage = (e) => { // this handles message events from the associated processor (audioworkletprocessor)
+            if (e.data.eventType === 'data') { // handle events based on eventType
                 const audioData = e.data.audioBuffer;
                 createAudioBufferSource(audioData);
             }
@@ -67,13 +68,13 @@ function Recorder(props) {
             }
         }
     });
-    let delayNode = null;
-    let stream = null;
-    var recorderSource = null;
+    let delayNode = null; // audiobuffersource nodes connect to this, which are delayed when outputting to streamOut
+    let stream = null; // this is the local stream
+    var recorderSource = null; // source for recorderNode; uses remote stream as its source
 
     // recorder variables
-    let chunks = [];
-    let recorder = null;
+    let chunks = []; // chunks of audio collected by mediaRecorder, must be reassembled before use
+    let recorder = null; // mediaRecorder reading streamOut
     let audio = null;
     let recordIcon = require('./assets/images/record.png')
     let playingIcon = require('./assets/images/playing.png')
@@ -83,14 +84,11 @@ function Recorder(props) {
     let streamName = getUrlParameter("streamName");
     let streamOut = null;
 
-    //audio tracks
-    let tracks = [];
-
     //room info
     let currentRoom = '' + state.sessionID + '-';
 
     //Merge variables
-    let intervalReturn = null;
+    let intervalReturn = null; // use this to clearInterval on the connectAudioBuffers function
 
     function getPlayerOrder() {
         for (let i = 0; i < state.userlist.length; i++) {
@@ -115,7 +113,8 @@ function Recorder(props) {
     }
 
     function initAntMedia() {
-        joinRoom();
+        //join the antmedia room with audio only amcu
+        webRTCAdaptor.joinRoom(currentRoom, state.streamName, "multitrack", "amcu");
         webRTCAdaptor.play(currentRoom, state.token, ""); 
     };
    
@@ -185,20 +184,7 @@ function Recorder(props) {
             return;
         }
 
-        //create the audio element
-        var audioElement = document.getElementById("remoteVideo" + index);
-
-        if (audioElement == null) {
-            createRemoteAudio(index, trackOrder);
-            audioElement = document.getElementById("remoteVideo" + index);
-            audioElement.srcObject = new MediaStream();
-        }
-
-        //recorderSource = recordContext.createMediaStreamTrackSource(obj.track);
-        let test = new MediaStream();
-        test.addTrack(obj.track);
-        
-        recorderSource = recordContext.createMediaStreamSource(test);
+        recorderSource = recordContext.createMediaStreamTrackSource(obj.track);
         recorderSource.connect(recorderNode); // potentially failing?
 
         recorderNode.parameters.get('isRecording').setValueAtTime(1, recordContext.currentTime);
@@ -213,34 +199,6 @@ function Recorder(props) {
             recorder.ondataavailable = onDataAvailable;
             recorder.onstop = onStop;
         }
-    }
-
-    //add tracks to the antmedia room
-    function addTrackList(streamId, trackList) {
-        //addVideoTrack(streamId);
-        // console.log("Track list", trackList);
-        trackList.forEach(function (trackId) {
-            addVideoTrack(trackId);
-        });
-    }
-
-    //add antmedia stream to track list
-    function addVideoTrack(trackId) {
-        tracks.push(trackId);
-    }
-
-    //enable checked track
-    // function enableTrack(trackId, isEnabled) {
-    //     webRTCAdaptor.enableTrack(currentRoom, trackId, isEnabled);
-    // }
-
-    //create antmedia remote audio player
-    function createRemoteAudio(streamId, playerName) {
-        var player = document.createElement("div");
-        player.className = "col-sm-3";
-        player.id = '' + playerName;
-        player.innerHTML = '<video id="remoteVideo' + streamId + '"controls autoplay playsinline></video>' + playerName;
-        document.getElementById("players").appendChild(player);
     }
 
     //connect webrtc adaptor
@@ -259,10 +217,9 @@ function Recorder(props) {
             console.error(err);
             stream = null;
         }
-
         connectMediaStreams();
 
-         return;
+        return;
     }
 
     // takes recorded audio data and creates an audio source from it
@@ -298,11 +255,6 @@ function Recorder(props) {
         streamIn.connect(streamOut); // connect to new combined stream
         delayNode.connect(streamOut);
         webRTCAdaptor = initiateWebrtc(streamOut.stream);
-    }
-
-    //join the antmedia room with audio only amcu
-    function joinRoom() {
-        webRTCAdaptor.joinRoom(currentRoom, state.streamName, "multitrack", "amcu");
     }
 
     //publish the local stream
