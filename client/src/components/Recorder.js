@@ -42,14 +42,12 @@ function Recorder(props) {
     };
 
     // audiocontext variables
-    // recorder context records incoming audio; playback context plays it back to the user and combines local user audio 
-    // with the recording(s) in order to create a new stream
-    const recordContext = new AudioContext();
-    recordContext.resume();
-    const playbackContext = new AudioContext();
+    const recordContext = new AudioContext(); // recorder context records incoming audio from remote stream
+    recordContext.resume(); // enable the record context immediately
+    const playbackContext = new AudioContext(); // playback context plays back to user and combines local user audio with audiobuffer recordings to create new stream
     let playerOrder = 0;
     let sources = []; // holds audiobuffer sources
-    let recorderNode = null;
+    let recorderNode = null; // audioWorklet node, records audio
     recordContext.audioWorklet.addModule("RecorderProcessor.js") // enables audioworklet module
     .then(() => {
         recorderNode = new AudioWorkletNode(recordContext, 'recorder-worklet');
@@ -75,14 +73,14 @@ function Recorder(props) {
     // recorder variables
     let chunks = []; // chunks of audio collected by mediaRecorder, must be reassembled before use
     let recorder = null; // mediaRecorder reading streamOut
-    let audio = null;
+    let audio = null; // creates an audiofile based off blob of combined mediaRecorder chunks
     let recordIcon = require('./assets/images/record.png')
     let playingIcon = require('./assets/images/playing.png')
 
     //antmedia variables
     let webRTCAdaptor = null;
     let streamName = getUrlParameter("streamName");
-    let streamOut = null;
+    let streamOut = null; // combined stream, outputs to next player in the chain
 
     //room info
     let currentRoom = '' + state.sessionID + '-';
@@ -112,6 +110,7 @@ function Recorder(props) {
         }
     }
 
+    // this function is called when WebRTCAdaptor is finished intializing, to prevent "WebRTCAdaptor is null" errors
     function initAntMedia() {
         //join the antmedia room with audio only amcu
         webRTCAdaptor.joinRoom(currentRoom, state.streamName, "multitrack", "amcu");
@@ -119,7 +118,7 @@ function Recorder(props) {
     };
    
 
-    // event handlers for recorder
+    // event handlers for mediaRecorder
     function onDataAvailable(e) {
         chunks.push(e.data);
     }
@@ -131,7 +130,9 @@ function Recorder(props) {
         audio = new Audio(audioURL);
         saveAs(blob, "audioTest.wav")
     }
+    //
 
+    // starts mediaRecorder recording process (NOT recorderNode)
     function startRecording() {
         if (!recorder) {
             return;
@@ -145,6 +146,7 @@ function Recorder(props) {
         return;
     }
 
+    // stops mediaRecorder recording process (NOT recorderNode)
     function stopRecording() {
         if (!recorder) {
             return;
@@ -157,6 +159,7 @@ function Recorder(props) {
         return;
     }
 
+    // this plays assembled audio from mediaRecorder.onstop
     function playRecording() {
         if (!audio) {
             return;
@@ -183,14 +186,17 @@ function Recorder(props) {
             return;
         }
 
+        // create audio source from previous players' remote stream
         recorderSource = recordContext.createMediaStreamTrackSource(obj.track);
-        recorderSource.connect(recorderNode); // potentially failing?
+        recorderSource.connect(recorderNode); // connect to recorderNode
 
+        // enable recorderNode (to disable, set value to 0)
         recorderNode.parameters.get('isRecording').setValueAtTime(1, recordContext.currentTime);
-
-        intervalReturn = setInterval(connectAudioBuffer, 1000); // connect an audio buffer every 1000ms
-        playbackContext.resume();
-
+        // connects an audiobuffer every 1000ms, use clearInterval(intervalReturn) to stop
+        intervalReturn = setInterval(connectAudioBuffer, 1000);
+        playbackContext.resume(); // enables playback 
+        
+        // record audio if you're the last player
         if (state.username === state.userlist.at(-1)) {
             recorder = new MediaRecorder(streamOut.stream);
 
@@ -200,8 +206,8 @@ function Recorder(props) {
         }
     }
 
-    //connect webrtc adaptor
     async function getAudioDevice() {
+        // grab local stream
         try {
             stream = await navigator.mediaDevices
                 .getUserMedia({
@@ -223,37 +229,36 @@ function Recorder(props) {
 
     // takes recorded audio data and creates an audio source from it
     function createAudioBufferSource(audioData) {
-        // createBuffer(channels, seconds, sampleRate)
+        // syntax is createBuffer(channels, seconds, sampleRate)
         let buffer = playbackContext.createBuffer(1, playbackContext.sampleRate * 1, playbackContext.sampleRate);
-        buffer.copyToChannel(audioData, 0);
-        let bufferIn = playbackContext.createBufferSource();
-        bufferIn.buffer = buffer;
-        // bufferIn.onended = connectAudioBuffer();
-        sources.push(bufferIn);
+        buffer.copyToChannel(audioData, 0); // copy audioData into buffer
+        let bufferIn = playbackContext.createBufferSource(); // create source
+        bufferIn.buffer = buffer; // assign buffer to source
+        // bufferIn.onended = connectAudioBuffer(); // callback function for when bufferSource ends
+        sources.push(bufferIn); // push bufferSource into array
     }
 
     function connectAudioBuffer() { // add delay parameter to control when audiobuffer plays back? (in ms)
         console.log("loading audio buffer");
-        let audioBuffer = sources.splice(0, 1)[0];
-        if (audioBuffer) {
+        let audioBuffer = sources.splice(0, 1)[0]; // grab the first bufferSource in the array
+        if (audioBuffer) { // if audioBuffer exists
             audioBuffer.connect(playbackContext.destination);
             audioBuffer.connect(delayNode);
             audioBuffer.start();
             console.log("audio buffer connected");
-        } else {
-            console.error("No audio buffer sources found; cannot connect to playback context.");
+        } else { // if audioBuffer is undefined
+            console.error("No audio buffer sources found; cannot connect it to playback context.");
         }
     }
 
     function connectMediaStreams() {
-        console.log(state.delay);
         var streamIn = playbackContext.createMediaStreamSource(stream); // local stream
-        delayNode = playbackContext.createDelay(10);
-        delayNode.delayTime.setValueAtTime(state.delay, playbackContext.currentTime);
-        streamOut = playbackContext.createMediaStreamDestination(); // output new combined stream
-        streamIn.connect(streamOut); // connect to new combined stream
-        delayNode.connect(streamOut);
-        webRTCAdaptor = initiateWebrtc(streamOut.stream);
+        delayNode = playbackContext.createDelay(10); // create delayNode with maxDelay of 10s
+        delayNode.delayTime.setValueAtTime(state.delay, playbackContext.currentTime); // set delayTime of delayNode
+        streamOut = playbackContext.createMediaStreamDestination(); // output combined stream of localStream and audioBufferSourceNodes, send to next player
+        streamIn.connect(streamOut); // connect localStream to new combined stream
+        delayNode.connect(streamOut); // connect delayNode to new combined stream
+        webRTCAdaptor = initiateWebrtc(streamOut.stream); // initialize the webRTC adaptor
     }
 
     //publish the local stream
