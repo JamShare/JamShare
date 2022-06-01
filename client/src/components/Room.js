@@ -15,9 +15,9 @@ function Room() {
   let { state: { sessionID, guest, usernames }, } = ({} = useLocation()); //gets the variable we passed from navigate
   const [serverUserList, setServerUserList] = useState(usernames);//important for saving the state passed to this parent component from the server. child components access this via "props" and do not use their own setstate for this value
   const [indicesReady, setIndicesReady] = useState([0,0,0,0]);
-  const [clientIndex, setClientIndex] = useState();
+  const [clientIndex, setClientIndex] = useState(-1);
   
-  console.log("room state: ", sessionID, guest, serverUserList);
+  console.log("room state:", sessionID, guest, serverUserList, indicesReady, clientIndex);
 
   socket.on('client-update-userlist', (newusernames) => {
     console.log('room got user order update', newusernames);
@@ -26,9 +26,14 @@ function Room() {
       if(newusernames[i] === guest){
         console.log("this client is index", newusernames[i], i);
         setClientIndex(i);
+        break;//break or index gets set to -1 in next iteration
       }
       else {
-        console.log("error in index update");
+        console.log("this client is not index. seeking next index", i);
+        setClientIndex(-1)
+      }
+      if(clientIndex === -1){
+        console.log("failed to find matching user index")
       }
     }
     setServerUserList(newusernames);
@@ -37,7 +42,7 @@ function Room() {
   socket.on('player-index-ready', (index) => {
     console.log('room: index player ready:', index);
     const [updatedIndices] = indicesReady.splice(index, 1, 1);//in index, put 1 value of 1. 
-    console.log("updated indicies", updatedIndices);
+    console.log("updated ready indices:", updatedIndices);
     setIndicesReady(updatedIndices);
   });
 
