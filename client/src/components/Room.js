@@ -42,7 +42,7 @@ function Room() {
 
   socket.on('player-index-ready', (index) => {
     console.log('room: index player ready:', index);
-    var newlist = [...indicesReady];
+    var newlist = indicesReady;
     const [updatedIndices] = newlist.splice(index, 1, 1);//in index, put 1 value of 1. 
     console.log("updated ready indices:", updatedIndices);
     setIndicesReady(updatedIndices);
@@ -50,7 +50,7 @@ function Room() {
 
   socket.on('player-index-not-ready', (index) => {
     console.log('room: index player not ready:', index);
-    var newlist = [...indicesReady];
+    var newlist = indicesReady;
     const [updatedIndices] = newlist.splice(index, 1, 0);//in index, put 1 value of 0. 
     console.log("updated indicies", updatedIndices);
     setIndicesReady(updatedIndices);

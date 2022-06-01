@@ -36,7 +36,7 @@ function Participants(props) {
     }catch(error){
       console.log(error)
     }
-    
+
     if(props.readyUsers[props.clientIndex] === 0){
       let data = {index: props.clientIndex};
       console.log('Sending updated ready index to server', props.clientIndex);
@@ -74,7 +74,7 @@ function Participants(props) {
                       <img className='dragDn' src={image5} width='20' height='5' alt=' dragImage '></img>                                        
                       <img className='round' src={image2} width='50' height='50' alt=' UserImage '></img>
                       {item+": "+(index+1)}
-                      {props.readyUsers[index] !== 0 ? <>READY</> : <></>}
+                      {props.readyUsers[index] !== 0 ? <> READY</> : <></>}
                       
                     </div>
                   )}

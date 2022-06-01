@@ -179,11 +179,11 @@ class Session {
   }
 
   playerIndexReady(socket, index){
-    socket.emit('player-index-ready', index);
+    socket.to(this.sessionID).emit('player-index-ready', index);
   }
 
   playerIndexNotReady(socket, index){
-    socket.emit('player-index-not-ready', index);
+    socket.to(this.sessionID).emit('player-index-not-ready', index);
   }
 
   // retSessionIDandClients(){
