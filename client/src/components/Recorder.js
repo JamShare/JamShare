@@ -175,9 +175,9 @@ function Recorder(props) {
         }
 
         recorderSource = recordContext.createMediaStreamTrackSource(obj.track);
-        recorderSource.connect(recorderNode); // potentially failing?
+        console.log("Recorder source: ", recorderSource, " obj.track: ", obj.track)
+        recorderSource.connect(recorderNode); 
 
-        //For now nick merge test
         recorderNode.parameters.get('isRecording').setValueAtTime(1, recordContext.currentTime);
         intervalReturn = setInterval(connectAudioBuffer, 1000); // connect an audio buffer every 1000ms
         playbackContext.resume(); // begin playback to users speakers and streamOut
