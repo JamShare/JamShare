@@ -21,6 +21,8 @@ function Room() {
 
   socket.on('client-update-userlist', (newusernames) => {
     console.log('room got user order update', newusernames);
+    setServerUserList(newusernames);
+
     for (var i = 0; i < newusernames.length; i++) {
       console.log("room index order", newusernames[i], i);
       if(newusernames[i] === guest){
@@ -36,7 +38,6 @@ function Room() {
         console.log("failed to find matching user index")
       }
     }
-    setServerUserList(newusernames);
   });
 
   socket.on('player-index-ready', (index) => {
