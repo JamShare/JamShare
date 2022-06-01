@@ -252,10 +252,11 @@ function Recorder(props) {
     // delayNode attempts to sync audioBuffer and local stream because there
     // is a delay between them due to hardware/io latency
     function connectMediaStreams() {
+        let delay = 0.15;
         console.log(state.delay);
         var streamIn = playbackContext.createMediaStreamSource(stream); // local stream
         delayNode = playbackContext.createDelay(10);
-        delayNode.delayTime.setValueAtTime(state.delay, playbackContext.currentTime);
+        delayNode.delayTime.setValueAtTime(delay, playbackContext.currentTime);
         streamOut = playbackContext.createMediaStreamDestination(); // output new combined stream
         streamIn.connect(streamOut); // connect to new combined stream
         delayNode.connect(streamOut);
