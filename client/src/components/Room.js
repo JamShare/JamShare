@@ -22,7 +22,9 @@ function Room() {
   socket.on('client-update-userlist', (newusernames) => {
     console.log('room got user order update', newusernames);
     for (var i = 0; i < newusernames.length; i++) {
+      console.log("room index order", newusernames[i], i);
       if(newusernames[i] === guest){
+        console.log("this client is index", newusernames[i], i);
         setClientIndex(i);
       }
       else {

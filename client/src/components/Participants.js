@@ -31,6 +31,12 @@ function Participants(props) {
   };
 
   function toggleReady(){
+    try{
+      console.log("toggleinfo", props.clientIndex, props.readyUsers);
+    }catch(error){
+      console.log(error)
+    }
+    
     if(props.readyUsers[props.clientIndex] === 0){
       let data = {index: props.clientIndex};
       console.log('Sending updated ready index to server', props.clientIndex);
