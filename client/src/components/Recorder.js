@@ -116,8 +116,7 @@ function Recorder(props) {
 
     function initAntMedia() {
         joinRoom();
-        getTracks();
-        startPlaying();
+        webRTCAdaptor.play(currentRoom, state.token, ""); 
     };
    
 
@@ -216,12 +215,6 @@ function Recorder(props) {
         }
     }
 
-    //get the tracks in the antmedia room
-    function getTracks() {
-        //streamId = "room1";
-        webRTCAdaptor.getTracks(currentRoom, state.token);
-    }
-
     //add tracks to the antmedia room
     function addTrackList(streamId, trackList) {
         //addVideoTrack(streamId);
@@ -229,49 +222,6 @@ function Recorder(props) {
         trackList.forEach(function (trackId) {
             addVideoTrack(trackId);
         });
-    }
-
-    //play the enabled antmedia room tracks
-    function startPlaying() {
-        var enabledTracks = [];
-        //tracks to play if we are player 2
-        if (playerOrder === 2) {
-            // console.log("Player Order: ", playerOrder);
-            // console.log("Tracks Order: ", tracks);
-
-            tracks.forEach(function (trackId) {
-                if (trackId === "1") {
-                    enabledTracks.push("1");
-                }
-                else {
-                    enabledTracks.push(("!") + trackId);
-                }
-            });
-        }
-        //tracks to play if we are player 3 
-        else if (playerOrder === 3) {
-            // console.log("Player Order: ", playerOrder);
-            tracks.forEach(function (trackId) {
-                if (trackId === "1") {
-                    enabledTracks.push("1");
-                }
-                else if (trackId === "2") {
-                    enabledTracks.push("2");
-                }
-                else {
-                    enabledTracks.push(("!") + trackId);
-                }
-            });
-        }
-        //if not player 2 or 3 mute all tracks
-        else {
-            tracks.forEach(function (trackId) {
-                enabledTracks.push(("!") + trackId);
-            });
-        }
-        //play the room tracks
-        //streamId = "room1";
-        webRTCAdaptor.play(currentRoom, state.token, "");
     }
 
     //add antmedia stream to track list
