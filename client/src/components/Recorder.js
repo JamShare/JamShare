@@ -5,14 +5,6 @@ import { saveAs } from 'file-saver';
 import Metronome from './metronome.js';
 
 function Recorder(props) {
-    //audio context sourcesuserlistsessionId
-    // recorder context records incoming audio; playback context plays it back to the user and combines local user audio 
-    // with the recording(s) in order to create a new stream
-    const recordContext = new AudioContext();
-    recordContext.resume();
-    const playbackContext = new AudioContext();
-    let playerOrder = 0;
-
     let state = {
         isRecording: false,
         isPlaying: false,
@@ -48,8 +40,15 @@ function Recorder(props) {
         isShow: false,
         delay: .25,
     };
+
+    // audiocontext variables
+    // recorder context records incoming audio; playback context plays it back to the user and combines local user audio 
+    // with the recording(s) in order to create a new stream
+    const recordContext = new AudioContext();
+    recordContext.resume();
+    const playbackContext = new AudioContext();
+    let playerOrder = 0;
     let sources = [];
-    let chunks = [];
     let recorderNode = null;
     recordContext.audioWorklet.addModule("RecorderProcessor.js")
     .then(() => {
@@ -70,7 +69,11 @@ function Recorder(props) {
         }
     });
     let delayNode = null;
-    let metronome = null;
+    let stream = null;
+    var recorderSource = null;
+
+    // recorder variables
+    let chunks = [];
     let recorder = null;
     let audio = null;
     let recordIcon = require('./assets/images/record.png')
@@ -88,8 +91,6 @@ function Recorder(props) {
     let currentRoom = '' + state.sessionID + '-';
 
     //Merge variables
-    let stream = null;
-    var recorderSource = null;
     let intervalReturn = null;
 
     function getPlayerOrder() {
