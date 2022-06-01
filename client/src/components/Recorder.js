@@ -116,6 +116,8 @@ function Recorder(props) {
 
     function initAntMedia() {
         joinRoom();
+        getTracks();
+        startPlaying();
     };
    
 
