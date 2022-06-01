@@ -109,6 +109,11 @@ function Recorder(props) {
             console.log('Error in getAudioDevice:', error);
         }
     }
+
+    // these functions execute after webRTCAdapter is initialized in getAudioDevice()
+    function initAntMedia() {
+        joinRoom();
+    };
    
     // event handlers for recorder
     function onDataAvailable(e) {
@@ -159,6 +164,7 @@ function Recorder(props) {
 
     //remotely play each audio stream
     function playAudio(obj) {
+        tracks.push(obj.trackId);
         let room = currentRoom;
         let trackOrder = obj.trackId.slice(-1);
 
@@ -293,6 +299,7 @@ function Recorder(props) {
                     console.log("publish finished");
                 } else if (info === "trackList") {
                     console.log("trackList", obj.streamId);
+                    addTrackList(obj.streamId, obj.trackList);
                 } else if (info === "joinedTheRoom") {
                     console.log("Object ID", obj.streamId);
                     publish(obj.streamId, state.token);
