@@ -10,6 +10,38 @@ class Sessions {
     this.sessions = new Map();
   }
 
+  playerReady(data, socket){
+    try{
+    console.log("player index clicked ready button:", data.index );
+    const currentSID = this.findSessionIDFromSocketID(socket.id)
+    console.log("currentSID", currentSID);
+
+    const currentSession = this.sessions.get(currentSID);
+  
+    currentSession.playerIndexReady(socket, data.index);//emits to room which index is ready
+    } catch (error){
+      console.log("failed to update ready status...\n", error);
+      let data = {console:"failed to update ready status...\n", error:error};
+      socket.emit('error', data);
+    }
+  }
+
+  playerNotReady(data, socket){
+    try{
+    console.log("player index clicked not ready button:", data.index );
+    const currentSID = this.findSessionIDFromSocketID(socket.id)
+    console.log("currentSID", currentSID);
+
+    const currentSession = this.sessions.get(currentSID);
+  
+    currentSession.playerIndexNotReady(socket, data.index);//emits to room which index is ready
+    } catch (error){
+      console.log("failed to update not ready status...\n", error);
+      let data = {console:"failed to update not ready status...\n", error:error};
+      socket.emit('error', data);
+    }
+  }
+
   disconnectUser(socket){
     // try{
       const currentSID = this.findSessionIDFromSocketID(socket.id)
@@ -144,6 +176,14 @@ class Session {
     this.sessionID = sessionID;
     // game session in progress or not? disallow changes to player order during runtime
     this.gameSession = false;
+  }
+
+  playerIndexReady(socket, index){
+    socket.emit('player-index-ready', index);
+  }
+
+  playerIndexNotReady(socket, index){
+    socket.emit('player-index-not-ready', index);
   }
 
   // retSessionIDandClients(){

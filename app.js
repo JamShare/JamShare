@@ -8,7 +8,6 @@ const http = require('http');
 const Socket = require('socket.io');
 const port = process.env.PORT || 3001;
 const Sessions = require('./Sessions.js');
-const { userJoin, getCurrentUser } = require('./Users');
 const { register_new_user, validate_creds } = require('./auth/auth.js');
 
 //node instance
@@ -53,8 +52,27 @@ var sessions = new Sessions();
 // Listening for incoming connections
 io.on('connection', (socket) => {
   console.log("client connected:",socket.id);
-  //recieve the data from the user
-  clientObject = undefined;
+
+  //Jam control signals
+  socket.on('player-ready', (data) => {//data is index of player that clicked ready
+    try{
+      sessions.playerReady(data, socket);
+    }catch(error){
+      console.log(error); 
+      socket.emit('error',error);
+    }
+  });
+
+  socket.on('player-not-ready', (data) => {//data is index of player that clicked ready
+    try{
+      sessions.playerNotReady(data, socket);
+    }catch(error){
+      console.log(error); 
+      socket.emit('error',error);
+    }
+  });
+
+  //recieve the data from the user to create new session. reply within the function with generated sessionID.
   socket.on('create-session', (data) => {
     try{
       sessions.createSession(data, socket);
@@ -167,15 +185,6 @@ io.on('connection', (socket) => {
   // });
 });
 
-function assignPlayer(id) {
-  if (players.includes(id)) {
-    return players.length;
-  }
-  else {
-    players.push(id);
-    return players.length;
-  }
-}
 
 server.listen(port, () => console.log(`Listening on port ${port}`));
 app.use(express.static(path.resolve(__dirname, './client/build')));

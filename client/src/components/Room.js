@@ -14,12 +14,38 @@ import socket from "../index";
 function Room() {
   let { state: { sessionID, guest, usernames }, } = ({} = useLocation()); //gets the variable we passed from navigate
   const [serverUserList, setServerUserList] = useState(usernames);//important for saving the state passed to this parent component from the server. child components access this via "props" and do not use their own setstate for this value
+  const [indicesReady, setIndicesReady] = useState([0,0,0,0]);
+  const [clientIndex, setClientIndex] = useState();
+  
   console.log("room state: ", sessionID, guest, serverUserList);
 
   socket.on('client-update-userlist', (newusernames) => {
     console.log('room got user order update', newusernames);
+    for (var i = 0; i < newusernames.length; i++) {
+      if(newusernames[i] === guest){
+        setClientIndex(i);
+      }
+      else {
+        console.log("error in index update");
+      }
+    }
     setServerUserList(newusernames);
   });
+
+  socket.on('player-index-ready', (index) => {
+    console.log('room: index player ready:', index);
+    const [updatedIndices] = indicesReady.splice(index, 1, 1);//in index, put 1 value of 1. 
+    console.log("updated indicies", updatedIndices);
+    setIndicesReady(updatedIndices);
+  });
+
+  socket.on('player-index-not-ready', (index) => {
+    console.log('room: index player not ready:', index);
+    const [updatedIndices] = indicesReady.splice(index, 1, 0);//in index, put 1 value of 0. 
+    console.log("updated indicies", updatedIndices);
+    setIndicesReady(updatedIndices);
+  });
+
 
   useEffect(()=>{
     window.addEventListener('beforeunload', keepOnPage);//this is fired upon component mounting
@@ -45,10 +71,10 @@ function Room() {
         <img class='jam-logo' src={JamShareLogo} alt='logo'/>
         
       </div>
-      <Participants userlist={serverUserList} sessionID={sessionID} guest={guest}></Participants>
+      <Participants clientIndex={clientIndex} readyUsers={indicesReady} userlist={serverUserList} sessionID={sessionID} guest={guest}></Participants>
       <Viewer userlist={serverUserList} sessionID={sessionID} guest={guest}></Viewer>
       {/* <Chat userlist={serverUserList} sessionID={sessionID} guest={guest}></Chat> */}
-      <Recorder userlist={serverUserList} sessionID={sessionID} guest={guest}></Recorder>
+      <Recorder clientIndex={clientIndex} readyUsers={indicesReady} userlist={serverUserList} sessionID={sessionID} guest={guest}></Recorder>
       <div class="jybannerb">
       Session ID: {sessionID} - Portland State University - JamShare - 2022
       </div>
