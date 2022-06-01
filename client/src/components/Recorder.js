@@ -196,40 +196,6 @@ function Recorder(props) {
             audioElement.srcObject = new MediaStream();
         }
 
-        // let timeToDelay = 0;
-
-        // console.log("Track Order: ", trackOrder);
-        // if (playerOrder === 2 && trackOrder === '1') {
-        //     timeToDelay = 0.5;
-        // } else if (playerOrder === 3 && trackOrder === '1') {
-        //     timeToDelay = 1;
-        // }
-        // else if (playerOrder === 3 && trackOrder === '2') {
-        //     timeToDelay = 0.5;
-        // }
-        // else if (playerOrder === 4 && trackOrder === '1') {
-        //     timeToDelay = 1.5;
-        // }
-        // else if (playerOrder === 4 && trackOrder === '2') {
-        //     timeToDelay = 1;
-        // }
-        // else if (playerOrder === 4 && trackOrder === '3') {
-        //     timeToDelay = 0.5;
-        // }
-
-        //audio context delay code
-        // let audioCtx = new AudioContext();
-        // const delay = new DelayNode(audioCtx, {
-        //     delayTime: timeToDelay,
-        // });
-
-        // var source = audioCtx.createMediaStreamTrackSource(obj.track);
-        // source.connect(delay);
-        // var dest = audioCtx.createMediaStreamDestination();
-        // delay.connect(dest);
-        // audioElement.srcObject.addTrack(dest.stream.getAudioTracks()[0]);
-
-        //Nick merge code-----------------------------------------------------------------
         //recorderSource = recordContext.createMediaStreamTrackSource(obj.track);
         let test = new MediaStream();
         test.addTrack(obj.track);
@@ -237,50 +203,17 @@ function Recorder(props) {
         recorderSource = recordContext.createMediaStreamSource(test);
         recorderSource.connect(recorderNode); // potentially failing?
 
-        //For now nick merge test
-        // setTimeout(function(){
         recorderNode.parameters.get('isRecording').setValueAtTime(1, recordContext.currentTime);
-        // metronome.startStop();
-        // }, 2000);
+
         intervalReturn = setInterval(connectAudioBuffer, 1000); // connect an audio buffer every 1000ms
         playbackContext.resume();
 
-        //Nick merge code-----------------------------------------------------------------
-
-        //if we are the last player, record the audio streams
-        // console.log("New stream player order: ", playerOrder);
-        // console.log("User List: ", state.userlist.at(-1));
         if (state.username === state.userlist.at(-1)) {
             recorder = new MediaRecorder(streamOut.stream);
 
             //initialize event handlers for recorder
             recorder.ondataavailable = onDataAvailable;
             recorder.onstop = onStop;
-
-
-            //Push ac sources
-            //     const source = recordContext.createMediaStreamTrackSource(dest.stream.getAudioTracks()[0]);
-            //     acSources.push(source);
-            //     console.log("Acsource length", acSources.length);
-            //     //if we have three streams.
-            //     if (acSources.length === playerOrder - 1) {
-
-            //         //connect all of the sources
-            //         for (let i = 0; i < acSources.length; i++) {
-            //             console.log("i acDest: ", acSources[i]);
-            //             acSources[i].connect(acDest);
-            //         }
-
-            //         //create the media recorder for the last player
-            //         console.log("acDest: ", acDest);
-            //         recorder = new MediaRecorder(acDest.stream)
-
-            //         // initialize event handlers for recorder
-            //         recorder.ondataavailable = onDataAvailable;
-            //         recorder.onstop = onStop;
-
-            //     }
-            // }
         }
     }
 
