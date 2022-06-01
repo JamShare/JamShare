@@ -247,6 +247,11 @@ function Recorder(props) {
             audioBuffer.start();
             console.log("audio buffer connected");
         } else { // if audioBuffer is undefined
+            /* add last player check
+            if (state.isRecording) {
+                state.isRecording = !state.isRecording;
+            }
+            */ 
             console.error("No audio buffer sources found; cannot connect it to playback context.");
         }
     }
