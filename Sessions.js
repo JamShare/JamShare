@@ -229,6 +229,7 @@ class Session {
       console.log("usernames now in session:",usernames);
       socket.emit('join-session-success', usernames);
       console.log("user joined. updating user list of:",this.sessionID);
+      socket.emit('client-update-userlist', usernames);
       socket.to(this.sessionID).emit('client-update-userlist', usernames);
     } catch (error) {
       socket.emit('join-session-failed');
