@@ -2,7 +2,6 @@ import React from 'react';
 import { WebRTCAdaptor } from '../js/webrtc_adaptor.js';
 import { getUrlParameter } from "../js/fetch.stream.js";
 import { saveAs } from 'file-saver';
-import Metronome from './metronome.js';
 
 function Recorder(props) {
     let state = {
@@ -348,7 +347,6 @@ function Recorder(props) {
         streamOut = playbackContext.createMediaStreamDestination(); // output new combined stream
         streamIn.connect(streamOut); // connect to new combined stream
         delayNode.connect(streamOut);
-        metronome = new Metronome(120, playbackContext, playbackContext.destination);
         webRTCAdaptor = initiateWebrtc(streamOut.stream);
     }
 
@@ -393,12 +391,12 @@ function Recorder(props) {
                     publish(obj.streamId, state.token);
                 } else if (info === "closed") {
                     if (typeof obj != "undefined") {
-                        console.log("Connecton closed: "
-                            + JSON.stringify(obj));
+                        console.log("Connecton closed: " + JSON.stringify(obj));
                     }
                 } else if (info === "streamInformation") {
 
                 } else if (info === "newStreamAvailable") {
+                    // get previous players stream
                     let tempOrder = obj.trackId.slice(-1);
                     if (parseInt(tempOrder, 10) === parseInt(playerOrder-1, 10)) {
                         // console.log("Playing", obj.trackId);
