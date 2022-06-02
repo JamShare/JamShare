@@ -7,7 +7,7 @@ function Recorder(props) {
   let state = {
     isRecording: false,
     isPlaying: false,
-    icon: '',
+    icon: require('./assets/images/device.jpg'),
     text: 'Jam!',
     userlist: props.userlist,
     sessionID: props.sessionID,
@@ -41,6 +41,11 @@ function Recorder(props) {
     isShow: false,
   };
 
+  // deviceIcon = require('./assets/images/microphone.jpg');
+  // stopIcon = require('./assets/images/stop.jpg');
+  // playIcon = require('./assets/images/play.jpg');
+  // pauseIcon = require('./assets/images/paus.jpg');
+
   //audio context variables
   let acSources = [];
   let playerOrder = 0;
@@ -71,6 +76,7 @@ function Recorder(props) {
   //start the jam
   function startTheJam() {
     //get the current players order
+    // setState({icon: deviceIcon});
     getPlayerOrder();
 
     //we delay due to webRTCAdaptor needing init time per function
@@ -117,6 +123,7 @@ function Recorder(props) {
     recorder.start();
     state.isRecording = true;
     console.log('Recording started successfully.');
+    // setState({icon: playIcon});
     return;
   }
 
@@ -129,6 +136,7 @@ function Recorder(props) {
     }
     recorder.stop();
     state.isRecording = false;
+    // setState({icon: stopIcon});
     return;
   }
 
@@ -136,6 +144,14 @@ function Recorder(props) {
     if (!audio) {
       return;
     }
+    // if (state.isPlaying) {
+    //   setState({icon: pauseIcon});
+    //   setState({ isPlaying: false});
+    // }
+    // if (!state.isRecording) {
+    //   setState({icon: playIcon});
+    //   setState({ isPlaying: true});
+    // }
     audio.play();
     return;
   }
@@ -341,14 +357,20 @@ function Recorder(props) {
 
   return (
     <div className='jamblock'>
-      <button onClick={startTheJam}>Start The Jam!</button>
-
-      <button onClick={startRecording}>Start recording</button>
-
-      <button onClick={stopRecording}>Stop recording</button>
-      <button onClick={playRecording}>Play recording</button>
+      <div className='RoomComponentList RoomComponentListAddImg'>
+        <h1>JAM</h1>
+      </div>
+      <div className='RoomComponentList RoomComponentListAddImg RoomComponentListJamImg'>
+        <img class="round" src={state.icon} width="200" height="200"alt=" recording "></img>
+      </div>
+      <button className='rec' onClick={startTheJam}>Start The Jam!</button>
+      <button className='rec' onClick={startRecording}>Start recording</button>
+      <button className='rec' onClick={stopRecording}>Stop recording</button>
+      <button className='rec' onClick={playRecording}>Play recording</button>
+      <div className='RoomComponentList RoomComponentListAddImg'>
+        <h1>Local Audio</h1>
+      </div>
       <div>
-        Local Audio
         <audio id='local_audio' autoPlay muted playsInline controls={true} />
       </div>
       <div className='container'>

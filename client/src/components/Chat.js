@@ -66,21 +66,25 @@ function Chat(props) {
 
   return (
     <div className='ProjectSectionContent'>
-      <div className='recordblock'>
+      <div className='chatinputblock'>
         <br></br>
-        <input
-          type='text'
-          name='message'
-          id='messageinput'
-          onChange={(e) => {
-            setMessage(e.target.value);
-          }}
-          value={message}
-          onKeyDown={sendMessage}
-        />
-        <button className='a2' onClick={sendMessage}>
-          Send
-        </button>
+        <div className='RoomComponentList RoomComponentListChatinput'>
+          <input className='chatInput'
+            type='text'
+            name='message'
+            id='messageinput'
+            onChange={(e) => {
+              setMessage(e.target.value);
+            }}
+            value={message}
+            onKeyDown={sendMessage}
+          />
+          <button className='send' onClick={sendMessage}>
+            Send
+          </button>
+        </div>
+      </div>
+      <div className='chatblock'>
         {chat &&
           chat.map((m, i) => {
             if (m.username === 'badeed') {

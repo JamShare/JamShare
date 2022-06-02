@@ -1,4 +1,3 @@
-
 .jybanner {
   background-color:black;
   width: 100%;
@@ -8,8 +7,23 @@
   justify-content: center;
   display:flex;
   overflow: hidden;
+  z-index: 4;
 }
-
+.jybannera{
+  top: 89px;
+  position:fixed;
+  background-color: rgb(46, 46, 46);
+  display:flex;
+  overflow: hidden;
+  text-align: left;
+  border: 2px solid #ffffff;
+  border-radius: 5px;
+  color: #ffffff;
+  font-size: 15pt;
+  height: 40px;
+  width: 100%;
+  z-index: 4;
+}
 .jybannerb {
   background-color:black;
   width: 100%;
@@ -23,6 +37,7 @@
   overflow: hidden;
   font-size: 15pt;
   text-align: center;
+  z-index: 4;
 }
 
 .jam-logo {
@@ -38,18 +53,49 @@
   overflow: hidden;
 }
 
+button.about{
+  position:absolute;
+  top: 6px;
+  right: 15px;
+  background-color:  orange;
+  border: 3px solid orange; 
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 13pt;
+  text-align: center;
+  height: 28px;
+  width: auto;
+}
+
+button.about a{
+  color:purple;
+}
+
+button.send{
+  position:absolute;
+  top: 0px;
+  right: 5px;
+  color: orange;
+  background-color:  purple;
+  border: 2px solid #ffffff; 
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 10pt;
+  text-align: center;
+  height: 30px;
+}
+
 button.rec{
   height: 50px;
   width: 240px;
   margin-top: 20px;
-
   text-align: center;
   color: orange;
   background-color:  purple;
   border: 3px solid #ffffff; 
   border-radius: 5px;
   font-weight: bold;
-  font-size: 10pt;
+  font-size: 13pt;
 }
 
 .dragUp{
@@ -63,9 +109,13 @@ button.rec{
   position:absolute;
 }
 .ProjectSectionContent {
-  display: flex;
-  height: 100vh;
+  height: 120vh;
   background-color:  rgb(46, 46, 46);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center;
+  background-size: contain;
+  overflow: hidden;
 }
 
 .RoomComponentList{
@@ -89,10 +139,81 @@ button.rec{
 .RoomComponentListAddImg{
   height: 50px;
   margin-top: 15px;
+  margin-bottom: 15px;
   display: flex;
   justify-content: center;
   background-color: rgb(117, 117, 117);
   border: 0px solid #ffffff; 
+}
+
+.RoomComponentListChatinput{
+  top: -18px;
+  height: 35px;
+  margin: 0px;
+  display: flex;
+  background-color: rgb(117, 117, 117);
+  border: 0px solid #ffffff; 
+  width: 100%;
+ overflow:visible;
+}
+.RoomComponentListJamImg{
+  height:200px;
+}
+
+.ViewerComponentList{
+  border: 3px solid rgb(216, 216, 216);
+  background-image: url('assets/images/wave.png');
+  background-repeat: repeat-x;
+  background-attachment:local;
+  background-position:center;
+  background-size:auto;
+  overflow: hidden;
+}
+
+.ViewerComponentList span{
+  border-radius: 50%;
+  background-color: #ffffff;
+  padding: 1px;
+}
+
+.chatblock{
+  background-color: rgb(117, 117, 117);
+  display: table-cell;
+  border: 3px solid #ffffff;
+  border-radius: 5px;
+  color: rgb(216, 216, 216);
+  width: 300px;
+  height: 290px;
+  left: 10px;
+  top: 495px;
+  bottom: 40px;
+  position:absolute;
+  overflow:scroll;
+  overflow-x:hidden;
+  overflow-y:auto;
+  z-index: 3;
+  vertical-align: bottom;
+}
+.chatinputblock{
+  background-color: rgb(117, 117, 117);
+  border: 3px solid #ffffff;
+  border-radius: 5px;
+  color: rgb(216, 216, 216);
+  width: 300px;
+  height: 50px;
+  left: 10px;
+  top: 790px;
+  bottom: 40px;
+  position:absolute;
+  z-index: 3;
+}
+
+.chatInput{
+  left :5px;
+  right: 15px;
+  height: 30px;
+  width: auto;
+  position: absolute;
 }
 
 .userblock{
@@ -102,13 +223,13 @@ button.rec{
   border-radius: 5px;
   color: rgb(216, 216, 216);
   width: 300px;
-  height: auto;
+  height: 350px;
   left: 10px;
-  bottom: 100px;
-  position: fixed;
+  top:140px;
+  position:absolute;
   overflow:scroll;
-    overflow-x:hidden;
-    overflow-y:auto;
+  overflow-x:hidden;
+  overflow-y:auto;
   z-index: 3;
 }
 
@@ -119,36 +240,37 @@ button.rec{
   border-radius: 5px;
   color: rgb(216, 216, 216);
   width:auto;
-  height: auto;
+  max-width: 440px;
+  height: 700px;
   margin-top: 100px;
   margin-bottom: 100px;
   left: 500px;
-    right: 500px;
-    bottom: 100px;
-  position: fixed;
+  right: 500px;
+  top:140px;
   overflow:scroll;
-    overflow-x:hidden;
-    overflow-y:auto;
+  overflow-x:hidden;
+  overflow-y:auto;
   z-index: 2;
+  position:absolute;
 }
 
 .jamblock{
-  
+  display: block;
   text-align: center;
   background-color: rgb(117, 117, 117);
   border: 3px solid #ffffff;
   border-radius: 5px;
   color: rgb(216, 216, 216);
   width: 300px;
-  height: auto;
+  height: 700px;
+  top:140px;
   font-family: "IndieFlower";
   font-size: 18pt;
-  bottom: 100px;
-  position: fixed;
+  position:absolute;
   overflow:scroll;
-    overflow-x:hidden;
-    overflow-y:auto;
-    z-index: 3;
+  overflow-x:hidden;
+  overflow-y:auto;
+  z-index: 3;
 }
 
 .jamblock h1{
@@ -161,6 +283,9 @@ button.rec{
 }
 
 @media (0px<=width<=820px) {
+  .jybannerb {
+    font-size: 0px;
+  }
   .RoomComponentList{
     margin-right: 8px;
   }
@@ -169,9 +294,30 @@ button.rec{
     padding-right: 5px;
     width: 125px;
     border: 0px solid #ffffff;
-    top: 100px;
     left:-10px;
     box-sizing: content-box;
+  }
+  .chatblock{
+    padding: 0px;
+    padding-right: 5px;
+    width: auto;
+    right: 263px;
+    border: 0px solid #ffffff;
+    left:-10px;
+    min-width: 230px;
+    box-sizing: content-box;
+    z-index: 3;
+  }
+  .chatinputblock{
+    padding: 0px;
+    padding-right: 5px;
+    width: auto;
+    right: 263px;
+    border: 0px solid #ffffff;
+    left:-10px;
+    min-width: 230px;
+    box-sizing: content-box;
+    z-index: 3;
   }
   .dragUp{
     width: 15px;
@@ -185,29 +331,36 @@ button.rec{
     margin: 0px;
     left: 100px;
     right: 263px;
-    top: 100px;
+    height:350px;
     min-width: 175px;
     z-index: 3;
   }
   .jamblock{
     padding: 0px;  
     margin: 0px;
-    top: 100px;
     right: -20px;
     width: 280px;
   }
 }
 
-@media (820px<=width<=1275px) {
+@media (820px<=width<=1080px) {
   .RoomComponentList{
     margin-right: 5px; 
   }
-  .userblock{
-    
+  .chatblock{
     padding: 0px;
     width: 290px;
     margin: 5px;
-    top: 100px;
+  }
+  .chatinputblock{
+    padding: 0px;
+    width: 290px;
+    margin: 5px;
+  }
+  .userblock{
+    padding: 0px;
+    width: 290px;
+    margin: 5px;
   }
   .userblock div img{
     margin-left: 10px;
@@ -220,26 +373,99 @@ button.rec{
     margin: 5px;
     left: 305px;
     right: 305px;
-    top: 100px;
   }
   .recordblock div img{
     margin-left: 10px;
     margin-right: 10px;
   }
+  .ViewerComponentList span{
+    margin-left: -10px;
+    padding-left: 10px;
+  }
   .jamblock{
     padding: 0px;
     margin: 5px;
-    top: 100px;
     right: 0px;
   }
 }
 
-@media (width>=1275px) {
+@media (1080px<=width<=1400px) {
+  .RoomComponentList{
+    margin-right: 5px; 
+  }
+  .chatblock{
+    padding: 0px;
+    width: 290px;
+    margin: 5px;
+    top: 515px;
+  }
+  .chatinputblock{
+    padding: 0px;
+    width: 290px;
+    margin: 5px;
+    top: 810px;
+  }
+  .userblock{
+    padding: 0px;
+    width: 290px;
+    margin: 5px;
+    top: 160px;
+  }
+  .userblock div img{
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+  .recordblock{
+    padding-top: 0px;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin: 5px;
+    left: 305px;
+    right: 305px;
+    top: 160px;
+  }
+  .recordblock div img{
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+  .ViewerComponentList span{
+    margin-left: -10px;
+    padding-left: 10px;
+  }
+  .jamblock{
+    padding: 0px;
+    margin: 5px;
+    top: 160px;
+    left: 750px;
+    right: 0px;
+    left: 750px;
+    width:auto
+  }
+}
+
+@media (width>=1400px) {
+  .chatblock{
+    padding: 10px;
+    width: 300px;
+    margin: 10px;
+    top: 525px;
+  }
+  .chatblock{
+    padding: 10px;
+    width: 300px;
+    margin: 10px;
+    top: 525px;
+  }
+  .chatinputblock{
+    width: 300px;
+    margin: 10px;
+    top: 820px;
+  }
   .userblock{
     padding: 10px;
     width: 300px;
     margin: 10px;
-    top: 130px;
+    top: 170px;
   }
   .userblock div img{
     margin-left: 10px;
@@ -252,25 +478,36 @@ button.rec{
     margin: 10px;
     left: 350px;
     right: 350px;
-    top: 130px;
+    top: 170px;
+  }
+  .ViewerComponentList span{
+    margin-left: -10px;
+    padding-left: 10px;
   }
   .recordblock div img{
     margin-left: 10px;
     margin-right: 10px;
   }
   .jamblock{
+    
+    justify-content: center;
     padding-top: 50px;
     margin: 10px;
-    top: 130px;
+    top: 170px;
     right: 10px;
+    left: 830px;
+    width:auto;
+    max-width:800px;
   }
 }
+
 .list-container {
   display: block;
   font-size: 18px;
   background-color: #eee;
   flex-direction: column;
 }
+
 .item-container {
   border-radius: 25px;
   background-color: #fff;
