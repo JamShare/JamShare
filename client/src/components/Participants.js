@@ -33,20 +33,19 @@ function Participants(props) {
   function toggleReady(){
     try{
       console.log("toggleinfo", props.clientIndex, props.readyUsers);
+      if(props.readyUsers[props.clientIndex] === 0){
+        let data = {index: props.clientIndex};
+        console.log('Sending updated ready index to server', props.clientIndex);
+        socket.emit('player-ready', data );
+      } else if (props.readyUsers[props.clientIndex] === 1){
+        let data = {index: props.clientIndex};
+        console.log('Sending updated not ready index to server', props.clientIndex);
+        socket.emit('player-not-ready', data );
+      } else {
+        console.log("error toggling ready status");
+      }
     }catch(error){
       console.log(error)
-    }
-
-    if(props.readyUsers[props.clientIndex] === 0){
-      let data = {index: props.clientIndex};
-      console.log('Sending updated ready index to server', props.clientIndex);
-      socket.emit('player-ready', data );
-    } else if (props.readyUsers[props.clientIndex] === 1){
-      let data = {index: props.clientIndex};
-      console.log('Sending updated not ready index to server', props.clientIndex);
-      socket.emit('player-not-ready', data );
-    } else {
-      console.log("error toggling ready status");
     }
   }
 

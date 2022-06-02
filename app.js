@@ -53,7 +53,17 @@ var sessions = new Sessions();
 io.on('connection', (socket) => {
   console.log("client connected:",socket.id);
 
-  //Jam control signals
+
+  //Jam control signals. index given determines behavior
+  socket.on('initjam', (data) => {//data is index of player that clicked ready
+    try{
+      sessions.initjam(data, socket);
+    }catch(error){
+      console.log(error); 
+      socket.emit('error',error);
+    }
+  });
+
   socket.on('player-ready', (data) => {//data is index of player that clicked ready
     try{
       sessions.playerReady(data, socket);
@@ -71,6 +81,8 @@ io.on('connection', (socket) => {
       socket.emit('error',error);
     }
   });
+  //end jam control
+
 
   //recieve the data from the user to create new session. reply within the function with generated sessionID.
   socket.on('create-session', (data) => {

@@ -93,6 +93,9 @@ class Clients {
 
               this.clients.splice(i, 1, b);
               this.clients.splice(j, 1, a);
+
+                /////TODO: NEED TO UPDATE ClientsMap also!!! 
+
             }
           }
         }

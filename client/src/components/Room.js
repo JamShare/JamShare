@@ -19,6 +19,15 @@ function Room() {
   
   console.log("room state:", sessionID, guest, serverUserList, indicesReady, clientIndex);
 
+  //server messages to client console
+  socket.on('servermessage', (message) => {
+    console.log("servermessage:", message);
+  });
+  socket.on('error', (error) => {
+    console.error("servererror:", error);
+  });
+
+  //user list updates
   socket.on('client-update-userlist', (newusernames) => {
     console.log('room got user order update', newusernames);
     setServerUserList(newusernames);
@@ -40,23 +49,25 @@ function Room() {
     }
   });
 
+  //ready states
   socket.on('player-index-ready', (index) => {
     console.log('room: index player ready:', index);
-    var newlist = indicesReady;
+    var newlist = [indicesReady];
+    console.log('newlist:', newlist);
     const [updatedIndices] = newlist.splice(index, 1, 1);//in index, put 1 value of 1. 
     console.log("updated ready indices:", updatedIndices);
     setIndicesReady(updatedIndices);
   });
-
   socket.on('player-index-not-ready', (index) => {
     console.log('room: index player not ready:', index);
-    var newlist = indicesReady;
+    var newlist = [indicesReady];
+    console.log('newlist:', newlist);
     const [updatedIndices] = newlist.splice(index, 1, 0);//in index, put 1 value of 0. 
     console.log("updated indicies", updatedIndices);
     setIndicesReady(updatedIndices);
   });
 
-
+  //closing room window
   useEffect(()=>{
     window.addEventListener('beforeunload', keepOnPage);//this is fired upon component mounting
     return()=>{//things in return of useEffect are ran upon unmounting
@@ -67,7 +78,6 @@ function Room() {
         window.removeEventListener('beforeunload', keepOnPage);
       }
   },[]);
-  
   const keepOnPage=(e)=> {
     var message = 'Warning!\n\nNavigating away from this page will delete your text if you haven\'t already saved it.';
     e.returnValue = message;

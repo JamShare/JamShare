@@ -10,6 +10,22 @@ class Sessions {
     this.sessions = new Map();
   }
 
+  initjam(data, socket){
+    try{
+    console.log("index starting jam", data.index );
+    const currentSID = this.findSessionIDFromSocketID(socket.id)
+    console.log("currentSID", currentSID);
+
+    const currentSession = this.sessions.get(currentSID);
+  
+    currentSession.initjam(data.index, socket);//emits to room which index is ready
+    } catch (error){
+      console.log("failed to signal start jam...\n", error);
+      let data = {console:"failed to signal start jam...\n", error:error};
+      socket.emit('message', data);//emits to just this client
+    }
+  }
+
   playerReady(data, socket){
     try{
     console.log("player index clicked ready button:", data.index );
@@ -169,6 +185,9 @@ class Sessions {
 
 
 
+
+
+
 //Session: instance contains information about an active session.
 class Session {
   constructor(sessionID) {
@@ -177,6 +196,35 @@ class Session {
     // game session in progress or not? disallow changes to player order during runtime
     this.gameSession = false;
   }
+
+  initjam(index, socket){
+    //only called from client if userList[0] clicks and readyUsers is all 1's.
+    //init clients in proper order. clients will only listen to index before them in client side but still need to be 
+    //initialized in proper order.
+
+    //clients begin writing to their incoming remote stream buffer when the audio stream being published is not empty...
+    //only  
+    //because we cannot socket.on for each client in the server from this function seperatedly, we must signal multiple times until conditions are met.
+    
+    //client 0 will emit startjam with index 1 in socket event when initialized and ready to publish.
+
+    //this function gets called with index 1. send index 1 to room session. client index 1 will act accordingly by initalizing..
+    //client 1 will emit startjam with index 2 in socket event when initialized and ready to publish. 
+    ///....
+    // this function gets called with last index . sends last index value to room session. clients will all begin listening to index 3's
+    // publish for the mixed audio if it's the last in their userlist 
+    if(index !== this.clients.clients.length - 1){//we are not at the last player yet
+      socket.to(this.sessionID).emit("initialize", index);
+    } 
+    if(index === this.clients.clients.length -1){//for the final player, we send signal to everyone else to init their buffer for
+      //last player's music. they will check to ensure they aren't the last player first.
+      socket.to(this.sessionID).emit("initializeMixed", index);
+    }
+  }
+
+
+  //actually start writing to buffer when audio is not empty....
+
 
   playerIndexReady(socket, index){
     socket.to(this.sessionID).emit('player-index-ready', index);
@@ -229,7 +277,7 @@ class Session {
       console.log("usernames now in session:",usernames);
       socket.emit('join-session-success', usernames);
       console.log("user joined. updating user list of:",this.sessionID);
-      socket.emit('client-update-userlist', usernames);
+      socket.emit('client-update-userlist', usernames);//needed to trigger index counting of this client upon join in room
       socket.to(this.sessionID).emit('client-update-userlist', usernames);
     } catch (error) {
       socket.emit('join-session-failed');
@@ -258,7 +306,7 @@ class Session {
 
   startGameSession(socket) {
     this.gameSession = true;
-    // socket.brodcast.to(sessionID).emit('game-started');
+    // socket.brodcast.t:o(sessionID).emit('game-started');
   }
 
   startPlayerStream(socket) {
