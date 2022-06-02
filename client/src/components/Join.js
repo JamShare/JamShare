@@ -105,7 +105,7 @@ function Join(props) {
         data={sessionID}
         onHide={handleClose}
         centered
-        size='xl'>
+        size='m'>
         <Modal.Header closeButton className='purplebg'>
           <Modal.Title id='contained-modal-title-vcenter' className='orange'>
             {guest}, Share this link with your fellow Jammers!
@@ -114,14 +114,14 @@ function Join(props) {
         <Modal.Body className='show-grid purplebg'>
           <Container>
             <Row>
-              <Col lg={4}></Col>
-              <Col lg={4} id='a'>
+              <Col lg={3}></Col>
+              <Col lg={6} id='a'>
                 <input
                   ref={inputArea}
                   onChange={(e) => setSessionID(e.target.value)}
                   value={sessionID}></input>
               </Col>
-              <Col lg={4}></Col>
+              <Col lg={3}></Col>
             </Row>
           </Container>
         </Modal.Body>
