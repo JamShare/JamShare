@@ -15,7 +15,7 @@ function Recorder(props) {
     let state = {
         isRecording: false,
         isPlaying: false,
-        icon: '',
+        icon: require('./assets/images/device.jpg'),
         text: 'Jam!',
         userlist: props.userlist,
         sessionID: props.sessionID,
@@ -319,23 +319,28 @@ function Recorder(props) {
 
     return (
         <div className="jamblock">
-            <button onClick={startTheJam}>
-                Start The Jam!
-            </button>
+            
 
+            <div className='RoomComponentList RoomComponentListAddImg'>
+                <h1>JAM</h1>
+            </div>
+            <div className='RoomComponentList RoomComponentListAddImg RoomComponentListJamImg'>
+                <img className="round" src={state.icon} width="200" height="200" alt=" recording "></img>
+            </div>
+            <button className='rec' onClick={startTheJam}>Start The Jam!</button>
             <>
                 {isShowRecordButton ?
 
                     <div id="record-buttons">
-                        <button onClick={startRecording}>
+                        <button className='rec' onClick={startRecording}>
                             Start recording
                         </button>
 
-                        <button onClick={stopRecording}>
+                        <button className='rec' onClick={stopRecording}>
                             Stop recording
                         </button>
 
-                        <button onClick={playRecording}>
+                        <button className='rec' onClick={playRecording}>
                             Play recording
                         </button>
                     </div>
@@ -343,9 +348,11 @@ function Recorder(props) {
                     <></>
                 }
             </>
-
+            <div className='RoomComponentList RoomComponentListAddImg'>
+                <h1>Local Audio</h1>
+            </div>
+            
             <div>
-                Local Audio
                 <audio id="local_audio" autoPlay muted playsInline controls={true} />
             </div>
             <div className="container">
