@@ -8,7 +8,7 @@ function Recorder(props) {
     let state = {
         isRecording: false,
         isPlaying: false,
-        icon: '',
+        icon: require('./assets/images/device.jpg'),
         text: 'Jam!',
         userlist: props.userlist,
         sessionID: props.sessionID,
@@ -291,32 +291,28 @@ function Recorder(props) {
     }
 
     return (
-        <div class="jamblock">
-            <button onClick={startTheJam}>
-                Start The Jam!
-            </button>
-
-            <button onClick={startRecording}>
-                Start recording
-            </button>
-
-            <button onClick={stopRecording}>
-                Stop recording
-            </button>
-            <button onClick={playRecording}>
-                Play recording
-            </button>
-            <div>
-                Local Audio
-                <audio id="local_audio" autoPlay muted playsInline controls={true} />
-            </div>
-            <div class="container">
-                <ul id="trackList" name="trackList">
-                </ul>
-            </div>
-            <div id="players">
-            </div>
-        </div>
+      <div className='jamblock'>
+      <div className='RoomComponentList RoomComponentListAddImg'>
+        <h1>JAM</h1>
+      </div>
+      <div className='RoomComponentList RoomComponentListAddImg RoomComponentListJamImg'>
+        <img class="round" src={state.icon} width="200" height="200"alt=" recording "></img>
+      </div>
+      <button className='rec' onClick={startTheJam}>Start The Jam!</button>
+      <button className='rec' onClick={startRecording}>Start recording</button>
+      <button className='rec' onClick={stopRecording}>Stop recording</button>
+      <button className='rec' onClick={playRecording}>Play recording</button>
+      <div className='RoomComponentList RoomComponentListAddImg'>
+        <h1>Local Audio</h1>
+      </div>
+      <div>
+        <audio id='local_audio' autoPlay muted playsInline controls={true} />
+      </div>
+      <div className='container'>
+        <ul id='trackList' name='trackList'></ul>
+      </div>
+      <div id='players'></div>
+    </div>
     );
 }
 
