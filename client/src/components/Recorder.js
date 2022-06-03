@@ -214,6 +214,7 @@ function Recorder(props) {
                         echoCancellation: false,
                         autoGainControl: false,
                         noiseSuppression: false,
+                        latency: 0
                     }
                 });
         } catch (err) {
