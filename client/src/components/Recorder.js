@@ -46,29 +46,9 @@ function Recorder(props) {
     recordContext.resume(); // enable the record context immediately
     const playbackContext = new AudioContext(); // playback context plays back to user and combines local user audio with audiobuffer recordings to create new stream
     let playerOrder = 0;
-    let sources = []; // holds audiobuffer sources
-    let recorderNode = null; // audioWorklet node, records audio
-    recordContext.audioWorklet.addModule("RecorderProcessor.js") // enables audioworklet module
-    .then(() => {
-        recorderNode = new AudioWorkletNode(recordContext, 'recorder-worklet');
-        recorderNode.connect(recordContext.destination);
-        recorderNode.port.onmessage = (e) => { // this handles message events from the associated processor (audioworkletprocessor)
-            if (e.data.eventType === 'data') { // handle events based on eventType
-                const audioData = e.data.audioBuffer;
-                createAudioBufferSource(audioData);
-            }
-            if (e.data.eventType === 'stop') {
-                // recording stopped
-            }
-            if (e.data.eventType === 'error') {
-                console.error('Error in recorder node.');
-                // recorderSource.connect(streamOut);
-            }
-        }
-    });
     let delayNode = null; // audiobuffersource nodes connect to this, which are delayed when outputting to streamOut
     let stream = null; // this is the local stream
-    var recorderSource = null; // source for recorderNode; uses remote stream as its source
+    var remoteSource = null; // source for recorderNode; uses remote stream as its source
 
     // recorder variables
     let chunks = []; // chunks of audio collected by mediaRecorder, must be reassembled before use
@@ -186,17 +166,9 @@ function Recorder(props) {
         }
 
         // create audio source from previous players' remote stream
-        recorderSource = recordContext.createMediaStreamTrackSource(obj.track);
-        recorderSource.connect(recorderNode); // connect to recorderNode
+        remoteSource = playbackContext.createMediaStreamTrackSource(obj.track);
+        remoteSource.connect(delayNode);
 
-        // enable recorderNode (to disable, set value to 0)
-        recorderNode.parameters.get('isRecording').setValueAtTime(1, recordContext.currentTime);
-        // connects an audiobuffer every 1000ms, use clearInterval(intervalReturn) to stop
-        setTimeout(function() {
-            intervalReturn = setInterval(connectAudioBuffer, 1000);
-            playbackContext.resume(); // enables playback 
-        }, 2000);
-        
         // record audio if you're the last player
         if (state.username === state.userlist.at(-1)) {
             recorder = new MediaRecorder(streamOut.stream);
@@ -224,37 +196,7 @@ function Recorder(props) {
             stream = null;
         }
         connectMediaStreams();
-
         return;
-    }
-
-    // takes recorded audio data and creates an audio source from it
-    function createAudioBufferSource(audioData) {
-        // syntax is createBuffer(channels, seconds, sampleRate)
-        let buffer = playbackContext.createBuffer(1, playbackContext.sampleRate * 1, playbackContext.sampleRate);
-        buffer.copyToChannel(audioData, 0); // copy audioData into buffer
-        let bufferIn = playbackContext.createBufferSource(); // create source
-        bufferIn.buffer = buffer; // assign buffer to source
-        // bufferIn.onended = connectAudioBuffer(); // callback function for when bufferSource ends
-        sources.push(bufferIn); // push bufferSource into array
-    }
-
-    function connectAudioBuffer() { // add delay parameter to control when audiobuffer plays back? (in ms)
-        console.log("loading audio buffer");
-        let audioBuffer = sources.splice(0, 1)[0]; // grab the first bufferSource in the array
-        if (audioBuffer) { // if audioBuffer exists
-            audioBuffer.connect(playbackContext.destination);
-            audioBuffer.connect(delayNode);
-            audioBuffer.start();
-            console.log("audio buffer connected");
-        } else { // if audioBuffer is undefined
-            /* add last player check
-            if (state.isRecording) {
-                state.isRecording = !state.isRecording;
-            }
-            */ 
-            console.error("No audio buffer sources found; cannot connect it to playback context.");
-        }
     }
 
     function connectMediaStreams() {
@@ -265,12 +207,6 @@ function Recorder(props) {
         streamIn.connect(streamOut); // connect localStream to new combined stream
         delayNode.connect(streamOut); // connect delayNode to new combined stream
         webRTCAdaptor = initiateWebrtc(streamOut.stream); // initialize the webRTC adaptor
-    }
-
-    function updateDelay() {
-        if (delayNode) {
-            delayNode.delayTime.setValueAtTime(state.delay, playbackContext.currentTime);
-        }
     }
 
     //publish the local stream
@@ -376,12 +312,6 @@ function Recorder(props) {
             </div>
             <div id="players">
             </div>
-            <input
-                    type='text'
-                    name='session'
-                    onChange={(e) => {state.delay = e.target.value; updateDelay();}}
-            />
-            <input type='submit' value='Submit' />
         </div>
     );
 }
