@@ -96,6 +96,7 @@ function Recorder(props) {
     function onStop() {
         console.log("Recording stopped successfully.");
         let blob = new Blob(chunks, { 'type': 'audio/wav; codecs=opus' })
+        chunks = [];
         let audioURL = URL.createObjectURL(blob);
         audio = new Audio(audioURL);
         saveAs(blob, "audioTest.wav")
