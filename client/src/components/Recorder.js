@@ -77,13 +77,6 @@ function Recorder(props) {
     let recordIcon = require('./assets/images/record.png')
     let playingIcon = require('./assets/images/playing.png')
 
-    //for listening and recording last player's combined audio
-    let mixedAudioRecorder = new MediaRecorder();
-    let mixedAudioNode = null; //audioWorklet node records final player's stream
-    let mixedChunks = [];//chunks of audio collected by mediaRecorder, must be reassembled before use
-    // let mixedAudio = null; //creates audiofile from blobs of mediaRecorder chunks
-
-
     //antmedia variables
     let webRTCAdaptor = null;
     let streamName = getUrlParameter("streamName");
@@ -95,17 +88,6 @@ function Recorder(props) {
     //Merge variables
     let intervalReturn = null; // use this to clearInterval on the connectAudioBuffers function
 
-    //socket event to initialize the final player's fully mixed audio file and output it to viewer.
-        socket.on('initializeMixed',(index)=>{
-        if(playerOrder === props.userlist.length){//final player already has the recording
-            return;
-        }
-
-        // INITIALIZE COMBINED audio listener here
-
-        
-    });
-
     //socket event to initialize in proper order
     socket.on('initialize', (index) => {
             //initialize and connect to MUTED incoming remote stream.
@@ -114,8 +96,10 @@ function Recorder(props) {
                 getAudioDevice();
             }
             //signal to next index to initialize and listen to our MUTED publish.
-            let data = {index:(playerOrder)};//next player index (playerOrder is +1 to index). if we are last, server will notify everyone to listen.
-            socket.emit('initjam', data)//send signal to next player
+            if (playerOrder !== props.userlist.length) {
+                let data = {index:(playerOrder)};//next player index (playerOrder is +1 to index). if we are last, server will notify everyone to listen.
+                socket.emit('initjam', data)//send signal to next player
+            }
             return;
     });
 
@@ -150,15 +134,12 @@ function Recorder(props) {
         }
     }
 
-
-
     // this function is called when WebRTCAdaptor is finished intializing, to prevent "WebRTCAdaptor is null" errors
     function initAntMedia() {
         //join the antmedia room with audio only amcu
         webRTCAdaptor.joinRoom(currentRoom, state.streamName, "multitrack", "amcu");
         webRTCAdaptor.play(currentRoom, state.token, ""); 
     };
-   
 
     // event handlers for mediaRecorder
     function onDataAvailable(e) {
@@ -172,7 +153,6 @@ function Recorder(props) {
         audio = new Audio(audioURL);
         saveAs(blob, "audioTest.wav")
     }
-    //
 
     // starts mediaRecorder recording process (NOT recorderNode)
     function startRecording() {
@@ -201,16 +181,6 @@ function Recorder(props) {
         return;
     }
 
-    // this plays assembled audio from mediaRecorder.onstop
-    function playRecording() {
-        if (!audio) {
-            return;
-        }
-        audio.play();
-        return;
-    }
-
-
     //remotely play each audio stream
     function setupAudio(obj) { // when new track is published from previous player
         let room = currentRoom;
@@ -230,6 +200,16 @@ function Recorder(props) {
         // create audio source from previous players' remote stream
         recorderSource = recordContext.createMediaStreamTrackSource(obj.track);
         recorderSource.connect(recorderNode); // connect to recorderNode
+
+
+        // record audio if you're the last player
+        if (state.username === state.userlist.at(-1)) {
+            recorder = new MediaRecorder(streamOut.stream);
+
+            //initialize event handlers for recorder
+            recorder.ondataavailable = onDataAvailable;
+            recorder.onstop = onStop;
+        }
     }
 
     function playAudio() {
@@ -239,16 +219,6 @@ function Recorder(props) {
         // connects an audiobuffer every 1000ms, use clearInterval(intervalReturn) to stop
         intervalReturn = setInterval(connectAudioBuffer, 1000);
         playbackContext.resume(); // enables playback 
-        
-        // mixedaudio
-        // record audio if you're the last player
-        if (state.username === state.userlist.at(-1)) {
-            recorder = new MediaRecorder(streamOut.stream);
-
-            //initialize event handlers for recorder
-            recorder.ondataavailable = onDataAvailable;
-            recorder.onstop = onStop;
-        }
     }
 
     function setupMixed(obj) {
@@ -262,17 +232,13 @@ function Recorder(props) {
 
         mixedStream = new MediaStream();
         mixedStream.addTrack(obj.track());
-    }
-
-    function saveMixed(obj){//saves the final players stream and makes it available to viewer for download
         // record audio if you're NOT the last player
-        if (state.username !== state.userlist.at(-1)) {
-            mixedAudioRecorder = new MediaRecorder(mixedStream.stream);
-
-            //initialize event handlers for recorder
-            mixedAudioRecorder.ondataavailable = mixedOnDataAvailable;
-            mixedAudioRecorder.onstop = mixedOnStop;
-        }
+        recorder = new MediaRecorder(mixedStream.stream);
+        // obj.track.onunmute => mixedAudioRecorder.start();
+        // obj.track.onmute => mixedAudioRecorder.stop();
+        //initialize event handlers for recorder
+        recorder.ondataavailable = onDataAvailable;
+        recorder.onstop = onStop;
     }
 
     async function getAudioDevice() {
@@ -379,7 +345,7 @@ function Recorder(props) {
                     let tempOrder = obj.trackId.slice(-1);
                     if (parseInt(tempOrder, 10) === parseInt(playerOrder-1, 10)) {
                         // console.log("Playing", obj.trackId);
-                        playAudio(obj);
+                        setupAudio(obj);
                     }
                 } else if (info === "ice_connection_state_changed") {
                     console.log("iceConnectionState Changed: ", JSON.stringify(obj));

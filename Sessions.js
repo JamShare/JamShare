@@ -271,10 +271,6 @@ class Session {
     if(index !== this.clients.clients.length - 1){//we are not at the last player yet
       socket.to(this.sessionID).emit("initialize", index);
     } 
-    if(index === this.clients.clients.length -1){//for the final player, we send signal to everyone else to init their buffer for
-      //last player's music. they will check to ensure they aren't the last player first.
-      socket.to(this.sessionID).emit("initializeMixed", index);
-    }
   }
 }
 
