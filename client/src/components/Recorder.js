@@ -42,8 +42,8 @@ function Recorder(props) {
     };
 
     // audiocontext variables
-    const recordContext = new AudioContext(); // recorder context records incoming audio from remote stream
-    recordContext.resume(); // enable the record context immediately
+    // const recordContext = new AudioContext(); // recorder context records incoming audio from remote stream
+    // recordContext.resume(); // enable the record context immediately
     const playbackContext = new AudioContext(); // playback context plays back to user and combines local user audio with audiobuffer recordings to create new stream
     let playerOrder = 0;
     let delayNode = null; // audiobuffersource nodes connect to this, which are delayed when outputting to streamOut
@@ -168,6 +168,8 @@ function Recorder(props) {
         // create audio source from previous players' remote stream
         remoteSource = playbackContext.createMediaStreamTrackSource(obj.track);
         remoteSource.connect(delayNode);
+        console.log("Recorder.js: Connected remote stream to playbackContext.")
+        playbackContext.resume();
 
         // record audio if you're the last player
         if (state.username === state.userlist.at(-1)) {
