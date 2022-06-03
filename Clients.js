@@ -7,6 +7,11 @@ class Clients {
     this.maxlength = 4;
   }
 
+  numClients(){
+    console.log("numClients:", this.clients.length);
+    return this.clients.length;
+  }
+
   addClient(socketClientID, username) {
     if (this.maxlength <= this.clients.length) {
       throw 'Room is full.';

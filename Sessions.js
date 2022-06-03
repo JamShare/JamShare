@@ -274,7 +274,7 @@ class Session {
     console.log(data.message);
 
     try{
-      if(index !== this.clients.clients.length - 1){//we are not at the last player yet
+      if(index !== (this.clients.numClients() - 1)){//we are not at the last player yet
         let data = {message: ("not the last player", index)};//everyone listens for last player when it becomes available
 
         console.log(data.message);
