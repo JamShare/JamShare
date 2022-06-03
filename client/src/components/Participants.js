@@ -54,7 +54,7 @@ function Participants(props) {
       </DragDropContext>
       <div className='RoomComponentList RoomComponentListAddImg'>
         <img src={image3} width='50' height='50' alt=' add icon '></img>
-      </div>      
+      </div>    
     </div>
   );
 }

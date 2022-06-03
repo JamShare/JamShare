@@ -22,29 +22,21 @@ function Join(props) {
 
   console.log('join username: ', guest);
 
-  socket.on('create-session-response', (session_ID) => {
-    console.log('create session response from server', session_ID);
-    setSessionID(session_ID); //doesnt seem to actually work
-    handleShow();
-  });
   useEffect(() => {
-    console.log('session ID updated:', sessionID);
-  }, [sessionID]);
-
-  useEffect(() => {
+    var ses;
+    socket.on('create-session-response', (session_ID) => {
+      console.log('create session response from server', session_ID);
+      setSessionID(session_ID); //doesnt seem to actually work
+      handleShow();
+    });
+    socket.on('join-session-failed', () => {
+      alert(`Session ID: ${sessionID} does not exist.`);
+    });
     socket.on('join-session-success', (usernames) => {
       console.log('joining session with users:', usernames);
       let path = '/Room';
       navigate(path, { state: { sessionID, guest, usernames } });
     });
-  }, [guest, navigate, sessionID]);
-
-  socket.on('join-session-failed', () => {
-    alert(`Session ID: ${sessionID} does not exist.`);
-  });
-  useEffect(() => {
-    console.log('session ID updated:', sessionID);
-    // setSessionID(sessionID)
   }, [sessionID]);
 
   const createSession = (room) => {
@@ -57,6 +49,7 @@ function Join(props) {
     e.preventDefault();
     // console.log(e.target.value);
     console.log(sessionID);
+    setSessionID(sessionID);
     let data = { sessionID: sessionID, username: guest };
     socket.emit('join-session', data);
   };
@@ -67,6 +60,7 @@ function Join(props) {
 
   function copyLink() {
     console.log('Copied Link', sessionID);
+    setSessionID(sessionID);
   }
 
   return (
@@ -78,8 +72,6 @@ function Join(props) {
         title={guest}
         data={sessionID}
         onHide={handleClose}
-        {...props}
-        socket='value'
         centered
         size='xl'>
         <Modal.Header closeButton className='purplebg'>
