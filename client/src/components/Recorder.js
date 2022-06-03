@@ -215,7 +215,7 @@ function Recorder(props) {
                         echoCancellation: false,
                         autoGainControl: false,
                         noiseSuppression: false,
-                        latency: 0
+                        latency: {max: .25, min: 0.003}
                     }
                 });
         } catch (err) {
@@ -269,6 +269,8 @@ function Recorder(props) {
         streamOut = playbackContext.createMediaStreamDestination(); // output combined stream of localStream and audioBufferSourceNodes, send to next player
         streamIn.connect(streamOut); // connect localStream to new combined stream
         delayNode.connect(streamOut); // connect delayNode to new combined stream
+        console.log("PlaybackContext baseLatency: ", playbackContext.baseLatency)
+        console.log("PlaybackContext outputLatency: ", playbackContext.outputLatency)
         webRTCAdaptor = initiateWebrtc(streamOut.stream); // initialize the webRTC adaptor
     }
 
