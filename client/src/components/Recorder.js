@@ -192,8 +192,10 @@ function Recorder(props) {
         // enable recorderNode (to disable, set value to 0)
         recorderNode.parameters.get('isRecording').setValueAtTime(1, recordContext.currentTime);
         // connects an audiobuffer every 1000ms, use clearInterval(intervalReturn) to stop
-        intervalReturn = setInterval(connectAudioBuffer, 1000);
-        playbackContext.resume(); // enables playback 
+        setTimeout(function() {
+            intervalReturn = setInterval(connectAudioBuffer, 1000);
+            playbackContext.resume(); // enables playback 
+        }, 2000);
         
         // record audio if you're the last player
         if (state.username === state.userlist.at(-1)) {
