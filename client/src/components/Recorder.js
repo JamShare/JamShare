@@ -168,7 +168,6 @@ function Recorder(props) {
         return;
     }
 
-
     //remotely play each audio stream
     function playAudio(obj) {
         let room = currentRoom;
@@ -215,19 +214,12 @@ function Recorder(props) {
                         echoCancellation: false,
                         autoGainControl: false,
                         noiseSuppression: false,
-                        latency: {max: .25, min: 0.003}
                     }
                 });
         } catch (err) {
             console.error(err);
             stream = null;
         }
-        let tracks = stream.getTracks();
-        console.log("Tracks: ", tracks);
-        let settings = tracks[0].getSettings();
-        console.log("Settings: ", settings);
-        let latency = settings.latency;
-        console.log("Latency: ", latency);
         connectMediaStreams();
 
         return;
@@ -265,12 +257,10 @@ function Recorder(props) {
     function connectMediaStreams() {
         var streamIn = playbackContext.createMediaStreamSource(stream); // local stream
         delayNode = playbackContext.createDelay(10); // create delayNode with maxDelay of 10s
-        delayNode.delayTime.setValueAtTime(state.delay, playbackContext.currentTime); // set delayTime of delayNode
+        delayNode.delayTime.setValueAtTime(playbackContext.outputLatency, playbackContext.currentTime); // set delayTime of delayNode
         streamOut = playbackContext.createMediaStreamDestination(); // output combined stream of localStream and audioBufferSourceNodes, send to next player
         streamIn.connect(streamOut); // connect localStream to new combined stream
         delayNode.connect(streamOut); // connect delayNode to new combined stream
-        console.log("PlaybackContext baseLatency: ", playbackContext.baseLatency)
-        console.log("PlaybackContext outputLatency: ", playbackContext.outputLatency)
         webRTCAdaptor = initiateWebrtc(streamOut.stream); // initialize the webRTC adaptor
     }
 
