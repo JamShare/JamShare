@@ -7,7 +7,7 @@ import './index.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 const io = require('socket.io-client');
-const SERVER = 'http://localhost:3001';
+const SERVER = "https://gentle-lake-00593.herokuapp.com";
 let socket = io(SERVER);
 export default socket; //https://stackoverflow.com/questions/48794919/reactjs-socket-io-best-way-to-handle-socket-connection
 
