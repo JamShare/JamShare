@@ -267,9 +267,11 @@ function Recorder(props) {
         }
         connectMediaStreams();
 
-        let data = {index:playerOrder};
-        console.log('sending init signal to index:',data.index);
-        socket.emit('initjam', data);//notify player 2 at index 1.
+        if(stream!==null){
+            let data = {index:playerOrder};
+            console.log('sending init signal to index:',data.index);
+            socket.emit('initjam', data);//notify player 2 at index 1.
+        }
         return;
     }
 
