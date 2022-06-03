@@ -169,7 +169,9 @@ function Recorder(props) {
         remoteSource = playbackContext.createMediaStreamTrackSource(obj.track);
         remoteSource.connect(playbackContext.destination);
         remoteSource.connect(delayNode);
-        delayNode.delayTime.setValueAtTime(playbackContext.outputLatency, playbackContext.currentTime); // set delayTime of delayNode
+        console.log("New outputLatency: ", playbackContext.outputLatency);
+        console.log("New baseLatency: ", playbackContext.baseLatency);
+        // delayNode.delayTime.setValueAtTime(playbackContext.outputLatency, playbackContext.currentTime); // set delayTime of delayNode
         console.log("Recorder.js: Connected remote stream to playbackContext.")
         playbackContext.resume();
 
@@ -206,6 +208,8 @@ function Recorder(props) {
     function connectMediaStreams() {
         var streamIn = playbackContext.createMediaStreamSource(stream); // local stream
         delayNode = playbackContext.createDelay(10); // create delayNode with maxDelay of 10s
+        console.log("Old outputLatency: ", playbackContext.outputLatency);
+        console.log("Old baseLatency: ", playbackContext.baseLatency);
         delayNode.delayTime.setValueAtTime(playbackContext.outputLatency, playbackContext.currentTime); // set delayTime of delayNode
         streamOut = playbackContext.createMediaStreamDestination(); // output combined stream of localStream and audioBufferSourceNodes, send to next player
         streamIn.connect(streamOut); // connect localStream to new combined stream
