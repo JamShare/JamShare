@@ -21,6 +21,14 @@ function Room() {
     setServerUserList(newusernames);
   });
 
+  //server messages to client console
+  socket.on('servermessage', (message) => {
+    console.log("servermessage:", message);
+  });
+  socket.on('error', (error) => {
+    console.error("servererror:", error);
+  });
+
   useEffect(()=>{
     window.addEventListener('beforeunload', keepOnPage);//this is fired upon component mounting
     return()=>{//things in return of useEffect are ran upon unmounting

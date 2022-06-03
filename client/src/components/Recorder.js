@@ -77,6 +77,13 @@ function Recorder(props) {
     let recordIcon = require('./assets/images/record.png')
     let playingIcon = require('./assets/images/playing.png')
 
+    //for listening and recording last player's combined audio
+    let mixedAudioRecorder = new MediaRecorder();
+    let mixedAudioNode = null; //audioWorklet node records final player's stream
+    let mixedChunks = [];//chunks of audio collected by mediaRecorder, must be reassembled before use
+    // let mixedAudio = null; //creates audiofile from blobs of mediaRecorder chunks
+
+
     //antmedia variables
     let webRTCAdaptor = null;
     let streamName = getUrlParameter("streamName");
@@ -88,6 +95,30 @@ function Recorder(props) {
     //Merge variables
     let intervalReturn = null; // use this to clearInterval on the connectAudioBuffers function
 
+    //socket event to initialize the final player's fully mixed audio file and output it to viewer.
+        socket.on('initializeMixed',(index)=>{
+        if(playerOrder === props.userlist.length){//final player already has the recording
+            return;
+        }
+
+        // INITIALIZE COMBINED audio listener here
+
+        
+    });
+
+    //socket event to initialize in proper order
+    socket.on('initialize', (index) => {
+            //initialize and connect to MUTED incoming remote stream.
+            //CALL INITIALIZE HERE 
+            if(playerOrder === index){
+                getAudioDevice();
+            }
+            //signal to next index to initialize and listen to our MUTED publish.
+            let data = {index:(playerOrder)};//next player index (playerOrder is +1 to index). if we are last, server will notify everyone to listen.
+            socket.emit('initjam', data)//send signal to next player
+            return;
+    });
+
     function getPlayerOrder() {
         for (let i = 0; i < state.userlist.length; i++) {
             if (state.username === state.userlist[i]) {
@@ -97,18 +128,29 @@ function Recorder(props) {
     }
 
     function startTheJam() {
+        // make sure Jam hasn't started
+        // if already initialized, don't reinitialize
         try {
         getPlayerOrder();
         } catch (error) {
             console.log('Error in playerOrder:', error);
         }
 
-        try {
-        getAudioDevice();
-        } catch(error) {
-            console.log('Error in getAudioDevice:', error);
+        if(playerOrder === 1){//&& everyoneIsReady() && !initialized
+            try {
+                getAudioDevice();
+                let data = {index:playerOrder};
+                socket.emit('initjam', data);//notifty player 2 at index 1.
+            } catch(error) {
+                console.log('Error in getAudioDevice:', error);
+            }
+                //initialize all players with socket event        
+        }else{
+            console.log("Waiting for others to ready")
         }
     }
+
+
 
     // this function is called when WebRTCAdaptor is finished intializing, to prevent "WebRTCAdaptor is null" errors
     function initAntMedia() {
@@ -170,10 +212,8 @@ function Recorder(props) {
 
 
     //remotely play each audio stream
-    function playAudio(obj) {
+    function setupAudio(obj) { // when new track is published from previous player
         let room = currentRoom;
-        let trackOrder = obj.trackId.slice(-1);
-
         console.log("new stream available with id: "
             + obj.streamId + "on the room:" + room);
 
@@ -186,16 +226,33 @@ function Recorder(props) {
             return;
         }
 
+        // setup
         // create audio source from previous players' remote stream
         recorderSource = recordContext.createMediaStreamTrackSource(obj.track);
         recorderSource.connect(recorderNode); // connect to recorderNode
+    }
 
+    function playAudio(obj) {
+        let room = currentRoom;
+        console.log("new stream available with id: "
+            + obj.streamId + "on the room:" + room);
+
+        var index;
+        if (obj.track.kind === "audio") {
+            index = obj.track.id.replace("ARDAMSa", "");
+        }
+
+        if (index === room) {
+            return;
+        }
+        // playback
         // enable recorderNode (to disable, set value to 0)
-        recorderNode.parameters.get('isRecording').setValueAtTime(1, recordContext.currentTime);
+        recorderNode.parameters.get('isRecording').setValueAtTime(1, recordContext.currentTime); // listen in
         // connects an audiobuffer every 1000ms, use clearInterval(intervalReturn) to stop
         intervalReturn = setInterval(connectAudioBuffer, 1000);
         playbackContext.resume(); // enables playback 
         
+        // mixedaudio
         // record audio if you're the last player
         if (state.username === state.userlist.at(-1)) {
             recorder = new MediaRecorder(streamOut.stream);
@@ -203,6 +260,28 @@ function Recorder(props) {
             //initialize event handlers for recorder
             recorder.ondataavailable = onDataAvailable;
             recorder.onstop = onStop;
+        }
+    }
+
+    function saveMixed(obj){//saves the final players stream and makes it available to viewer for download
+        var index;
+        if (obj.track.kind === "audio") {
+            index = obj.track.id.replace("ARDAMSa", "");
+        }
+        if (index === currentRoom) {
+            return;
+        }
+
+        mixedStream = new MediaStream();
+        mixedStream.addTrack(obj.track());
+  
+        // record audio if you're NOT the last player
+        if (state.username !== state.userlist.at(-1)) {
+            mixedAudioRecorder = new MediaRecorder(mixedStream.stream);
+
+            //initialize event handlers for recorder
+            mixedAudioRecorder.ondataavailable = mixedOnDataAvailable;
+            mixedAudioRecorder.onstop = mixedOnStop;
         }
     }
 

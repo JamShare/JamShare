@@ -133,6 +133,22 @@ class Sessions {
     let userList = currentSession.getClientsSessionsUsernameList();
     return userList;
   }
+
+  initjam(data, socket){
+    try{
+    console.log("index starting jam", data.index );
+    const currentSID = this.findSessionIDFromSocketID(socket.id)
+    console.log("currentSID", currentSID);
+
+    const currentSession = this.sessions.get(currentSID);
+  
+    currentSession.initjam(data.index, socket);//emits to room which index is ready
+    } catch (error){
+      console.log("failed to signal start jam...\n", error);
+      let data = {console:"failed to signal start jam...\n", error:error};
+      socket.emit('message', data);//emits to just this client
+    }
+  }
 }
 
 
@@ -234,6 +250,31 @@ class Session {
     let end_time = Date.now();
     interval = end_time - start_time / 1000;
     socket.emit('pong', interval);
+  }
+
+  initjam(index, socket){
+    //only called from client if userList[0] clicks and readyUsers is all 1's.
+    //init clients in proper order. clients will only listen to index before them in client side but still need to be 
+    //initialized in proper order.
+
+    //clients begin writing to their incoming remote stream buffer when the audio stream being published is not empty...
+    //only  
+    //because we cannot socket.on for each client in the server from this function seperatedly, we must signal multiple times until conditions are met.
+    
+    //client 0 will emit startjam with index 1 in socket event when initialized and ready to publish.
+
+    //this function gets called with index 1. send index 1 to room session. client index 1 will act accordingly by initalizing..
+    //client 1 will emit startjam with index 2 in socket event when initialized and ready to publish. 
+    ///....
+    // this function gets called with last index . sends last index value to room session. clients will all begin listening to index 3's
+    // publish for the mixed audio if it's the last in their userlist 
+    if(index !== this.clients.clients.length - 1){//we are not at the last player yet
+      socket.to(this.sessionID).emit("initialize", index);
+    } 
+    if(index === this.clients.clients.length -1){//for the final player, we send signal to everyone else to init their buffer for
+      //last player's music. they will check to ensure they aren't the last player first.
+      socket.to(this.sessionID).emit("initializeMixed", index);
+    }
   }
 }
 
