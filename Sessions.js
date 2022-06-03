@@ -141,9 +141,11 @@ class Sessions {
     console.log("currentSID", currentSID);
 
     const currentSession = this.sessions.get(currentSID);
-  
-    currentSession.initjam(data.index, socket);//emits to room which index is ready
-    } catch (error){
+    console.log("session for initjam:", currentSession);
+
+    currentSession.initjam(socket, data.index);//emits to room which index is ready
+    
+  } catch (error){
       console.log("failed to signal start jam...\n", error);
       let data = {console:"failed to signal start jam...\n", error:error};
       socket.emit('message', data);//emits to just this client
@@ -252,7 +254,7 @@ class Session {
     socket.emit('pong', interval);
   }
 
-  initjam(index, socket){
+  initjam(socket, index){
     //only called from client if userList[0] clicks and readyUsers is all 1's.
     //init clients in proper order. clients will only listen to index before them in client side but still need to be 
     //initialized in proper order.
@@ -268,9 +270,12 @@ class Session {
     ///....
     // this function gets called with last index . sends last index value to room session. clients will all begin listening to index 3's
     // publish for the mixed audio if it's the last in their userlist 
+    let data = {message: ("signal player index to init", index)};
+
     try{
       if(index !== this.clients.clients.length - 1){//we are not at the last player yet
-        let data = {message: ("signal player index to init", index)};
+        let data = {message: ("not the last player", index)};//everyone listens for last player when it becomes available
+
         console.log(data.message);
         socket.to(this.sessionID).emit("servermessage", data);
         socket.to(this.sessionID).emit("initialize", index);
