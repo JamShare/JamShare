@@ -1,7 +1,8 @@
 import React from 'react';
 import { WebRTCAdaptor } from '../js/webrtc_adaptor.js';
 import { getUrlParameter } from "../js/fetch.stream.js";
-import { saveAs } from 'file-saver';
+import { saveAs } from 'file-saver'
+import socket from '../index.js';
 
 function Recorder(props) {
     // state variables
@@ -230,7 +231,7 @@ function Recorder(props) {
             return;
         }
 
-        mixedStream = new MediaStream();
+        let mixedStream = new MediaStream();
         mixedStream.addTrack(obj.track());
         // record audio if you're NOT the last player
         recorder = new MediaRecorder(mixedStream.stream);
@@ -390,9 +391,6 @@ function Recorder(props) {
 
             <button onClick={stopRecording}>
                 Stop recording
-            </button>
-            <button onClick={playRecording}>
-                Play recording
             </button>
             <div>
                 Local Audio
