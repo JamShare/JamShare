@@ -98,7 +98,7 @@ function Recorder(props) {
             //initialize and connect to MUTED incoming remote stream.
             //CALL INITIALIZE HERE 
             console.log("init", playerOrder, index);
-            if(playerOrder === index && initd !== 1){
+            if(playerOrder === index+1 && initd !== 1){
                 getAudioDevice();
             }
             //signal to next index to initialize and listen to our MUTED publish.
