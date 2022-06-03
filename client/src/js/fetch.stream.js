@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 //ask if adaptive m3u8 file
 
 if (!String.prototype.endsWith) {

@@ -1,25 +1,35 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import Chat from './Chat';
 import Recorder from './Recorder';
-import Viewer from './Viewer';
 import Participants from './Participants';
-import { Link, Navigate, useNavigate, useLocation } from "react-router-dom";
-import './App.css'
-import './room.css'
-import JamShareLogo from './assets/images/JamShareLogo.jpg'
-import socket from "../index";
-//import headlong from './assets/musics/headlong70.mp3'
-
+import { useLocation } from 'react-router-dom';
+import './App.css';
+import './room.css';
+import JamShareLogo from './assets/images/JamShareLogo.jpg';
+import socket from '../index';
+import Viewer from './Viewer';
 
 function Room() {
-  let { state: { sessionID, guest, usernames }, } = ({} = useLocation()); //gets the variable we passed from navigate
-  const [serverUserList, setServerUserList] = useState(usernames);//important for saving the state passed to this parent component from the server. child components access this via "props" and do not use their own setstate for this value
-  console.log("room state: ", sessionID, guest, serverUserList);
+  let {
+    state: { sessionID, guest, usernames },
+  } = (useLocation()); //gets the variable we passed from navigate
 
-  socket.on('client-update-userlist', (newusernames) => {
-    console.log('room got user order update', newusernames);
-    setServerUserList(newusernames);
-  });
+  const [serverUserList, setServerUserList] = useState(usernames);
+
+  console.log('room state: ', sessionID, guest, serverUserList);
+
+  useEffect(() => {
+    window.addEventListener('beforeunload', keepOnPage); //this is fired upon component mounting
+    socket.on('client-update-userlist', (newusernames) => {
+      console.log('room got user order update', newusernames);
+      setServerUserList(newusernames);
+    });
+    return () => {
+      //things in return of useEffect are ran upon unmounting
+      console.log('component unmounting');
+      window.removeEventListener('beforeunload', keepOnPage);
+    };
+  }, []);
 
   //server messages to client console
   socket.on('servermessage', (message) => {
@@ -44,21 +54,39 @@ function Room() {
     var message = 'Warning!\n\nNavigating away from this page will delete your text if you haven\'t already saved it.';
     e.returnValue = message;
     return message;
-  }
-  
+  };
+
   return (
-    <div class="ProjectSectionContent" >
-      {/* <audio src={headlong} autoPlay></audio> */}
-      <div class="jybanner">
-        <img class='jam-logo' src={JamShareLogo} alt='logo'/>
-        
+    <div className='ProjectSectionContent'>
+      <div className='jybanner'>
+        <img className='jam-logo' src={JamShareLogo} alt='logo' />
       </div>
-      <Participants userlist={serverUserList} sessionID={sessionID} guest={guest}></Participants>
-      <Viewer userlist={serverUserList} sessionID={sessionID} guest={guest}></Viewer>
-      {/* <Chat userlist={serverUserList} sessionID={sessionID} guest={guest}></Chat> */}
-      <Recorder userlist={serverUserList} sessionID={sessionID} guest={guest}></Recorder>
-      <div class="jybannerb">
-      Session ID: {sessionID} - Portland State University - JamShare - 2022
+      <div class="jybannera">
+        Session ID: {sessionID}
+      </div>
+
+      <Participants
+        userlist={serverUserList}
+        sessionID={sessionID}
+        guest={guest}></Participants>
+      <Chat
+        userlist={serverUserList}
+        sessionID={sessionID}
+        guest={guest}></Chat>
+      <Viewer>
+        userlist={serverUserList}
+        sessionID={sessionID}
+        guest={guest}
+      </Viewer>
+      <Recorder
+        userlist={serverUserList}
+        sessionID={sessionID}
+        guest={guest}></Recorder>
+      <div className='jybannerb'>
+        Portland State University - JamShare - 2022
+        <button className='about'>
+          <a href="https://github.com/JamShare">About Us</a>
+        </button>
       </div>
     </div>
   );

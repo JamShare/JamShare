@@ -3,6 +3,7 @@ import { WebSocketAdaptor } from "./websocket_adaptor.js"
 import { MediaManager } from "./media_manager.js"
 import { SoundMeter } from "./soundmeter.js"
 
+/* eslint-disable */
 
 /**
  * This structure is used to handle large size data channel messages (like image)

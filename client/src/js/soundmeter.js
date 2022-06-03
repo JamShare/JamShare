@@ -6,6 +6,8 @@
  *  tree.
  */
 
+/* eslint-disable */
+
 'use strict';
 
 // Meter class that generates a number correlated to audio volume.
