@@ -99,7 +99,8 @@ function Recorder(props) {
             }
             //signal to next index to initialize and listen to our MUTED publish.
             if (playerOrder !== props.userlist.length) {
-                let data = {index:(playerOrder)};//next player index (playerOrder is +1 to index). if we are last, server will notify everyone to listen.
+                let data = {index:playerOrder};//next player index (playerOrder is +1 to index). if we are last, server will notify everyone to listen.
+                console.log('sending init signal to index:', data.index);
                 socket.emit('initjam', data)//send signal to next player
             }
             return;
@@ -124,8 +125,10 @@ function Recorder(props) {
 
         if(playerOrder === 1){//&& everyoneIsReady() && !initialized
             try {
+                console.log('player 1 starting the jam! getting audio device..', playerOrder);
                 getAudioDevice();
                 let data = {index:playerOrder};
+                console.log('sending init signal to index:',data.index);
                 socket.emit('initjam', data);//notify player 2 at index 1.
             } catch(error) {
                 console.log('Error in getAudioDevice:', error);
