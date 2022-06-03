@@ -151,10 +151,59 @@ io.on('connection', (socket) => {
     }
   });
 
+  //broadcast incoming stream to all clients in session
+  // socket.on('client-audio-stream', (data) => {
+  //   sessions.streamToSession(data, socket);
+  // });
+
+
+  // socket.on('callUser', (data) => {
+  //   io.to(data.userToCall).emit('callUser', {
+  //     signal: data.signalData,
+  //     from: data.from,
+  //     name: data.name,
+  //   });
+  // });
+
+  // socket.on('answerCall', (data) => {
+  //   io.to(data.to).emit('callAccepted', data.signal);
+  // });
+
+  // socket.on('audio-stream', (data) => {
+  //   //console.log("Audio streaming.");
+  //   chunks.push(data);
+  // });
+
+  // socket.on('audio-stream-end', () => {
+  //   console.log('Audio streaming ended.');
+  //   // emits to all connected clients
+  //   // TODO change this when we establish multiple rooms
+  //   io.emit('audio-blob', chunks);
+  //   chunks = [];
+  // });
+
+  // socket.on('create-audio-file', function(data)  {
+  //   let blob = new Blob(this.chunks, {'type': 'audio/ogg; codecs=opus'})
+  //   let audioURL = URL.createObjectURL(blob);
+  //   this.audio = new Audio(audioURL);
+  // });
 });
 
-server.listen(port, () => console.log(`Listening on port ${port}`));
+function assignPlayer(id) {
+  if (players.includes(id)) {
+    return players.length;
+  }
+  else {
+    players.push(id);
+    return players.length;
+  }
+}
 
+server.listen(port, () => console.log(`Listening on port ${port}`));
 app.use(express.static(path.resolve(__dirname, './client/build')));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, './client/build/index.html'));
+});
 
 module.exports = app;
