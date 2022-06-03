@@ -3,7 +3,14 @@ import { WebRTCAdaptor } from '../js/webrtc_adaptor';
 import { getUrlParameter } from "../js/fetch.stream.js";
 import { saveAs } from 'file-saver';
 
+//recorder variables
+let chunks = [];
+let recorder = null;
+let audio = null;
+
 function Recorder(props) {
+
+    const [isShowRecordButton, setIsShowRecordButton] = React.useState(false);
 
     let state = {
         isRecording: false,
@@ -45,11 +52,6 @@ function Recorder(props) {
     let playerOrder = 0;
     let ac = new AudioContext();
     let acDest = ac.createMediaStreamDestination();
-
-    //recorder variables
-    let chunks = [];
-    let recorder = null;
-    let audio = null;
 
     //antmedia variables
     let webRTCAdaptor = null;
@@ -222,6 +224,9 @@ function Recorder(props) {
                 // initialize event handlers for recorder
                 recorder.ondataavailable = onDataAvailable;
                 recorder.onstop = onStop;
+
+                setIsShowRecordButton(!isShowRecordButton);
+                console.log("State", isShowRecordButton);
             }
         }
     }
@@ -318,16 +323,27 @@ function Recorder(props) {
                 Start The Jam!
             </button>
 
-            <button onClick={startRecording}>
-                Start recording
-            </button>
+            <>
+                {isShowRecordButton ?
 
-            <button onClick={stopRecording}>
-                Stop recording
-            </button>
-            <button onClick={playRecording}>
-                Play recording
-            </button>
+                    <div id="record-buttons">
+                        <button onClick={startRecording}>
+                            Start recording
+                        </button>
+
+                        <button onClick={stopRecording}>
+                            Stop recording
+                        </button>
+
+                        <button onClick={playRecording}>
+                            Play recording
+                        </button>
+                    </div>
+                    :
+                    <></>
+                }
+            </>
+
             <div>
                 Local Audio
                 <audio id="local_audio" autoPlay muted playsInline controls={true} />
