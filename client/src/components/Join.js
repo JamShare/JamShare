@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState, useRef } from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -23,7 +24,6 @@ function Join(props) {
   console.log('join username: ', guest);
 
   useEffect(() => {
-    var ses;
     socket.on('create-session-response', (session_ID) => {
       console.log('create session response from server', session_ID);
       setSessionID(session_ID); //doesnt seem to actually work

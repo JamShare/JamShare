@@ -43,7 +43,7 @@ function Room() {
       <div className='jybanner'>
         <img className='jam-logo' src={JamShareLogo} alt='logo' />
       </div>
-      <div class="jybannera">
+      <div className="jybannera">
         Session ID: {sessionID}
       </div>
 
