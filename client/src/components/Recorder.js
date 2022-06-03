@@ -166,10 +166,12 @@ function Recorder(props) {
         }
 
         // create audio source from previous players' remote stream
+        let settings = obj.track.getSettings();
+        let latency = settings.latency();
+        console.log("Latency: ", latency);
         remoteSource = playbackContext.createMediaStreamTrackSource(obj.track);
         remoteSource.connect(playbackContext.destination);
         remoteSource.connect(delayNode);
-        delayNode.delayTime.setValueAtTime(playbackContext.outputLatency, playbackContext.currentTime); // set delayTime of delayNode
         console.log("Recorder.js: Connected remote stream to playbackContext.")
         playbackContext.resume();
 
