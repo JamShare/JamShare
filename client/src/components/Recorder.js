@@ -119,14 +119,13 @@ function Recorder(props) {
     //Merge variables
     let intervalReturn = null; // use this to clearInterval on the connectAudioBuffers function
 
-    socket.on('initializeMixed',(streamval)=>{
-        if(playerOrder === userlist.length){//final player already has the recording
+
+    //socket event to initialize the final player's fully mixed audio file and output it to viewer.
+    socket.on('initializeMixed',(index)=>{
+        if(playerOrder === props.userlist.length){//final player already has the recording
             return;
         }
-
-        // INITIALIZE COMBINED audio listener here
-
-        
+        // INITIALIZE COMBINED audio listener here       
     });
 
     //socket event to initialize in proper order
@@ -134,14 +133,14 @@ function Recorder(props) {
             //initialize and connect to MUTED incoming remote stream.
             
             //CALL INITIALIZE HERE 
-            
+            if(playerOrder === index){
+                getAudioDevice();
+            }
 
             //signal to next index to initialize and listen to our MUTED publish.
             let data = {index:(playerOrder)};//next player index (playerOrder is +1 to index). if we are last, server will notify everyone to listen.
             socket.emit('initjam', data)//send signal to next player
             return;
-        }
-
     });
 
     function getPlayerOrder() {
@@ -160,7 +159,7 @@ function Recorder(props) {
             console.log('Error in playerOrder:', error);
         }
 
-        if(playerOrder === 1){//&& everyoneIsReady()
+        if(playerOrder === 1){//&& everyoneIsReady() && notInitialized
             try {
                 getAudioDevice();
                 let data = {index:playerOrder};
@@ -172,21 +171,6 @@ function Recorder(props) {
         }else{
             console.log("Waiting for others to ready")
         }
-    }
-    function initializePlayers(){
-        try {
-            getPlayerOrder();
-        } catch (error) {
-            console.log('Error in playerOrder:', error);
-        }
-        try {
-            getAudioDevice();
-            let data = {index:playerOrder};//playerOrder is 1 larger than index
-            socket.emit('initjam', data)
-        } catch(error) {
-            console.log('Error in getAudioDevice:', error);
-        }
-
     }
 
     async function getAudioDevice() {
@@ -286,7 +270,7 @@ function Recorder(props) {
 
 
     //remotely play each audio stream
-    function playAudio(obj) {
+    function playAudio(obj) {//this gets called on newstreamavailable
         let room = currentRoom;
         let trackOrder = obj.trackId.slice(-1);
 
@@ -307,6 +291,11 @@ function Recorder(props) {
         recorderSource.connect(recorderNode); // connect to recorderNode. recorderNode is 
 
         // enable recorderNode (to disable, set value to 0)
+        //when incoming stream is muted, set this to 0
+        if(obj.track.muted===true){
+            recorderNode.parameters.get('isRecording').setValueAtTime(0, recordContext.currentTime);//recording into buffer only occurs when set to 1.
+        }
+
         recorderNode.parameters.get('isRecording').setValueAtTime(1, recordContext.currentTime);//recording into buffer only occurs when set to 1.
         // connects an audiobuffer every 1000ms, use clearInterval(intervalReturn) to stop
         intervalReturn = setInterval(connectAudioBuffer, 1000);
@@ -336,6 +325,7 @@ function Recorder(props) {
         mixedAudioSource.connect(mixedAudioNode); // connect to recorderNode. recorderNode is 
 
         // enable recorderNode (to disable, set value to 0)
+        //when incoming stream is muted, set this to 0
         mixedAudioNode.parameters.get('isRecording').setValueAtTime(1, mixedAudioContext.currentTime);//recording into buffer only occurs when set to 1.
         // connects an audiobuffer every 1000ms, use clearInterval(intervalReturn) to stop
         intervalReturn = setInterval(connectAudioBuffer, 1000);
@@ -379,16 +369,17 @@ function Recorder(props) {
         console.log("loading audio buffer");
         let audioBuffer = sources.splice(0, 1)[0]; // grab the first bufferSource in the array
         if (audioBuffer) { // if audioBuffer exists
-            audioBuffer.connect(playbackContext.destination);
+            audioBuffer.connect(playbackContext.destination);//users hardware audio device 
             audioBuffer.connect(delayNode);
             audioBuffer.start();
             console.log("audio buffer connected");
         } else { // if audioBuffer is undefined
-            /* add last player check
-            if (state.isRecording) {
-                state.isRecording = !state.isRecording;
-            }
-            */ 
+            // add last player check
+            //audio buffer runs out it disconnects
+            // if () {
+            //     state.isRecording = !state.isRecording;
+            // }
+            
             console.error("No audio buffer sources found; cannot connect it to playback context.");
         }
     }
@@ -398,7 +389,6 @@ function Recorder(props) {
         delayNode = playbackContext.createDelay(10); // create delayNode with maxDelay of 10s
         delayNode.delayTime.setValueAtTime(state.delay, playbackContext.currentTime); // set delayTime of delayNode for writing to combined buffer
         
-
         streamOut = playbackContext.createMediaStreamDestination(); // output combined stream of localStream and audioBufferSourceNodes, send to next player
         
         //connect delayed local audio and incoming stream

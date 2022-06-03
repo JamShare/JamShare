@@ -7,6 +7,7 @@ run "npm i" in both.
 run "npm start" in ther server command prompt, and then the same command inside the prompt in client.
 go to localhost:3000 in FireFox only.
 
+# started with npm create-react-app
 
 
 # Contributers
