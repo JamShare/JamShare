@@ -225,7 +225,7 @@ function Recorder(props) {
         tracks = stream.getTracks();
         settings = tracks[0].getSettings();
         latency = settings.latency;
-        console.log(latency);
+        console.log("Latency: ", latency);
         connectMediaStreams();
 
         return;
