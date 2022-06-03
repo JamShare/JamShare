@@ -104,12 +104,12 @@ function Recorder(props) {
             if(playerOrder === index+1 && initd !== 1){
                 getAudioDevice();
             }
-            //signal to next index to initialize and listen to our MUTED publish.
-            if (playerOrder !== props.userlist.length && initd !== 1) {
-                let data = {index:playerOrder};//next player index (playerOrder is +1 to index). if we are last, server will notify everyone to listen.
-                console.log('sending init signal to index:', data.index);
-                socket.emit('initjam', data)//send signal to next player
-            }
+            // signal to next index to initialize and listen to our MUTED publish.
+            // if (playerOrder !== props.userlist.length && initd !== 1) {
+            //     let data = {index:playerOrder};//next player index (playerOrder is +1 to index). if we are last, server will notify everyone to listen.
+            //     console.log('sending init signal to index:', data.index);
+            //     socket.emit('initjam', data)//send signal to next player
+            // }
             initd = 1;
             return;
     });
@@ -138,7 +138,7 @@ function Recorder(props) {
                 
                 let data = {index:playerOrder};
                 console.log('sending init signal to index:',data.index);
-                socket.emit('initjam', data);//notify player 2 at index 1.
+                socket.emit('initjam', data);//notify playerat next index
                 
             } catch(error) {
                 console.log('Error in getAudioDevice:', error);
@@ -216,6 +216,8 @@ function Recorder(props) {
         recorderSource = recordContext.createMediaStreamTrackSource(obj.track);
         recorderSource.connect(recorderNode); // connect to recorderNode
 
+        playAudio();//PLAYS incoming stream audio to this client
+
 
         // record audio if you're the last player
         if (state.username === state.userlist.at(-1)) {
@@ -272,9 +274,15 @@ function Recorder(props) {
             console.error(err);
             stream = null;
         }
+
         connectMediaStreams();
 
-
+        if (playerOrder !== props.userlist.length && initd !== 1) {
+            let data = {index:playerOrder};//next player index (playerOrder is +1 to index). if we are last, server will notify everyone to listen.
+            console.log('sending init signal to index:', data.index);
+            socket.emit('initjam', data)//send signal to next player
+        }
+        
         return;
     }
 
@@ -379,10 +387,10 @@ function Recorder(props) {
 
                 } else if (info === "data_received") {
                     console.log("Data received: " + obj.event.data + " type: " + obj.event.type + " for stream: " + obj.streamId);
-                    if(obj.track.muted!==true && playingAudio !== true){
-                        playingAudio = true;
-                        playAudio();
-                    }
+                    // if(obj.track.muted!==true && playingAudio!== true){
+                    //     playingAudio = true;
+                    //     playAudio();
+                    // }
                 } else if (info === "bitrateMeasurement") {
                     console.log(info + " notification received");
                     console.log(obj);
