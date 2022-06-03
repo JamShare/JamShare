@@ -64,7 +64,7 @@ function Room() {
       <div className='jybannerb'>
       Session ID: {sessionID} - Portland State University - JamShare - 2022
         <button className='about'>
-          <a href="https://github.com/JamShare">About Us</a>
+          <a href="https://github.com/JamShare" target="_blank" rel="noopener noreferrer">About Us</a>
         </button>
       </div>
     </div>

@@ -146,7 +146,7 @@ function Signup(props) {
                 />
                 <br></br>
                 <Button variant='primary' type='submit' color='orange'>
-                  Sign Up and Jam!
+                  Sign In and Jam!
                 </Button>
               </form>
             </div>
