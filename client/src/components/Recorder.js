@@ -89,6 +89,9 @@ function Recorder(props) {
     //initialized?
     let initd = 0;
 
+    //currently playing audio?
+    let playingAudio = false;
+
     //Merge variables
     let intervalReturn = null; // use this to clearInterval on the connectAudioBuffers function
 
@@ -132,7 +135,11 @@ function Recorder(props) {
             try {
                 console.log('player 1 starting the jam! getting audio device..', playerOrder);
                 getAudioDevice();
-
+                
+                let data = {index:playerOrder};
+                console.log('sending init signal to index:',data.index);
+                socket.emit('initjam', data);//notify player 2 at index 1.
+                
             } catch(error) {
                 console.log('Error in getAudioDevice:', error);
             }
@@ -267,11 +274,7 @@ function Recorder(props) {
         }
         connectMediaStreams();
 
-        if(stream!==null){
-            let data = {index:playerOrder};
-            console.log('sending init signal to index:',data.index);
-            socket.emit('initjam', data);//notify player 2 at index 1.
-        }
+
         return;
     }
 
@@ -376,6 +379,10 @@ function Recorder(props) {
 
                 } else if (info === "data_received") {
                     console.log("Data received: " + obj.event.data + " type: " + obj.event.type + " for stream: " + obj.streamId);
+                    if(obj.track.muted!==true && playingAudio !== true){
+                        playingAudio = true;
+                        playAudio();
+                    }
                 } else if (info === "bitrateMeasurement") {
                     console.log(info + " notification received");
                     console.log(obj);
