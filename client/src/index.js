@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Signup, Room, Join, MorgSignup, MorgSignin, } from './components/component_export';
-import registerServiceWorker from './registerServiceWorker';
 import './fonts/Indie_Flower/IndieFlower-Regular.ttf';
 import './index.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
@@ -36,4 +35,4 @@ ReactDOM.render(
   </div>,
   document.getElementById('root')
 );
-registerServiceWorker();
+
