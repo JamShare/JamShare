@@ -132,9 +132,7 @@ function Recorder(props) {
             try {
                 console.log('player 1 starting the jam! getting audio device..', playerOrder);
                 getAudioDevice();
-                let data = {index:playerOrder};
-                console.log('sending init signal to index:',data.index);
-                socket.emit('initjam', data);//notify player 2 at index 1.
+
             } catch(error) {
                 console.log('Error in getAudioDevice:', error);
             }
@@ -269,6 +267,9 @@ function Recorder(props) {
         }
         connectMediaStreams();
 
+        let data = {index:playerOrder};
+        console.log('sending init signal to index:',data.index);
+        socket.emit('initjam', data);//notify player 2 at index 1.
         return;
     }
 
