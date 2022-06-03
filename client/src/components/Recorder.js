@@ -232,19 +232,7 @@ function Recorder(props) {
         recorderSource.connect(recorderNode); // connect to recorderNode
     }
 
-    function playAudio(obj) {
-        let room = currentRoom;
-        console.log("new stream available with id: "
-            + obj.streamId + "on the room:" + room);
-
-        var index;
-        if (obj.track.kind === "audio") {
-            index = obj.track.id.replace("ARDAMSa", "");
-        }
-
-        if (index === room) {
-            return;
-        }
+    function playAudio() {
         // playback
         // enable recorderNode (to disable, set value to 0)
         recorderNode.parameters.get('isRecording').setValueAtTime(1, recordContext.currentTime); // listen in
@@ -263,7 +251,7 @@ function Recorder(props) {
         }
     }
 
-    function saveMixed(obj){//saves the final players stream and makes it available to viewer for download
+    function setupMixed(obj) {
         var index;
         if (obj.track.kind === "audio") {
             index = obj.track.id.replace("ARDAMSa", "");
@@ -274,7 +262,9 @@ function Recorder(props) {
 
         mixedStream = new MediaStream();
         mixedStream.addTrack(obj.track());
-  
+    }
+
+    function saveMixed(obj){//saves the final players stream and makes it available to viewer for download
         // record audio if you're NOT the last player
         if (state.username !== state.userlist.at(-1)) {
             mixedAudioRecorder = new MediaRecorder(mixedStream.stream);
