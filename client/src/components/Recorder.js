@@ -3,6 +3,7 @@ import { WebRTCAdaptor } from '../js/webrtc_adaptor.js';
 import { getUrlParameter } from "../js/fetch.stream.js";
 import { saveAs } from 'file-saver'
 import socket from '../index.js';
+import e from 'cors';
 
 function Recorder(props) {
     // state variables
@@ -102,7 +103,7 @@ function Recorder(props) {
             //CALL INITIALIZE HERE 
             console.log("init", playerOrder, index);
             if(playerOrder === index+1 && initd !== 1){
-                getAudioDevice();
+                getAudioDevice();//once player clicks allow and the publish starts, then the init signal to next player is sent 
             }
             // signal to next index to initialize and listen to our MUTED publish.
             // if (playerOrder !== props.userlist.length && initd !== 1) {
@@ -110,7 +111,6 @@ function Recorder(props) {
             //     console.log('sending init signal to index:', data.index);
             //     socket.emit('initjam', data)//send signal to next player
             // }
-            initd = 1;
             return;
     });
 
@@ -274,17 +274,20 @@ function Recorder(props) {
             console.error(err);
             stream = null;
         }
-
         connectMediaStreams();
-
-        if (playerOrder !== props.userlist.length && initd !== 1) {
-            let data = {index:playerOrder};//next player index (playerOrder is +1 to index). if we are last, server will notify everyone to listen.
-            console.log('sending init signal to index:', data.index);
-            socket.emit('initjam', data)//send signal to next player
-        }
-        
         return;
     }
+
+    // navigator.mediaDevices.ondevicechange = event => {//wait for player to allow microphone to send message to next player
+    //     if (playerOrder !== props.userlist.length && initd !== 1) {
+    //         initd = 1;
+    //         let data = {index:playerOrder};//next player index (playerOrder is +1 to index). if we are last, server will notify everyone to listen.
+    //         console.log('sending init signal to index:', data.index);
+    //         socket.emit('initjam', data)//send signal to next player
+    //     } else {
+    //         initd = 0;
+    //     }
+    // }
 
     // takes recorded audio data and creates an audio source from it
     function createAudioBufferSource(audioData) {
@@ -348,8 +351,17 @@ function Recorder(props) {
                     initAntMedia();
                 } else if (info === "publish_started") {
                     //stream is being published
+                    //wait till publish starts to send next player init signal
+                    if (playerOrder !== props.userlist.length && initd !== 1) {
+                        initd = 1;
+                        let data = {index:playerOrder};//next player index (playerOrder is +1 to index). if we are last, server will notify everyone to listen.
+                        console.log('sending init signal to index:', data.index);
+                        socket.emit('initjam', data)//send signal to next player
+                    } else {
+                        initd = 0;
+                    }
                     console.log("publish started");
-                    alert("publish started");
+                    // alert("publish started");
                 } else if (info === "publish_finished") {
                     //stream is being finished
                     console.log("publish finished");
@@ -366,7 +378,12 @@ function Recorder(props) {
 
                 } else if (info === "newStreamAvailable") {
                     // get previous players stream
-                    let tempOrder = obj.trackId.slice(-1);
+                    let tempOrder = obj.trackId.slice(-1);//playerOrder of player sending track
+
+                    if(parseInt(tempOrder, 10) === parseInt(props.userlist.length, 10)){
+                        //recording final player's stream
+                    }
+
                     if (parseInt(tempOrder, 10) === parseInt(playerOrder-1, 10)) {
                         // console.log("Playing", obj.trackId);
                         setupAudio(obj);
@@ -401,7 +418,7 @@ function Recorder(props) {
             callbackError: function (error) {
                 //some of the possible errors, NotFoundError, SecurityError,PermissionDeniedError
                 console.log("error callback: " + JSON.stringify(error));
-                alert(JSON.stringify(error));
+                // alert(JSON.stringify(error));
             }
         });
     }
