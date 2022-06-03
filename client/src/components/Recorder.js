@@ -101,7 +101,7 @@ function Recorder(props) {
         getPlayerOrder();
             //initialize and connect to MUTED incoming remote stream.
             //CALL INITIALIZE HERE 
-            console.log("init", playerOrder, index);
+            console.log("init", playerOrder, index+1);
             if(playerOrder === index+1 && initd !== 1){
                 getAudioDevice();//once player clicks allow and the publish starts, then the init signal to next player is sent 
             }
@@ -352,13 +352,11 @@ function Recorder(props) {
                 } else if (info === "publish_started") {
                     //stream is being published
                     //wait till publish starts to send next player init signal
-                    if (playerOrder !== props.userlist.length && initd !== 1) {
+                    if (playerOrder !== props.userlist.length && initd !== 1) {//last player wont send signal this way. instead the others are listening for the last player's publish
                         initd = 1;
                         let data = {index:playerOrder};//next player index (playerOrder is +1 to index). if we are last, server will notify everyone to listen.
                         console.log('sending init signal to index:', data.index);
                         socket.emit('initjam', data)//send signal to next player
-                    } else {
-                        initd = 0;
                     }
                     console.log("publish started");
                     // alert("publish started");
@@ -381,11 +379,13 @@ function Recorder(props) {
                     let tempOrder = obj.trackId.slice(-1);//playerOrder of player sending track
 
                     if(parseInt(tempOrder, 10) === parseInt(props.userlist.length, 10)){
-                        //recording final player's stream
+                        //recording final player's 
+                        console.log("recording final player's stream", obj.trackId);
+
                     }
 
                     if (parseInt(tempOrder, 10) === parseInt(playerOrder-1, 10)) {
-                        // console.log("Playing", obj.trackId);
+                        console.log("Playing new stream available", obj.trackId);
                         setupAudio(obj);
                     }
                 } else if (info === "ice_connection_state_changed") {

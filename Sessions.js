@@ -274,13 +274,13 @@ class Session {
     console.log("signal player index to init", index);
 
     try{
-      // if(index < (this.clients.numClients() - 1)){//we are not at the last player yet
+      if(index < (this.clients.numClients() - 1)){//we are not at the last player yet
         let data = {message: "not the last player. initializing", index: index};//everyone listens for last player when it becomes available
 
         console.log("not the last order player to init", index);
         socket.to(this.sessionID).emit("servermessage", data);
         socket.to(this.sessionID).emit("initialize", index);
-      // } 
+      } 
     }catch(error){
       let data = {message: ("signal player index to init failed", index)};
       console.log(data.message);
