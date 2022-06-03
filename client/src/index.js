@@ -1,38 +1,29 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { render } from 'react-dom';
-
-import {
-  Signup,
-  Room,
-  Join,
-  Morg_Signup,
-  Morg_Signin,
-} from './components/component_export';
-
+import { Signup, Room, Join, MorgSignup, MorgSignin, } from './components/component_export';
+import registerServiceWorker from './registerServiceWorker';
 import './fonts/Indie_Flower/IndieFlower-Regular.ttf';
 import './index.css';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 const io = require('socket.io-client');
-const SERVER = "https://gentle-lake-00593.herokuapp.com";
-
+const SERVER = 'http://localhost:3001';
 let socket = io(SERVER);
 export default socket; //https://stackoverflow.com/questions/48794919/reactjs-socket-io-best-way-to-handle-socket-connection
 
-socket.on('error', error=>{
-  console.log("server error", error);
+socket.on('error', (error) => {
+  console.log('server error', error);
 });
 
 ReactDOM.render(
   <div>
     <BrowserRouter>
       <Routes>
-        <Route exact path='/' element={<Signup/>} />
-        <Route path='/join' element={<Join/>} />
-        <Route path='/room' element={<Room/>} />
-        <Route path='/signup2' element={<Morg_Signup />} />
-        <Route path='/signin2' element={<Morg_Signin />} />
+        <Route exact path='/' element={<Signup />} />
+        <Route path='/join' element={<Join />} />
+        <Route path='/room' element={<Room />} />
+        <Route path='/signup2' element={<MorgSignup />} />
+        <Route path='/signin2' element={<MorgSignin />} />
       </Routes>
       <link
         rel='stylesheet'
@@ -45,3 +36,4 @@ ReactDOM.render(
   </div>,
   document.getElementById('root')
 );
+registerServiceWorker();

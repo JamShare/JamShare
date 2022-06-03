@@ -1,6 +1,5 @@
-const fs = require("fs");
-
 module.exports = {
+  /*
     devServer: {
         
         https: {
@@ -17,4 +16,5 @@ module.exports = {
         //host: "192.168.1.11",
         port: 3000,
     }
+    */
 };

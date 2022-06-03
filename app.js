@@ -3,18 +3,21 @@ var express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 var cors = require('cors');
+const https = require('https');
 const http = require('http');
-
 const Socket = require('socket.io');
 const port = process.env.PORT || 3001;
 const Sessions = require('./Sessions.js');
 const { userJoin, getCurrentUser } = require('./Users');
+const fs = require('fs');
+
 const { register_new_user, validate_creds } = require('./auth/auth.js');
 
-//node instance
 var app = express();
+
 app.use(bodyParser.json());
 app.use(cors());
+
 //just a response if people access server directly
 /*
 app.get('/', function (request, response) {
@@ -27,7 +30,7 @@ app.post('/chat', function (request, response) {
   response.set('Access-Control-Allow-Origin', '*');
 });
 
-//auth
+//Auth
 app.post('/auth/signup', async (req, res) => {
   const [username, password] = ['username', 'password'].map((e) => req.body[e]);
   res.send(await register_new_user(username, password));
@@ -37,6 +40,7 @@ app.post('/auth/signin', async (req, res) => {
   const [username, password] = ['username', 'password'].map((e) => req.body[e]);
   res.send(await validate_creds(username, password));
 });
+
 ///// end auth
 
 //Server
@@ -47,84 +51,91 @@ const io = Socket(server, {
   },
 });
 
-//Active sessions manager
+//Active sessions
 var sessions = new Sessions();
 
 // Listening for incoming connections
 io.on('connection', (socket) => {
-  console.log("client connected:",socket.id);
-  //recieve the data from the user
-  clientObject = undefined;
+  console.log('client connected:', socket.id);
   socket.on('create-session', (data) => {
-    try{
+    try {
       sessions.createSession(data, socket);
-    }catch(error){
-      console.log(error); 
-      socket.emit('error',error);
+    } catch (error) {
+      console.log(error);
+      socket.emit('error', error);
     }
   });
 
   //'join-session' emitted from client when user clicks 'join jam session' in /Join.js modal popup, or when user enters session ID in orange box and presses enter.
   socket.on('join-session', (data) => {
-    try{
+    try {
       sessions.joinSession(data, socket);
-    } catch(error){
+    } catch (error) {
       console.log(error);
-      socket.emit('error',error);
+      socket.emit('error', error);
     }
   });
 
   socket.on('client-stream-out', (data) => {
-    try{
+    try {
       sessions.streamStarting(data, socket);
-    } catch(error){
+    } catch (error) {
       console.log(error);
-      socket.emit('error',error);
+      socket.emit('error', error);
     }
   });
-  
+
   socket.on('chat-message', (data) => {
-    try{sessions.emitChatMessage(data, socket);
-    } catch(error){
+    try {
+      console.log('chat-message :', data);
+      sessions.emitChatMessage(data, socket);
+    } catch (error) {
       console.log(error);
-      socket.emit('error',error);
+    }
+  });
+  socket.on('chat-message-history', (data) => {
+    try {
+      console.log('chat-message-history :', data);
+      sessions.emitChatHisttory(data, socket);
+    } catch (error) {
+      console.log(error);
     }
   });
 
   //update participants on server and broadcast to client when new user joins or host changes order
   socket.on('participants-order', (data) => {
-    try{
+    try {
       sessions.participantsOrder(data, socket);
-    } catch(error){
+    } catch (error) {
       console.log(error);
-      socket.emit('error',error);
+      socket.emit('error', error);
     }
   });
 
   socket.on('server-update-userlist', (data) => {
-    try{
-      console.log("app updating userlist",data);
+    try {
+      console.log('app updating userlist', data);
       sessions.updateUserList(data.updatedList, data.sessionID, socket);
-    } catch(error){ 
-      console.log(error); 
-      socket.emit('error',error);
+    } catch (error) {
+      console.log(error);
+      socket.emit('error', error);
     }
   });
 
   socket.on('get-userlist', (data) => {
-    try{
+    try {
       let userList = sessions.getUserList();
-    } catch(error){ 
-        console.log(error); 
-        socket.emit('error',error);
+    } catch (error) {
+      console.log(error);
+      socket.emit('error', error);
     }
   });
 
-  socket.on('disconnect', ()=>{
-    try{
-      console.log("socket ID disconnected from server:", socket.id );
+  socket.on('disconnect', () => {
+    try {
+      console.log('socket ID disconnected from server:', socket.id);
       sessions.disconnectUser(socket);
-    } catch(error){
+    } catch (error) {
       console.log(error);
     }
   });

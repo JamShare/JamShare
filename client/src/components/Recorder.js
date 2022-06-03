@@ -102,13 +102,8 @@ function Recorder(props) {
     function onDataAvailable(e) {
         chunks.push(e.data);
     }
-
-    function onStop(e) {
-        console.log("Recording stopped successfully.");
-        let blob = new Blob(chunks, { 'type': 'audio/wav; codecs=opus' })
-        let audioURL = URL.createObjectURL(blob);
-        audio = new Audio(audioURL);
-        saveAs(blob, "audioTest.wav")
+    if (state.isRecording) {
+      return;
     }
     //
 
@@ -138,6 +133,11 @@ function Recorder(props) {
         state.isRecording = false;
         return;
     }
+    recorder.stop();
+    state.isRecording = false;
+    // setState({icon: stopIcon});
+    return;
+  }
 
     // this plays assembled audio from mediaRecorder.onstop
     function playRecording() {
@@ -147,6 +147,17 @@ function Recorder(props) {
         audio.play();
         return;
     }
+    // if (state.isPlaying) {
+    //   setState({icon: pauseIcon});
+    //   setState({ isPlaying: false});
+    // }
+    // if (!state.isRecording) {
+    //   setState({icon: playIcon});
+    //   setState({ isPlaying: true});
+    // }
+    audio.play();
+    return;
+  }
 
     //remotely play each audio stream
     function playAudio(obj) {
@@ -218,6 +229,7 @@ function Recorder(props) {
         let publishStreamName = '' + currentRoom + '-' + playerOrder;
         webRTCAdaptor.publish(publishStreamName, token, "", "", streamName, currentRoom, "{someKey:somveValue}", playerOrder);
     }
+  }
 
     function initiateWebrtc(streamOut) {
         return new WebRTCAdaptor({
@@ -290,34 +302,127 @@ function Recorder(props) {
         });
     }
 
-    return (
-        <div class="jamblock">
-            <button onClick={startTheJam}>
-                Start The Jam!
-            </button>
-
-            <button onClick={startRecording}>
-                Start recording
-            </button>
-
-            <button onClick={stopRecording}>
-                Stop recording
-            </button>
-            <button onClick={playRecording}>
-                Play recording
-            </button>
-            <div>
-                Local Audio
-                <audio id="local_audio" autoPlay muted playsInline controls={true} />
-            </div>
-            <div class="container">
-                <ul id="trackList" name="trackList">
-                </ul>
-            </div>
-            <div id="players">
-            </div>
-        </div>
+  //publish the local stream
+  function publish(token) {
+    console.log('Publishing');
+    let publishStreamName = '' + currentRoom + '-' + playerOrder;
+    webRTCAdaptor.publish(
+      publishStreamName,
+      token,
+      '',
+      '',
+      streamName,
+      currentRoom,
+      '{someKey:somveValue}',
+      playerOrder
     );
+  }
+
+  function initiateWebrtc() {
+    return new WebRTCAdaptor({
+      websocket_url: state.websocketURL,
+      mediaConstraints: state.mediaConstraints,
+      peerconnection_config: state.pc_config,
+      sdp_constraints: state.sdpConstraints,
+      localVideoId: 'local_audio',
+      isPlayMode: true,
+      debug: true,
+      bandwidth: 900,
+      callback: function (info, obj) {
+        if (info === 'initialized') {
+          console.log('initialized');
+        } else if (info === 'publish_started') {
+          //stream is being published
+          console.log('publish started');
+          alert('publish started');
+        } else if (info === 'publish_finished') {
+          //stream is being finished
+          console.log('publish finished');
+        } else if (info === 'trackList') {
+          console.log('trackList', obj.streamId);
+        } else if (info === 'joinedTheRoom') {
+          console.log('Object ID', obj.streamId);
+          publish(obj.streamId, state.token);
+        } else if (info === 'closed') {
+          if (typeof obj != 'undefined') {
+            console.log('Connecton closed: ' + JSON.stringify(obj));
+          }
+        } else if (info === 'streamInformation') {
+        } else if (info === 'newStreamAvailable') {
+          //get every stream behind you
+          let tempOrder = obj.trackId.slice(-1);
+          if (parseInt(tempOrder, 10) < parseInt(playerOrder, 10)) {
+            console.log('Playing', obj.trackId);
+            playAudio(obj);
+          }
+        } else if (info === 'ice_connection_state_changed') {
+          console.log('iceConnectionState Changed: ', JSON.stringify(obj));
+        } else if (info === 'updated_stats') {
+          //obj is the PeerStats which has fields
+          //averageIncomingBitrate - kbits/sec
+          //currentIncomingBitrate - kbits/sec
+          //packetsLost - total number of packet lost
+          //fractionLost - fraction of packet lost
+          console.log(
+            'Average incoming kbits/sec: ' +
+              obj.averageIncomingBitrate +
+              ' Current incoming kbits/sec: ' +
+              obj.currentIncomingBitrate +
+              ' packetLost: ' +
+              obj.packetsLost +
+              ' fractionLost: ' +
+              obj.fractionLost +
+              ' audio level: ' +
+              obj.audioLevel
+          );
+        } else if (info === 'data_received') {
+          console.log(
+            'Data received: ' +
+              obj.event.data +
+              ' type: ' +
+              obj.event.type +
+              ' for stream: ' +
+              obj.streamId
+          );
+        } else if (info === 'bitrateMeasurement') {
+          console.log(info + ' notification received');
+          console.log(obj);
+        } else {
+          console.log(info + ' notification received');
+        }
+      },
+      callbackError: function (error) {
+        //some of the possible errors, NotFoundError, SecurityError,PermissionDeniedError
+        console.log('error callback: ' + JSON.stringify(error));
+        alert(JSON.stringify(error));
+      },
+    });
+  }
+
+  return (
+    <div className='jamblock'>
+      <div className='RoomComponentList RoomComponentListAddImg'>
+        <h1>JAM</h1>
+      </div>
+      <div className='RoomComponentList RoomComponentListAddImg RoomComponentListJamImg'>
+        <img class="round" src={state.icon} width="200" height="200"alt=" recording "></img>
+      </div>
+      <button className='rec' onClick={startTheJam}>Start The Jam!</button>
+      <button className='rec' onClick={startRecording}>Start recording</button>
+      <button className='rec' onClick={stopRecording}>Stop recording</button>
+      <button className='rec' onClick={playRecording}>Play recording</button>
+      <div className='RoomComponentList RoomComponentListAddImg'>
+        <h1>Local Audio</h1>
+      </div>
+      <div>
+        <audio id='local_audio' autoPlay muted playsInline controls={true} />
+      </div>
+      <div className='container'>
+        <ul id='trackList' name='trackList'></ul>
+      </div>
+      <div id='players'></div>
+    </div>
+  );
 }
 
 export default Recorder;
