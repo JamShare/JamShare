@@ -263,7 +263,7 @@ function Recorder(props) {
                 } else if (info === "publish_started") {
                     //stream is being published
                     console.log("publish started");
-                    alert("publish started");
+                    //alert("publish started");
                 } else if (info === "publish_finished") {
                     //stream is being finished
                     console.log("publish finished");
@@ -312,7 +312,7 @@ function Recorder(props) {
             callbackError: function (error) {
                 //some of the possible errors, NotFoundError, SecurityError,PermissionDeniedError
                 console.log("error callback: " + JSON.stringify(error));
-                alert(JSON.stringify(error));
+                //alert(JSON.stringify(error));
             }
         });
     }
