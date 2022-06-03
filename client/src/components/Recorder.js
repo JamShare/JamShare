@@ -136,9 +136,9 @@ function Recorder(props) {
                 console.log('player 1 starting the jam! getting audio device..', playerOrder);
                 getAudioDevice();
                 
-                let data = {index:playerOrder};
-                console.log('sending init signal to index:',data.index);
-                socket.emit('initjam', data);//notify playerat next index
+                // let data = {index:playerOrder};
+                // console.log('sending init signal to index:',data.index);
+                // socket.emit('initjam', data);//notify playerat next index
                 
             } catch(error) {
                 console.log('Error in getAudioDevice:', error);
