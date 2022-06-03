@@ -4,11 +4,6 @@ import image3 from './assets/images/add.jpg';
 import image5 from './assets/images/dragdn.jpg';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import socket from "../index";
-<<<<<<< HEAD
-// class Participants extends React.Component {
-=======
-
->>>>>>> origin/main
 function Participants(props) {
     console.log("participants sessionID", props.sessionID);
     console.log("participants userlist:", props.userlist);

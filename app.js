@@ -177,7 +177,7 @@ io.on('connection', (socket) => {
   // socket.on('audio-stream-end', () => {
   //   console.log('Audio streaming ended.');
   //   // emits to all connected clients
-  //   // TODO change this when we establish multiple rooms
+  //   // TODO change this when we establish multiple roomscd ..
   //   io.emit('audio-blob', chunks);
   //   chunks = [];
   // });
