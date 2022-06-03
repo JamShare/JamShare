@@ -271,6 +271,7 @@ class Session {
     // this function gets called with last index . sends last index value to room session. clients will all begin listening to index 3's
     // publish for the mixed audio if it's the last in their userlist 
     let data = {message: ("signal player index to init", index)};
+    console.log(data.message);
 
     try{
       if(index !== this.clients.clients.length - 1){//we are not at the last player yet
