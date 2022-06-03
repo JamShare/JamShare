@@ -7,6 +7,7 @@ import './App.css';
 import './room.css';
 import JamShareLogo from './assets/images/JamShareLogo.jpg';
 import socket from '../index';
+import Viewer from './Viewer';
 
 function Room() {
   let {
@@ -42,6 +43,9 @@ function Room() {
       <div className='jybanner'>
         <img className='jam-logo' src={JamShareLogo} alt='logo' />
       </div>
+      <div class="jybannera">
+        Session ID: {sessionID}
+      </div>
 
       <Participants
         userlist={serverUserList}
@@ -51,12 +55,20 @@ function Room() {
         userlist={serverUserList}
         sessionID={sessionID}
         guest={guest}></Chat>
+      <Viewer>
+        userlist={serverUserList}
+        sessionID={sessionID}
+        guest={guest}
+      </Viewer>
       <Recorder
         userlist={serverUserList}
         sessionID={sessionID}
         guest={guest}></Recorder>
       <div className='jybannerb'>
-        Session ID: {sessionID} - Portland State University - JamShare - 2022
+        Portland State University - JamShare - 2022
+        <button className='about'>
+          <a href="https://github.com/JamShare">About Us</a>
+        </button>
       </div>
     </div>
   );
