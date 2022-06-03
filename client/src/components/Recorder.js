@@ -86,6 +86,10 @@ function Recorder(props) {
     //room info
     let currentRoom = '' + state.sessionID + '-';
 
+    //initialized?
+    let initd = 0;
+    let sentInitSig = 0;
+
     //Merge variables
     let intervalReturn = null; // use this to clearInterval on the connectAudioBuffers function
 
@@ -94,11 +98,12 @@ function Recorder(props) {
             //initialize and connect to MUTED incoming remote stream.
             //CALL INITIALIZE HERE 
             console.log("init", playerOrder, index);
-            if(playerOrder === index){
+            if(playerOrder === index && initd !== 1){
                 getAudioDevice();
+                initd = 1;
             }
             //signal to next index to initialize and listen to our MUTED publish.
-            if (playerOrder !== props.userlist.length) {
+            if (playerOrder !== props.userlist.length && sentInitSig !== 1) {
                 let data = {index:playerOrder};//next player index (playerOrder is +1 to index). if we are last, server will notify everyone to listen.
                 console.log('sending init signal to index:', data.index);
                 socket.emit('initjam', data)//send signal to next player
