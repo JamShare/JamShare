@@ -74,6 +74,16 @@ io.on('connection', (socket) => {
     }
   });
 
+  //Jam control signals. index given determines behavior
+  socket.on('initjam', (data) => {//data is index of player that clicked ready
+    try{
+      sessions.initjam(data, socket);
+    }catch(error){
+      console.log(error); 
+      socket.emit('error',error);
+    }
+  });
+
   socket.on('client-stream-out', (data) => {
     try{
       sessions.streamStarting(data, socket);

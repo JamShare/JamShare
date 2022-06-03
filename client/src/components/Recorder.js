@@ -93,6 +93,7 @@ function Recorder(props) {
     socket.on('initialize', (index) => {
             //initialize and connect to MUTED incoming remote stream.
             //CALL INITIALIZE HERE 
+            console.log("init", playerOrder, index);
             if(playerOrder === index){
                 getAudioDevice();
             }
@@ -125,7 +126,7 @@ function Recorder(props) {
             try {
                 getAudioDevice();
                 let data = {index:playerOrder};
-                socket.emit('initjam', data);//notifty player 2 at index 1.
+                socket.emit('initjam', data);//notify player 2 at index 1.
             } catch(error) {
                 console.log('Error in getAudioDevice:', error);
             }
