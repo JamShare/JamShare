@@ -266,6 +266,12 @@ function Recorder(props) {
         webRTCAdaptor = initiateWebrtc(streamOut.stream); // initialize the webRTC adaptor
     }
 
+    function updateDelay() {
+        if (delayNode) {
+            delayNode.delayTime.setValueAtTime(state.delay, playbackContext.currentTime);
+        }
+    }
+
     //publish the local stream
     function publish(token) {
         let publishStreamName = '' + currentRoom + '-' + playerOrder;
@@ -372,7 +378,7 @@ function Recorder(props) {
             <input
                     type='text'
                     name='session'
-                    onChange={(e) => {state.delay = e.target.value}}
+                    onChange={(e) => {state.delay = e.target.value; updateDelay();}}
             />
             <input type='submit' value='Submit' />
         </div>
