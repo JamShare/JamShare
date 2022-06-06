@@ -18,6 +18,13 @@ function Room() {
 
   console.log('room state: ', sessionID, guest, serverUserList);
 
+  socket.on('servermessage', (message) => {
+    console.log("servermessage:", message);
+  });
+  socket.on('error', (error) => {
+    console.error("servererror:", error);
+  });
+
   useEffect(() => {
     window.addEventListener('beforeunload', keepOnPage); //this is fired upon component mounting
     socket.on('client-update-userlist', (newusernames) => {

@@ -2,6 +2,7 @@ import React from 'react';
 import { WebRTCAdaptor } from '../js/webrtc_adaptor.js';
 import { getUrlParameter } from "../js/fetch.stream.js";
 import { saveAs } from 'file-saver';
+import socket from '../index';
 
 function Recorder(props) {
     // state variables
@@ -46,6 +47,7 @@ function Recorder(props) {
     // recordContext.resume(); // enable the record context immediately
     const playbackContext = new AudioContext(); // playback context plays back to user and combines local user audio with audiobuffer recordings to create new stream
     let playerOrder = 0;
+    getPlayerOrder();
     let delayNode = null; // audiobuffersource nodes connect to this, which are delayed when outputting to streamOut
     let stream = null; // this is the local stream
     var remoteSource = null; // source for recorderNode; uses remote stream as its source
@@ -68,6 +70,21 @@ function Recorder(props) {
     //Merge variables
     let intervalReturn = null; // use this to clearInterval on the connectAudioBuffers function
 
+    //socket event to initialize in proper order
+    socket.on('initialize', (index) => {
+      console.log("init signal", index, playerOrder)
+      //initialize and connect to MUTED incoming remote stream.
+      //CALL INITIALIZE HERE 
+      if(playerOrder-1 === index){
+          getAudioDevice();
+      }
+      //signal to next index to initialize and listen to our MUTED publish.
+      let data = {index:(playerOrder)};//next player index (playerOrder is +1 to index). if we are last, server will notify everyone to listen.
+      socket.emit('initjam', data)//send signal to next player
+      return;
+    });
+
+
     function getPlayerOrder() {
         for (let i = 0; i < state.userlist.length; i++) {
             if (state.username === state.userlist[i]) {
@@ -77,16 +94,25 @@ function Recorder(props) {
     }
 
     function startTheJam() {
+        // make sure Jam hasn't started
+        // if already initialized, don't reinitialize
         try {
         getPlayerOrder();
         } catch (error) {
             console.log('Error in playerOrder:', error);
         }
 
-        try {
-        getAudioDevice();
-        } catch(error) {
-            console.log('Error in getAudioDevice:', error);
+        if(playerOrder === 1){//&& everyoneIsReady() && !initialized
+          try {
+              getAudioDevice();
+              let data = {index:playerOrder};
+              socket.emit('initjam', data);//notifty player 2 at index 1.
+          } catch(error) {
+              console.log('Error in getAudioDevice:', error);
+          }
+              //initialize all players with socket event        
+        }else{
+          console.log("Waiting for others to ready")
         }
     }
 
@@ -166,9 +192,9 @@ function Recorder(props) {
         }
 
         // create audio source from previous players' remote stream
-        // let settings = obj.track.getSettings();
-        // let latency = settings.latency();
-        // console.log("Latency: ", latency);
+        let settings = obj.track.getSettings();
+        let latency = settings.latency;
+        console.log("Latency: ", latency);
         remoteSource = playbackContext.createMediaStreamTrackSource(obj.track);
         remoteSource.connect(playbackContext.destination);
         remoteSource.connect(delayNode);

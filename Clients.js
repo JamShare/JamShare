@@ -57,6 +57,8 @@ class Clients {
     return usernames;
   }
 
+  
+
   // returns the socketID of the next player in the game
   getNextPlayer(socketID) {
     let client = clientsMap(socketID);
