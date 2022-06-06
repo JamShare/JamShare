@@ -266,10 +266,11 @@ function Recorder(props) {
                     console.log("initialized");
                     initAntMedia();
                 } else if (info === "publish_started") {
-                    //stream is being published
+                    //local? stream is being published
                     console.log("publish started");
                          //signal to next index to initialize and listen to our MUTED publish.
                   //wait till publish starts to send next player init signal
+                  console.log("initpublish", playerOrder, props.userlist.length);
                       if (playerOrder !== props.userlist.length && initd !== 1) {
                         initd = 1;
                         let data = {index:playerOrder};//next player index (playerOrder is +1 to index). if we are last, server will notify everyone to listen.
@@ -324,7 +325,7 @@ function Recorder(props) {
             callbackError: function (error) {
                 //some of the possible errors, NotFoundError, SecurityError,PermissionDeniedError
                 console.log("error callback: " + JSON.stringify(error));
-                alert(JSON.stringify(error));
+                // alert(JSON.stringify(error));
             }
         });
     }
