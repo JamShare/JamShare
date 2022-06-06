@@ -209,6 +209,7 @@ class Session {
     // publish for the mixed audio if it's the last in their userlist 
 
     if(index !== this.clients.getNumPlayers() - 1){//we are not at the last player yet
+      console.log("sending init to index:", index)
       socket.to(this.sessionID).emit("initialize", index);
     } 
   }

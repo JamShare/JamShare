@@ -57,7 +57,10 @@ class Clients {
     return usernames;
   }
 
-  // get
+  getNumPlayers(){
+    console.log("num players:", this.clients.length);
+    return this.clients.length;
+  }
 
   // returns the socketID of the next player in the game
   getNextPlayer(socketID) {

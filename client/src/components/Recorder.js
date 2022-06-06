@@ -70,6 +70,9 @@ function Recorder(props) {
     //Merge variables
     let intervalReturn = null; // use this to clearInterval on the connectAudioBuffers function
 
+    //initialized? 
+    let initd = 0; 
+
     //socket event to initialize in proper order
     socket.on('initialize', (index) => {
       console.log("init signal", index, playerOrder)
@@ -78,9 +81,7 @@ function Recorder(props) {
       if(playerOrder-1 === index){
           getAudioDevice();
       }
-      //signal to next index to initialize and listen to our MUTED publish.
-      let data = {index:(playerOrder)};//next player index (playerOrder is +1 to index). if we are last, server will notify everyone to listen.
-      socket.emit('initjam', data)//send signal to next player
+ 
       return;
     });
 
@@ -105,8 +106,8 @@ function Recorder(props) {
         if(playerOrder === 1){//&& everyoneIsReady() && !initialized
           try {
               getAudioDevice();
-              let data = {index:playerOrder};
-              socket.emit('initjam', data);//notifty player 2 at index 1.
+              // let data = {index:playerOrder};
+              // socket.emit('initjam', data);//notifty player 2 at index 1.
           } catch(error) {
               console.log('Error in getAudioDevice:', error);
           }
@@ -265,7 +266,15 @@ function Recorder(props) {
                 } else if (info === "publish_started") {
                     //stream is being published
                     console.log("publish started");
-                    alert("publish started");
+                         //signal to next index to initialize and listen to our MUTED publish.
+                  //wait till publish starts to send next player init signal
+                      if (playerOrder !== props.userlist.length && initd !== 1) {
+                        initd = 1;
+                        let data = {index:playerOrder};//next player index (playerOrder is +1 to index). if we are last, server will notify everyone to listen.
+                        console.log('sending init signal to index:', data.index);
+                        socket.emit('initjam', data)//send signal to next player
+                      }
+                         alert("publish started");
                 } else if (info === "publish_finished") {
                     //stream is being finished
                     console.log("publish finished");
