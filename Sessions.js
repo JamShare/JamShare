@@ -200,7 +200,8 @@ class Sessions {
     }
     */
 
-    nextID = getNextPlayer(socket.id);
+    nextID = this.clients.getNextPlayer(socket.id);
+    console.log("next SockID:", nextID);
     io.to(nextID).emit("initialize");
   }
 }
