@@ -237,7 +237,7 @@ initjam(index, socket, io){
   }
   */
 
-  nextID = this.clients.getNextPlayer(socket.id);
+  let nextID = this.clients.getNextPlayer(socket.id);
   console.log("next SockID:", nextID);
   io.to(nextID).emit("initialize");
 }
