@@ -191,28 +191,6 @@ class Session {
   //   return [this.sessionID, this.clients.retclients()];
   // }
 
-  // initjam(index, socket){
-  //   //only called from client if userList[0] clicks and readyUsers is all 1's.
-  //   //init clients in proper order. clients will only listen to index before them in client side but still need to be 
-  //   //initialized in proper order.
-
-  //   //clients begin writing to their incoming remote stream buffer when the audio stream being published is not empty...
-  //   //only  
-  //   //because we cannot socket.on for each client in the server from this function seperatedly, we must signal multiple times until conditions are met.
-
-  //   //client 0 will emit startjam with index 1 in socket event when initialized and ready to publish.
-
-  //   //this function gets called with index 1. send index 1 to room session. client index 1 will act accordingly by initalizing..
-  //   //client 1 will emit startjam with index 2 in socket event when initialized and ready to publish. 
-  //   ///....
-  //   // this function gets called with last index . sends last index value to room session. clients will all begin listening to index 3's
-  //   // publish for the mixed audio if it's the last in their userlist 
-
-  //   if(index !== this.clients.getNumPlayers() - 1){//we are not at the last player yet
-  //     console.log("sending init to index:", index)
-  //     socket.to(this.sessionID).emit("initialize", index);
-  //   } 
-//  }
 initjam(index, socket, io){
   //only called from client if userList[0] clicks and readyUsers is all 1's.
   //init clients in proper order. clients will only listen to index before them in client side but still need to be 
@@ -238,6 +216,9 @@ initjam(index, socket, io){
   */
 
   let nextID = this.clients.getNextPlayer(socket.id);
+  if (nextID === undefined) {
+    return;
+  }
   console.log("next SockID:", nextID);
   io.to(nextID).emit("initialize");
 }

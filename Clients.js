@@ -62,12 +62,15 @@ class Clients {
     return this.clients.length;
   }
 
-  // returns the socketID of the next player in the game
-  getNextPlayer(socketID) {
-    let client = this.clientsMap.get(socketID);
-    let index = this.clients.indexOf(client);
-    return this.clients[index + 1].getSocketID();
-  }
+    // returns the socketID of the next player in the game
+    getNextPlayer(socketID) {
+      let client = this.clientsMap.get(socketID);
+      let index = this.clients.indexOf(client);
+      if (this.clients[index+1]) {
+        return this.clients[index+1].getSocketID();
+      }
+      return undefined;
+    }
 
   // basic array swap funct
   swap(index1, index2) {
