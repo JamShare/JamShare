@@ -66,7 +66,7 @@ class Clients {
   getNextPlayer(socketID) {
     let client = this.clientsMap.get(socketID);
     let index = this.clients.indexOf(client);
-    return this.clients[index + 1].getSocketID;
+    return this.clients[index + 1].getSocketID();
   }
 
   // basic array swap funct
