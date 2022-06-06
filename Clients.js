@@ -64,8 +64,8 @@ class Clients {
 
   // returns the socketID of the next player in the game
   getNextPlayer(socketID) {
-    let client = clientsMap(socketID);
-    this.clients.indexOf(client);
+    let client = this.clientsMap(socketID);
+    let index = this.clients.indexOf(client);
     return this.clients[index + 1].getSocketID;
   }
 
