@@ -76,10 +76,9 @@ io.on('connection', (socket) => {
     }
   });
 
-  //Jam control signals. index given determines behavior
   socket.on('initjam', (data) => {//data is index of player that clicked ready
     try{
-      sessions.initjam(data, socket);
+      sessions.initjam(data, socket, io);
     }catch(error){
       console.log(error); 
       socket.emit('error',error);

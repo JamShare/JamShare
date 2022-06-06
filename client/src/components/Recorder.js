@@ -74,13 +74,15 @@ function Recorder(props) {
     let initd = 0; 
 
     //socket event to initialize in proper order
-    socket.on('initialize', (index) => {
-      console.log("init signal", index, playerOrder)
+    // socket.on('initialize', (index) => {
+      socket.on('initialize', () => {
+
+    console.log("init signal", playerOrder)
       //initialize and connect to MUTED incoming remote stream.
       //CALL INITIALIZE HERE 
-      if(playerOrder-1 === index){
+      // if(playerOrder-1 === index){
           getAudioDevice();
-      }
+      // }
  
       return;
     });
