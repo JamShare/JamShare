@@ -271,7 +271,7 @@ function Recorder(props) {
                          //signal to next index to initialize and listen to our MUTED publish.
                   //wait till publish starts to send next player init signal
                   console.log("initpublish", playerOrder, props.userlist.length);
-                      if (playerOrder !== props.userlist.length && initd !== 1) {
+                      if (playerOrder !== props.userlist.length+1 && initd !== 1) {
                         initd = 1;
                         let data = {index:playerOrder};//next player index (playerOrder is +1 to index). if we are last, server will notify everyone to listen.
                         console.log('sending init signal to index:', data.index);
