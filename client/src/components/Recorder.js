@@ -119,6 +119,11 @@ function Recorder(props) {
         }
     }
 
+    function stopTheJam() { // silence or unpublish so user order can be changed?
+
+        stopRecording();
+    }
+
     // this function is called when WebRTCAdaptor is finished intializing, to prevent "WebRTCAdaptor is null" errors
     function initAntMedia() {
         //join the antmedia room with audio only amcu
