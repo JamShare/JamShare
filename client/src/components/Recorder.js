@@ -105,7 +105,7 @@ function Recorder(props) {
             console.log('Error in playerOrder:', error);
         }
 
-        if(playerOrder === 1){//&& everyoneIsReady() && !initialized
+        if(playerOrder === 1 && !initd){//&& everyoneIsReady()
           try {
               getAudioDevice();
               // let data = {index:playerOrder};
@@ -120,8 +120,9 @@ function Recorder(props) {
     }
 
     function stopTheJam() { // silence or unpublish so user order can be changed?
-
-        stopRecording();
+        let publishStreamName = '' + currentRoom + '-' + playerOrder;
+        webRTCAdaptor.stop(publishStreamName);
+        // stopRecording();
     }
 
     // this function is called when WebRTCAdaptor is finished intializing, to prevent "WebRTCAdaptor is null" errors
@@ -283,9 +284,10 @@ function Recorder(props) {
                         console.log('sending init signal to index:', data.index);
                         socket.emit('initjam', data)//send signal to next player
                       }
-                         alert("publish started");
+                        alert("publish started");
                 } else if (info === "publish_finished") {
                     //stream is being finished
+                    console.log(obj);
                     console.log("publish finished");
                 } else if (info === "trackList") {
                     console.log("trackList", obj.streamId);
@@ -304,6 +306,9 @@ function Recorder(props) {
                     if (parseInt(tempOrder, 10) === parseInt(playerOrder-1, 10)) {
                         // console.log("Playing", obj.trackId);
                         playAudio(obj);
+                        obj.onmute = e => {
+                            console.log("Remote track muted.")
+                        };
                     }
                 } else if (info === "ice_connection_state_changed") {
                     console.log("iceConnectionState Changed: ", JSON.stringify(obj));
@@ -345,6 +350,7 @@ function Recorder(props) {
         <img class="round" src={state.icon} width="200" height="200"alt=" recording "></img>
       </div>
       <button className='rec' onClick={startTheJam}>Start The Jam!</button>
+      <button className='rec' onClick={stopTheJam}>Stop The Jam!</button>
       <button className='rec' onClick={startRecording}>Start recording</button>
       <button className='rec' onClick={stopRecording}>Stop recording</button>
       <button className='rec' onClick={playRecording}>Play recording</button>
