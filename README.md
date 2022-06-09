@@ -14,7 +14,7 @@ go to localhost:3000 in FireFox only.
 - Zach Santangelo (Team Lead)
 - Badeed Muhsen
 - Casey Rojas
-- Cristina Stone-Pedraza
+- Cristina Stone Pedraza
 - Devon Berry
 - Morgan Courvoisier
 - Nicholas Murphy
