@@ -173,6 +173,32 @@ function Recorder(props) {
         return;
     }
 
+    // starts or stops mediaRecorder (combines start and stop recording in one button)
+    // shows/hides icon depending on state
+    function startStopRecording() {
+        if (!recorder) {
+            return;
+        }
+        if (!state.isRecording) { // if not recording
+            recorder.start();
+            state.isRecording = true;
+            console.log("Recording started successfully.");
+            // show/hide icons
+            recordIcon.show();
+            playingIcon.hide();
+            return;
+        }
+        else {
+            recorder.stop();
+            state.isRecording = false;
+            console.log("Recording stopped.");
+            // show/hide icons
+            playingIcon.show();
+            recordIcon.hide();
+            return;
+        }
+    }
+
     // this plays assembled audio from mediaRecorder.onstop
     function playRecording() {
         if (!audio) {
@@ -348,6 +374,9 @@ function Recorder(props) {
       <button className='rec' onClick={startRecording}>Start recording</button>
       <button className='rec' onClick={stopRecording}>Stop recording</button>
       <button className='rec' onClick={playRecording}>Play recording</button>
+
+        <button className='rec' onClick={startStopRecording}>START/STOP RECORDING</button>
+
       <div className='RoomComponentList RoomComponentListAddImg'>
         <h1>Local Audio</h1>
       </div>
