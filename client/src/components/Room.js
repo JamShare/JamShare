@@ -51,6 +51,11 @@ function Room() {
         <img className='jam-logo' src={JamShareLogo} alt='logo' />
       </div>
 
+      <div className="jybannera">
+        Session ID: {sessionID}
+      </div>
+
+
       <Participants
         userlist={serverUserList}
         sessionID={sessionID}

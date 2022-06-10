@@ -4,7 +4,13 @@ import { getUrlParameter } from "../js/fetch.stream.js";
 import { saveAs } from 'file-saver';
 import socket from '../index';
 
+//recorder variables
+let chunks = [];
+let recorder = null;
+let audio = null;
+
 function Recorder(props) {
+
     // state variables
     let state = {
         isRecording: false,
@@ -64,6 +70,7 @@ function Recorder(props) {
     let streamName = getUrlParameter("streamName");
     let streamOut = null; // combined stream, outputs to next player in the chain
 
+
     //room info
     let currentRoom = '' + state.sessionID + '-';
 
@@ -87,7 +94,7 @@ function Recorder(props) {
      return;
     });
 
-
+    //gets the player order in the jam
     function getPlayerOrder() {
         for (let i = 0; i < state.userlist.length; i++) {
             if (state.username === state.userlist[i]) {
@@ -141,7 +148,7 @@ function Recorder(props) {
     }
     //
 
-    // starts mediaRecorder recording process (NOT recorderNode)
+    // starts mediaRecorder recording process
     function startRecording() {
         if (!recorder) {
             return;
@@ -189,15 +196,11 @@ function Recorder(props) {
         if (obj.track.kind === "audio") {
             index = obj.track.id.replace("ARDAMSa", "");
         }
-
         if (index === room) {
             return;
         }
 
         // create audio source from previous players' remote stream
-        let settings = obj.track.getSettings();
-        let latency = settings.latency;
-        console.log("Latency: ", latency);
         remoteSource = playbackContext.createMediaStreamTrackSource(obj.track);
         remoteSource.connect(playbackContext.destination);
         remoteSource.connect(delayNode);
