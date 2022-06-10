@@ -109,7 +109,7 @@ button.rec{
   position:absolute;
 }
 .ProjectSectionContent {
-  height: 120vh;
+  height: 100vh;
   background-color:  rgb(46, 46, 46);
   background-repeat: no-repeat;
   background-attachment: fixed;

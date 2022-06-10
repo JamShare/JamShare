@@ -18,6 +18,13 @@ function Room() {
 
   console.log('room state: ', sessionID, guest, serverUserList);
 
+  socket.on('servermessage', (message) => {
+    console.log("servermessage:", message);
+  });
+  socket.on('error', (error) => {
+    console.error("servererror:", error);
+  });
+
   useEffect(() => {
     window.addEventListener('beforeunload', keepOnPage); //this is fired upon component mounting
     socket.on('client-update-userlist', (newusernames) => {
@@ -43,9 +50,11 @@ function Room() {
       <div className='jybanner'>
         <img className='jam-logo' src={JamShareLogo} alt='logo' />
       </div>
+
       <div className="jybannera">
         Session ID: {sessionID}
       </div>
+
 
       <Participants
         userlist={serverUserList}
@@ -65,9 +74,9 @@ function Room() {
         sessionID={sessionID}
         guest={guest}></Recorder>
       <div className='jybannerb'>
-        Portland State University - JamShare - 2022
+      Session ID: {sessionID} - Portland State University - JamShare - 2022
         <button className='about'>
-          <a href="https://github.com/JamShare">About Us</a>
+          <a href="https://github.com/JamShare" target="_blank" rel="noopener noreferrer">About Us</a>
         </button>
       </div>
     </div>

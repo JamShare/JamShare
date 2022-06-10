@@ -1,13 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Signup, Room, Join, MorgSignup, MorgSignin, } from './components/component_export';
-import registerServiceWorker from './registerServiceWorker';
 import './fonts/Indie_Flower/IndieFlower-Regular.ttf';
 import './index.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 const io = require('socket.io-client');
-const SERVER = 'http://localhost:3001';
+const SERVER = "https://gentle-lake-00593.herokuapp.com";
 let socket = io(SERVER);
 export default socket; //https://stackoverflow.com/questions/48794919/reactjs-socket-io-best-way-to-handle-socket-connection
 
@@ -36,4 +35,4 @@ ReactDOM.render(
   </div>,
   document.getElementById('root')
 );
-registerServiceWorker();
+
