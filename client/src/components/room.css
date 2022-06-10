@@ -98,6 +98,10 @@ button.rec{
   font-size: 13pt;
 }
 
+button:hover {
+  background-color: rgb(164, 0, 164);
+}
+
 .dragUp{
   top: 0px;
   right: 43%;
@@ -116,6 +120,7 @@ button.rec{
   background-position: center;
   background-size: contain;
   overflow: hidden;
+  min-height: 1000px;
 }
 
 .RoomComponentList{
