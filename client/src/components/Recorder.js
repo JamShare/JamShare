@@ -195,6 +195,9 @@ function Recorder(props) {
         }
 
         // create audio source from previous players' remote stream
+        let settings = obj.track.getSettings();
+        let latency = settings.latency;
+        console.log("Latency: ", latency);
         remoteSource = playbackContext.createMediaStreamTrackSource(obj.track);
         remoteSource.connect(playbackContext.destination);
         remoteSource.connect(delayNode);
@@ -203,16 +206,12 @@ function Recorder(props) {
 
         // record audio if you're the last player
         if (state.username === state.userlist.at(-1)) {
-            setupRecorder(streamOut.stream);
+            recorder = new MediaRecorder(streamOut.stream);
+
+            //initialize event handlers for recorder
+            recorder.ondataavailable = onDataAvailable;
+            recorder.onstop = onStop;
         }
-    }
-
-    function setupRecorder(stream) {
-        recorder = new MediaRecorder(stream);
-
-        //initialize event handlers for recorder
-        recorder.ondataavailable = onDataAvailable;
-        recorder.onstop = onStop;
     }
 
     async function getAudioDevice() {
